@@ -17,7 +17,7 @@ class CovidConsumptionRequest extends FormRequest
     {
         $apikey = $this->headers->get('apikey');
         $actual_key = env('COVID_KEY');
-        print_r($apikey);die();
+        // print_r($apikey);die();
         if($apikey != $actual_key || !$actual_key) return false;
         else{
             return true;
