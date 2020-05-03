@@ -147,7 +147,7 @@ class ConsumptionsController extends Controller
 				DB::rollback();
 				return response()->json([
 						'error' => true,
-						'message' => 'Insert failed: Unexpected error occured while inserting lab' . $consumptions->lab_id ?? '' . ' data.',
+						'message' => 'Insert failed: Unexpected error occured while inserting lab' . $consumptions->lab ?? '' . ' data.',
 						'code' => 500
 					], 500);
 			}
