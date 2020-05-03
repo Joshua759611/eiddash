@@ -106,7 +106,6 @@ class ConsumptionsController extends Controller
 	public function create_covid(BlankRequest $request)
 	{
 		$consumptions = json_decode($request->input('consumptions'));
-		return response()->json($consumptions);
 		$consumptions_array = [];
 		foreach ($consumptions as $key => $consumption) {
 			$existing = CovidConsumption::existing($consumption->start_of_week, $consumption->lab_id)->first();
@@ -148,7 +147,7 @@ class ConsumptionsController extends Controller
 				DB::rollback();
 				return response()->json([
 						'error' => true,
-						'message' => 'Insert failed: Unexpected error occured while inserting lab' . $consumptions->lab ?? '' . ' data.',
+						'message' => 'Insert failed: Unexpected error occured while inserting lab' . json_decode($request->input('lab')) . ' data.',
 						'code' => 500
 					], 500);
 			}
