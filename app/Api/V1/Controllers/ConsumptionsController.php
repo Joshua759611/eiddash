@@ -106,6 +106,7 @@ class ConsumptionsController extends Controller
 	public function create_covid(BlankRequest $request)
 	{
 		$consumptions = json_decode($request->input('consumptions'));
+		return response()->json($consumptions);
 		$consumptions_array = [];
 		foreach ($consumptions as $key => $consumption) {
 			$existing = CovidConsumption::existing($consumption->start_of_week, $consumption->lab_id)->first();
