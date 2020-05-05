@@ -106,7 +106,6 @@ class ConsumptionsController extends Controller
 	public function create_covid(BlankRequest $request)
 	{
 		$consumptions = json_decode($request->input('consumptions'));
-		return response()->json($consumptions);
 		$consumptions_array = [];
 		foreach ($consumptions as $key => $consumption) {
 			$existing = CovidConsumption::existing($consumption->start_of_week, $consumption->lab_id)->first();
@@ -134,12 +133,14 @@ class ConsumptionsController extends Controller
 					$kit = CovidKit::where('material_no', $detail->kit->material_no)->first();
 					$db_detail = new CovidConsumptionDetail;
 					$detail_data = get_object_vars($detail);
+					$db_detail->fill($detail_data);
 					$db_detail->consumption_id = $db_consumption->id;
 					$db_detail->kit_id = $kit->id;
 					$db_detail->original_id = $detail->id;
 					$db_detail->synced = 1;
 					$db_detail->datesynced = date('Y-m-d');
 					unset($db_detail->id);
+					unset($db_detail->kit);
 					$db_detail->save();
 				}
 				DB::commit();				
