@@ -192,7 +192,7 @@ class ShortCodeQueries extends Model
                 'apikey' => env('SMS_KEY'),
                 'shortcode' => env('SMS_SENDER_ID'),
                 'partnerID' => env('SMS_PARTNER_ID'),
-				'mobile' => $recepient,
+				'mobile' => $phone,
 				'message' => $message,
 			],
 		]);
