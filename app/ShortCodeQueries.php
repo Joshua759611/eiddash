@@ -192,6 +192,6 @@ class ShortCodeQueries extends Model
 
     public static function sendPendingMessages()
     {
-    	self::__sendMessage('254725455925', 'Prepaation for the pending SMS`s');
+    	return self::__sendMessage('254725455925', 'Prepaation for the pending SMS`s');
     }
 }
