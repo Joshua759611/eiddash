@@ -188,4 +188,9 @@ class ShortCodeQueries extends Model
 				'body' => json_decode($response->getBody())
 			];
     }
+
+    public static function sendPendingMessages()
+    {
+    	self::__sendMessage('254725455925', 'Prepaation for the pending SMS`s');
+    }
 }
