@@ -11,7 +11,8 @@ use App\Mail\TestMail;
 class ShortCodeQueries extends Model
 {
     protected $guarded = [];
-    public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    // public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 
     private $limit = 5;
@@ -23,7 +24,7 @@ class ShortCodeQueries extends Model
     public function resendSMS()
     {
     	echo "==> Get unresponded SMS for date('Y')\n";
-    	$smses = $this->getUnsentEmail();
+    	$smses = $this->getUnsentSMS();
     	echo "==> Gotten {$smses->count()} requests\n";
     	foreach ($smses as $key => $sms) {
     		$message = $sms->message;
@@ -46,7 +47,7 @@ class ShortCodeQueries extends Model
     	echo "==>Completed sending SMS";
     }
 
-    public function getUnsentEmail()
+    public function getUnsentSMS()
     {
     	return $this->whereNull('dateresponded')->whereYear('created_at', date('Y'))->get();
     }
@@ -169,18 +170,30 @@ class ShortCodeQueries extends Model
     static function __sendMessage($phone, $message) {
        $client = new Client(['base_uri' => self::$sms_url]);
 
+		// $response = $client->request('post', '', [
+		// 	// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+		// 	'http_errors' => true,
+		// 	'debug' => true,
+		// 	'json' => [
+		// 		// 'sender' => env('SMS_SENDER_ID'),
+  //               'apiKey' => env('SMS_KEY'),
+  //               'shortCode' => env('SMS_SENDER_ID'),
+		// 		'recipient' => $phone,
+		// 		'message' => $message,
+  //               'callbackURL' => self::$sms_callback,
+  //               'enqueue' => 0,
+		// 	],
+		// ]);
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-			'http_errors' => true,
+			'http_errors' => false,
 			'debug' => true,
 			'json' => [
-				// 'sender' => env('SMS_SENDER_ID'),
-                'apiKey' => env('SMS_KEY'),
-                'shortCode' => env('SMS_SENDER_ID'),
-				'recipient' => $phone,
+                'apikey' => env('SMS_KEY'),
+                'shortcode' => env('SMS_SENDER_ID'),
+                'partnerID' => env('SMS_PARTNER_ID'),
+				'mobile' => $recepient,
 				'message' => $message,
-                'callbackURL' => self::$sms_callback,
-                'enqueue' => 0,
 			],
 		]);
 
