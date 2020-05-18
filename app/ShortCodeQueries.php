@@ -171,7 +171,8 @@ class ShortCodeQueries extends Model
 
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-			'http_errors' => false,
+			'http_errors' => true,
+			'debug' => true,
 			'json' => [
 				// 'sender' => env('SMS_SENDER_ID'),
                 'apiKey' => env('SMS_KEY'),
