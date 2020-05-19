@@ -25,10 +25,11 @@ class ShortCodeQueries extends Model
     {
     	echo "==> Get unresponded SMS for date('Y')\n";
     	$smses = $this->getUnsentSMS();
+    	$valid = 0;
+    	$invalid = 0;
     	echo "==> Gotten {$smses->count()} requests\n";
     	foreach ($smses as $key => $sms) {
     		$message = $sms->message;
-    		echo "\tSending message {$message}\n";
     		$message = $sms->message;
 			$phone = $sms->phoneno;
 			$patient = null;
@@ -37,14 +38,16 @@ class ShortCodeQueries extends Model
 			$status = 1;
     		$messageBreakdown = $this->messageBreakdown($message);
 			if (!$messageBreakdown) {
+				$invalid++;
 				$message = "The correct message format is {$this->msgFormat}\n {$this->msgFormatDescription}";
-				return response()->json(self::__sendMessage($phone, $message));
+				self::__sendMessage($phone, $message);
 			}
 			$patientTests = $this->getPatientData($messageBreakdown, $patient, $facility); // Get the patient data
 			$textMsg = $this->buildTextMessage($patientTests, $status, $testtype); // Get the message to send to the patient.
 			$sendTextMsg = $this->sendTextMessage($textMsg, $patient, $facility, $status, $message, $phone, $testtype, $sms); // Save and send the message
+			$valid++;
     	}
-    	echo "==>Completed sending SMS";
+    	echo "==>Completed sending SMS with valid SMS`s : {$valid} and invalid SMS`s: {$invalid}";
     }
 
     public function getUnsentSMS()
