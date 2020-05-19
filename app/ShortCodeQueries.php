@@ -110,7 +110,6 @@ class ShortCodeQueries extends Model
 		if (empty($tests))
 			return $msg;
 		foreach ($tests as $key => $test) {
-			dd($test);
 			$testtype = (get_class($test) == 'App\ViralsampleCompleteView') ? 2 : 1;
 			$msg .= "Facility: " . $test->facility . " [ " . $test->facilitycode . " ]\n";
 			$msg .= (get_class($test) == 'App\ViralsampleCompleteView') ? "CCC #: " : "HEI #:";
