@@ -150,7 +150,7 @@ class ShortCodeQueries extends Model
 		date_default_timezone_set('Africa/Nairobi');
         $dateresponded = date('Y-m-d H:i:s');
 		$response = self::__sendMessage($phone, $msg);
-		
+		dd($response);
 		if (!isset($shortcode))
 			$shortcode = new ShortCodeQueries;
 		$shortcode->testtype = $testtype;
