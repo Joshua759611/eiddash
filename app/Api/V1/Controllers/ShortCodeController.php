@@ -16,7 +16,8 @@ use GuzzleHttp\Client;
  */
 class ShortCodeController extends Controller
 {
-    public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    // public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 
     private $limit = 5;
@@ -138,7 +139,7 @@ class ShortCodeController extends Controller
 		}
 		date_default_timezone_set('Africa/Nairobi');
         $dateresponded = date('Y-m-d H:i:s');
-		$responseCode = self::__sendMessage($phone, $msg);
+		$response = self::__sendMessage($phone, $msg);
 		$shortcode = new ShortCodeQueries;
 		$shortcode->testtype = $testtype;
 		$shortcode->phoneno = $phone;
@@ -148,7 +149,7 @@ class ShortCodeController extends Controller
 		$shortcode->datereceived = $dateresponded;
 		$shortcode->status = $status;
 
-		if ($responseCode < 400)
+		if ($response->code < 400)
 			$shortcode->dateresponded = $dateresponded;
 		$shortcode->save();
 		return $msg;
@@ -157,20 +158,38 @@ class ShortCodeController extends Controller
     static function __sendMessage($phone, $message) {
        $client = new Client(['base_uri' => self::$sms_url]);
 
+		// $response = $client->request('post', '', [
+		// 	// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+		// 	'http_errors' => false,
+		// 	'json' => [
+		// 		// 'sender' => env('SMS_SENDER_ID'),
+  //               'apiKey' => env('SMS_KEY'),
+  //               'shortCode' => env('SMS_SENDER_ID'),
+		// 		'recipient' => $phone,
+		// 		'message' => $message,
+  //               'callbackURL' => self::$sms_callback,
+  //               'enqueue' => 0,
+		// 	],
+		// ]);
+		// return $response->getStatusCode();
+
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
+			'debug' => false,
 			'json' => [
-				// 'sender' => env('SMS_SENDER_ID'),
-                'apiKey' => env('SMS_KEY'),
-                'shortCode' => env('SMS_SENDER_ID'),
-				'recipient' => $phone,
+                'apikey' => env('SMS_KEY'),
+                'shortcode' => env('SMS_SENDER_ID'),
+                'partnerID' => env('SMS_PARTNER_ID'),
+				'mobile' => $phone,
 				'message' => $message,
-                'callbackURL' => self::$sms_callback,
-                'enqueue' => 0,
 			],
 		]);
-		return $response->getStatusCode();
+
+		return (object)[
+				'code' => $response->getStatusCode(),
+				'body' => json_decode($response->getBody())
+			];
 
 		// $body = json_decode($response->getBody());
   //       if($response->getStatusCode() == 402) die();
