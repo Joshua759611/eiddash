@@ -27,8 +27,15 @@ class ShortCodeQueries extends Model
     	$smses = $this->getUnsentSMS();
     	$valid = 0;
     	$invalid = 0;
+    	$loop = 0;
+    	$ratio = 0;
     	echo "==> Gotten {$smses->count()} requests\n";
     	foreach ($smses as $key => $sms) {
+    		$newratio = round((@($loop/$smses->count())*100));
+    		if ($ratio != $newratio){
+    			echo $ratio . '%';
+    			$ratio = $newratio;
+    		}
     		$message = $sms->message;
     		$message = $sms->message;
 			$phone = $sms->phoneno;
@@ -46,6 +53,7 @@ class ShortCodeQueries extends Model
 			$textMsg = $this->buildTextMessage($patientTests, $status, $testtype); // Get the message to send to the patient.
 			$sendTextMsg = $this->sendTextMessage($textMsg, $patient, $facility, $status, $message, $phone, $testtype, $sms); // Save and send the message
 			$valid++;
+			$loop++;
     	}
     	echo "==>Completed sending SMS with valid SMS`s : {$valid} and invalid SMS`s: {$invalid}";
     }
