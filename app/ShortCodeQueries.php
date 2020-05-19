@@ -130,7 +130,7 @@ class ShortCodeQueries extends Model
 					$msg .= "EID Result: " . $test->result_name . "\n";
 			} else {
 				$msg .= (get_class($test) == 'App\ViralsampleCompleteView') ? " VL" : " EID";
-				$msg .= " Rejected Sample: " . $test->rejected_reason->name . " - Collect New Sample.\n";
+				$msg .= " Rejected Sample: " . $test->rejected_reason($test->rejectedreason) . " - Collect New Sample.\n";
 			}
 			$lab = $test->lab;
 			if ($test->lab == NULL)
