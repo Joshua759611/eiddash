@@ -171,7 +171,8 @@ class ConsumptionsController extends Controller
 					'labname' => $consumption->lab->name,
 					'start_of_week' => $consumption->start_of_week,
 					'end_of_week' => $consumption->end_of_week,
-					'week' => $consumption->week
+					'week' => $consumption->week,
+					'tests' => $consumption->tests
 				];
 			foreach ($consumption->details as $key => $detail) {
 				$data[$conskey]['details'][] = [
