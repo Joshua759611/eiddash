@@ -126,13 +126,14 @@ class CovidController extends Controller
      */
     public function show(BlankRequest $request, $id)
     {
-        
+
         $apikey = $request->headers->get('apikey');
         $actual_key = env('COVID_KEY');
         if($actual_key != $apikey) abort(401);
 
         // $s = CovidSample::findOrFail($id);
-        $s = CovidSample::where(['cif_sample_id' => $id])->firstOrFail();
+        $s = CovidSample::where(['cif_sample_id' => $id])->first();
+        if(!$s) abort(404);
         $s->load(['patient']);
 
         return response()->json([
