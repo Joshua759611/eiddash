@@ -124,8 +124,9 @@ class CovidController extends Controller
      *      }
      * })
      */
-    public function show($id)
+    public function show(BlankRequest $request, $id)
     {
+        
         $apikey = $request->headers->get('apikey');
         $actual_key = env('COVID_KEY');
         if($actual_key != $apikey) abort(401);
