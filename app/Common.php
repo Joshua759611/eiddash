@@ -295,5 +295,36 @@ class Common
     }
 
 
+    public static function checkEmailExists()
+    {
+    	$users = [
+    		['name' => 'Japheth Gituku', 'email' => 'japhgituku@gmail.com'],
+    		['name' => 'Edward Musau', 'email' => 'eddymsa@yahoo.com'],
+    		['name' => 'Lorna Mueni', 'email' => 'lorna.mueni@kemsa.co.ke'],
+    		['name' => 'Caroline Kasera', 'email' => 'caroline.kasera@kemsa.co.ke'],
+    		['name' => 'Thomas Karanja', 'email' => 'TKaranja@mgic.umaryland.edu'],
+    		['name' => 'Bedan wamuti', 'email' => 'bedan.wamuti@kemsa.co.ke'],
+    		['name' => 'Osborn Otieno', 'email' => 'ootieno@usaid.gov'],
+    		['name' => 'Sharon Olwande', 'email' => 'solwande@clintonhealthaccess.org'],
+    		['name' => 'Tim Ngugi', 'email' => 'tngugi@clintonhealthaccess.org'],
+    		['name' => 'Roseline Warutere', 'email' => 'roselinewarutere@gmail.com'],
+    		['name' => 'Judi Lusike', 'email' => 'jlusike@clintonhealthaccess.org']
+    	];
+    	$exists = [];
+    	$dontexists = [];
+    	foreach ($users as $key => $user) {
+    		if (User::where('email', '=', $user['email'])->get()->isEmpty())
+    			$dontexists[] = $user;
+    		else
+    			$exists[] = $user;
+    	}
+    	echo "==>Existing Emails\n";
+    	print_r($exists);
+    	echo "\n==>End of Existing Emails\n";
+    	echo "\n\n==>Non-Existing Emails\n";
+    	print_r($dontexists);
+    	echo "\n==>End of Non-Existing Emails\n";
+    }
+
 
 }
