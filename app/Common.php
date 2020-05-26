@@ -314,9 +314,9 @@ class Common
     	$dontexists = [];
     	foreach ($users as $key => $user) {
     		if (User::where('email', '=', $user['email'])->get()->isEmpty())
-    			$dontexists[] = User::where('email', '=', $user['email'])->first();
+    			$dontexists[] = $user;
     		else
-    			$exists[] = $user;
+    			$exists[] = User::where('email', '=', $user['email'])->first();
     	}
     	echo "==>Existing Emails\n";
     	print_r($exists);
