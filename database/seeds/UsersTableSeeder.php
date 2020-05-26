@@ -188,7 +188,7 @@ class UsersTableSeeder extends Seeder
 
     	foreach ($allocationCommittee as $key => $value) {
     		$value = (object) $value;
-    		if (User::where('email', '=', $user->email)->get()->isEmpty()){
+    		if (User::where('email', '=', $value->email)->get()->isEmpty()){
     			$user = factory(App\User::class, 1)->create([
 			        'user_type_id' => 12,
 			        'surname' => ucfirst($value->surname),
