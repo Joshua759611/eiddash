@@ -184,7 +184,7 @@ class UsersTableSeeder extends Seeder
     			'surname' => 'soita',
     			'oname' => '',
     		]*/
-    	]
+    	];
 
     	foreach ($allocationCommittee as $key => $value) {
     		$value = (object) $value;
