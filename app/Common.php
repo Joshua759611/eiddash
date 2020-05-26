@@ -316,7 +316,7 @@ class Common
     		if (User::where('email', '=', $user['email'])->get()->isEmpty())
     			$dontexists[] = $user;
     		else
-    			$exists[] = User::where('email', '=', $user['email'])->first();
+    			$exists[] = User::where('email', '=', $user['email'])->first()->toArray();
     	}
     	echo "==>Existing Emails\n";
     	print_r($exists);
