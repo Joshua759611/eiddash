@@ -188,17 +188,18 @@ class UsersTableSeeder extends Seeder
 
     	foreach ($allocationCommittee as $key => $value) {
     		$value = (object) $value;
-    		if (User::where('email', '=', $value->email)->get()->isEmpty()){
-    			$user = factory(App\User::class, 1)->create([
-			        'user_type_id' => 12,
-			        'surname' => ucfirst($value->surname),
-			        'oname' => ucfirst($value->oname),
-			        'email' => $value->email,
-			        'username' => $value->email,
-		    	]);
-    		}
+    		dd($value);
+    		// if (User::where('email', '=', $value->email)->get()->isEmpty()){
+    		// 	$user = factory(App\User::class, 1)->create([
+			   //      'user_type_id' => 12,
+			   //      'surname' => ucfirst($value->surname),
+			   //      'oname' => ucfirst($value->oname),
+			   //      'email' => $value->email,
+			   //      'username' => $value->email,
+		    // 	]);
+    		// }
 
-	    	Mail::to([$user->email, 'bakasajoshua09@gmail.com'])->send(new UserCreated($user));
+	    	// Mail::to([$user->email, 'bakasajoshua09@gmail.com'])->send(new UserCreated($user));
     	}
 	}
 }
