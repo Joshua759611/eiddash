@@ -129,55 +129,74 @@ class UsersTableSeeder extends Seeder
     	// }
     	// // DB::table('users')->insert($data);
 
+    	
     	$allocationCommittee = [
-    		[
+    		[//Checked
     			'email' =>'roselinewarutere@gmail.com',
     			'surname' => 'warutere',
     			'oname' => 'roseline',
-    		],[
+    		],[//Checked
     			'email' =>'japhgituku@gmail.com',
-    			'surname' => 'gituku',
-    			'oname' => 'japheth',
-    		],[
+    			'surname' => 'Gituku',
+    			'oname' => 'Japheth',
+    		],[//Checked
     			'email' =>'eddymsa@yahoo.com',
-    			'surname' => 'eddy',
-    			'oname' => 'msa',
-    		],[
-    			'email' =>'asoita65@gmail.com',
-    			'surname' => 'soita',
-    			'oname' => '',
-    		],[
+    			'surname' => 'Edward',
+    			'oname' => 'Musau',
+    		],[//Checked
+    		 	'email' => 'lorna.mueni@kemsa.co.ke',
+    			'surname' => 'Mueni',
+    		 	'oname' => 'Lorna'
+    		],[//Checked
     			'email' =>'caroline.kasera@kemsa.co.ke',
-    			'surname' => 'kasera',
-    			'oname' => 'caroline',
-    		],[
+    			'surname' => 'Kasera',
+    			'oname' => 'Caroline',
+    		],[//CHecked
+    			'email' =>'solwande@clintonthealthaccess.org',
+    			'surname' => 'Olwande',
+    			'oname' => 'Sharon',
+    		],[//Checked
+    			'email' =>'tngugi@clintonthealthaccess.org',
+    			'surname' => 'Ngugi',
+    			'oname' => 'Tim',
+    		],[//Checked
+    			'email' =>'jlusike@clintonthealthaccess.org',
+    			'surname' => 'lusike',
+    			'oname' => 'judy',
+    		],[//Checked
+    			'email' => 'TKaranja@mgic.umaryland.edu',
+    			'surname' => 'Karanja',
+    			'oname' => 'Thomas'
+    		],[//Checked
+    			'email' => 'bedan.wamuti@kemsa.co.ke',
+    			'surname' => 'Wamuti',
+    			'oname' => 'Bedan'
+    		],[//Checked
+    			'email' => 'ootieno@usaid.gov',
+    			'surname' => 'Otieno',
+    			'oname' => 'Osborn'
+    		]/*,[
     			'email' =>'peter.mwangi@kemsa.co.ke',
     			'surname' => 'mwangi',
     			'oname' => 'peter',
     		],[
-    			'email' =>'solwande@clintonthealthaccess.org',
-    			'surname' => 'olwande',
-    			'oname' => 'sharon',
-    		],[
-    			'email' =>'tngugi@clintonthealthaccess.org',
-    			'surname' => 'ngugi',
-    			'oname' => 'tim',
-    		],[
-    			'email' =>'jlusike@clintonthealthaccess.org',
-    			'surname' => 'lusike',
-    			'oname' => 'judy',
-    		]
+    			'email' =>'asoita65@gmail.com',
+    			'surname' => 'soita',
+    			'oname' => '',
+    		]*/
     	]
 
     	foreach ($allocationCommittee as $key => $value) {
     		$value = (object) $value;
-    		$user = factory(App\User::class, 1)->create([
-		        'user_type_id' => 12,
-		        'surname' => ucfirst($value->surname),
-		        'oname' => ucfirst($value->oname),
-		        'email' => $value->email,
-		        'username' => $value->email,
-	    	]);
+    		if (User::where('email', '=', $user->email)->get()->isEmpty()){
+    			$user = factory(App\User::class, 1)->create([
+			        'user_type_id' => 12,
+			        'surname' => ucfirst($value->surname),
+			        'oname' => ucfirst($value->oname),
+			        'email' => $value->email,
+			        'username' => $value->email,
+		    	]);
+    		}
 
 	    	Mail::to([$user->email, 'bakasajoshua09@gmail.com'])->send(new UserCreated($user));
     	}
