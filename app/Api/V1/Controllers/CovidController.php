@@ -130,9 +130,9 @@ class CovidController extends Controller
         if($actual_key != $apikey) abort(401);
 
         // $s = CovidSample::findOrFail($id);
-        $s = CovidSampleView::where(['cif_sample_id' => $id])orWhere('identifier', $id)->first();
+        $s = CovidSampleView::where(['cif_sample_id' => $id])->orWhere('identifier', $id)->first();
         if(!$s) abort(404);
-        $s->load(['patient']);
+        // $s->load(['patient']);
 
         return response()->json([
           'sample' => $s,
