@@ -110,7 +110,6 @@ class CovidController extends Controller
         ], 201);
     }
 
-
     /**
      * Display the specified resource.
      *
