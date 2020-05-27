@@ -8,7 +8,7 @@ $api = app(Router::class);
 $api->version('v1', function (Router $api) {
     $api->group(['namespace' => 'App\\Api\\V1\\Controllers'], function(Router $api) {
         $api->group(['prefix' => 'auth'], function(Router $api) {
-            $api->post('signup', 'SignUpController@signUp');
+            // $api->post('signup', 'SignUpController@signUp');
 
             $api->group(['middleware' => 'api.throttle', 'limit' => 1, 'expires' => 1], function(Router $api) {
                 $api->post('login', 'LoginController@login');
