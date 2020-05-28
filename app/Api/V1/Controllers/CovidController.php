@@ -8,6 +8,7 @@ use App\Api\V1\Requests\BlankRequest;
 
 use App\CovidPatient;
 use App\CovidSample;
+use App\CovidSampleView;
 use App\CovidTravel;
 use App\Facility;
 use DB;
