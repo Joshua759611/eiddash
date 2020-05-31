@@ -42,7 +42,7 @@ class CovidKitsSeeder extends Seeder
                 ['material_no' => '8030073001', 'product_description' => 'Solid Waste Bag Set of 20',
                 'pack_size' => 20, 'calculated_pack_size' => 7680, 'type' => 'Kit', 'machine' => 3],
                 ['material_no' => '6438776001', 'product_description' => 'Cobas omni Secondary Tubes 13x75 (optional)*',
-                'pack_size' => 1500, 'calculated_pack_size' => 1500, 'type' => 'Kit', 'machine' => 3]
+                'pack_size' => 1500, 'calculated_pack_size' => 1500, 'type' => 'Kit', 'machine' => 3],
 
             // Consumables Kits
                 ['material_no' => 'P1', 'product_description' =>  'Oral pharyngeal swabs (Without media)', 'unit'=> 'pack', 'pack_size' => 25, 'type' => 'Consumable'],
