@@ -159,7 +159,6 @@ class ConsumptionsController extends Controller
 
 	public function getCovidConsumptions(CovidConsumptionRequest $request)
 	{
-		return response()->json('Returning somtheing back');
 		$consumptions = CovidConsumption::with(['lab', 'details.kit'])
 												->when($request, function ($query) use ($request){
 													if ($request->has('start_of_week'))
