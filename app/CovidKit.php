@@ -15,6 +15,11 @@ class CovidKit extends BaseModel
     	// return $tests;
     }
 
+    public function platform()
+    {
+        return $this->belongsTo(Machine::class, 'machine', 'id');
+    }
+
     public function beginingbalance()
     {
     	$balance = 0;

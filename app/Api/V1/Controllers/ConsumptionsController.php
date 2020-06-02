@@ -14,6 +14,7 @@ use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
 use App\Kits;
+use App\Machine;
 use DB;
 /**
  * 
@@ -135,7 +136,7 @@ class ConsumptionsController extends Controller
 					$detail_data = get_object_vars($detail);
 					$db_detail->fill($detail_data);
 					$db_detail->consumption_id = $db_consumption->id;
-					$db_detail->kit_id = $kit->id;
+					$db_detail->kit_id = $kit->material_no;
 					$db_detail->original_id = $detail->id;
 					$db_detail->synced = 1;
 					$db_detail->datesynced = date('Y-m-d');
@@ -159,11 +160,17 @@ class ConsumptionsController extends Controller
 
 	public function getCovidConsumptions(CovidConsumptionRequest $request)
 	{
-		$consumptions = CovidConsumption::with(['lab', 'details.kit'])
-												->when($request, function ($query) use ($request){
+		$consumptions = CovidConsumption::when($request, function ($query) use ($request){
 													if ($request->has('start_of_week'))
 														return $query->whereDate('start_of_week', $request->input('start_of_week'));
 												})->get();
+		// foreach ($consumptions as $key => $consumption) {
+		// 	$details = $consumption->details;
+		// 	$kits = $details->load('kit');
+		// 	return response()->json($kits);
+		// 	return response()->json($consumption->load('details.kit.platform'));
+		// }
+		// return response()->json($consumptions);
 		$data = [];													
 		foreach ($consumptions as $conskey => $consumption) {
 			$data[$conskey] = [
