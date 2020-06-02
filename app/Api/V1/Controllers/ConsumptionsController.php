@@ -151,7 +151,8 @@ class ConsumptionsController extends Controller
 				return response()->json([
 						'error' => true,
 						'message' => 'Insert failed: Unexpected error occured while inserting lab' . json_decode($request->input('lab')) . ' data.',
-						'code' => 500
+						'code' => 500,
+						'detailed' => $e
 					], 500);
 			}
 		}
