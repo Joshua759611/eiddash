@@ -180,7 +180,7 @@ class ConsumptionsController extends Controller
 					'start_of_week' => $consumption->start_of_week,
 					'end_of_week' => $consumption->end_of_week,
 					'week' => $consumption->week,
-					'tests' => $consumption->tests
+					'tests' => json_decode($consumption->tests)
 				];
 			foreach ($consumption->details as $key => $detail) {
 				$data[$conskey]['details'][] = [
