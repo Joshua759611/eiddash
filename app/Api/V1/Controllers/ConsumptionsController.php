@@ -183,11 +183,6 @@ class ConsumptionsController extends Controller
 					'tests' => json_decode($consumption->tests)
 				];
 			foreach ($consumption->details as $key => $detail) {
-				if (!(null !==$detail->kit)) {
-					return response()->json([
-										$detail
-									]);
-				}
 				$data[$conskey]['details'][] = [
 								'material_no' => $detail->kit->material_no,
 								'product_description' => $detail->kit->product_description,
