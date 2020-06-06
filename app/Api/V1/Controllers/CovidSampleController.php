@@ -166,7 +166,7 @@ class CovidSampleController extends Controller
                 $updating_model = $update_class::find($value->$nat_column);
             }else{
                 if($input == 'samples'){
-                    $s = \App\CovidSample::where([$original_column => $value, 'lab_id' => $lab_id])->first();
+                    $s = \App\CovidSample::where([$original_column => $value->id, 'lab_id' => $lab_id])->first();
                     if(!$s){
                         $errors_array[] = $value;
                         continue;
