@@ -92,7 +92,7 @@ class CovidController extends Controller
         if($actual_key != $apikey) abort(401);
 
         $p = new CovidPatient;
-        $p->fill($request->only(['case_id', 'nationality', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
+        $p->fill($request->only(['case_id', 'nationality', 'identifier_type', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
         $p->cif_patient_id = $request->input('patient_id');
         $p->facility_id = Facility::locate($request->input('facility'))->first()->id ?? null;
         $p->save();
