@@ -53,6 +53,11 @@ class CovidSampleController extends Controller
         $sample->original_sample_id = $s->id;
         if($sample->cif_sample_id) $sample->synched = 2;
         $sample->datesynched = date('Y-m-d');
+        return response()->json([
+            'status' => 'ok',
+            'patient' => $patient->id,
+            'sample' => $sample,
+        ], 400);   
         $sample->save();
         // $sample_data[0] = ['original_id' => $s->id, 'national_id' => $sample->id];
         $sample_data['sample_' . $s->id] = $sample->id;
