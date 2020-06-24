@@ -46,7 +46,8 @@ class VlPartnerNonsuppressed extends Mailable implements ShouldQueue
         $contact = DB::table('vl_partner_contacts_for_alerts')->where('id', $this->partner_contact_id)->get()->first();
 
         // $startdate = date('Y-m-d', strtotime('-30 days'));
-        $startdate = date('Y-m-d', strtotime('-15 days'));
+        // $startdate = date('Y-m-d', strtotime('-15 days'));
+        $startdate = date('Y-m-d', strtotime('-8 days'));
         $enddate = date("Y-m-d", strtotime('-1 days'));
         
         $displayfromdate=date("d-M-Y",strtotime($startdate));
@@ -62,6 +63,7 @@ class VlPartnerNonsuppressed extends Mailable implements ShouldQueue
                 return $query->where('county_id', $contact->county);
             })
             ->whereBetween('datetested', [$startdate, $enddate])
+            ->orderBy('county_id')
             ->orderBy('facility_id')
             ->orderBy('datetested', 'ASC')
             ->get();
