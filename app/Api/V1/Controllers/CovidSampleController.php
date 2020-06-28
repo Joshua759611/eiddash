@@ -171,7 +171,7 @@ class CovidSampleController extends Controller
                 $updating_model = $update_class::find($value->$nat_column);
             }else{
                 if($input == 'samples'){
-                    $s = \App\CovidSample::where([$original_column => $value->id, 'lab_id' => $lab_id])->first();
+                    $s = CovidSample::where([$original_column => $value->id, 'lab_id' => $lab_id])->first();
                     if(!$s){
                         $errors_array[] = $value;
                         continue;
@@ -193,7 +193,17 @@ class CovidSampleController extends Controller
                 $original_patient = $value->patient;
                 $update_data['patient_id'] = $original_patient->national_patient_id;
                 unset($update_data['patient']);
+                $patient = $updating_model->patient;
+                if(!$patient){
+                    $patient = new CovidPatient;
+                    $patient->fill(get_object_vars($value->patient));
+                    $patient->id = $value->patient->national_patient_id;
+                    $patient->original_patient_id = $value->patient->id;
+                    $patient->save();
+                    unset($updating_model->patient);
+                }
             }
+
 
             $updating_model->fill($update_data);
             $updating_model->$original_column = $value->id;
