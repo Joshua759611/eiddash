@@ -81,7 +81,7 @@ class CovidSample extends BaseModel
             $a = explode(' ', $value);
             if(count($a) == 1) $a = explode('-', $value);
             $word = $a[0];
-            $this->attributes['sample_type'] = DB::table('covid_sample_types')->where('name', 'like', "{$value}%")->first()->id ?? null;
+            $this->attributes['sample_type'] = DB::connection('covid')->table('covid_sample_types')->where('name', 'like', "{$value}%")->first()->id ?? null;
         }
     }
 
