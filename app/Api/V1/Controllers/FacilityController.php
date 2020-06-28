@@ -41,17 +41,20 @@ class FacilityController extends Controller
                 unset($value->facility_contact);
                 $fac = new Facility;
                 $fac->fill(get_object_vars($value));
-                unset($fac->id);
+                unset($fac->clinician_phone);
+                unset($fac->clinician_name);
+                unset($fac->hubcontacttelephone);
+                unset($fac->covid_email);
                 $fac->synched = 1;
                 $fac->save();
 
                 $fac_array = $fac->toArray();
-                unset($fac_array['poc']);
-                unset($fac_array['has_gene']);
-                unset($fac_array['has_alere']);
-                unset($fac_array['clinician_phone']);
-                unset($fac_array['clinician_name']);
-                unset($fac_array['hubcontacttelephone']);
+                // unset($fac_array['poc']);
+                // unset($fac_array['has_gene']);
+                // unset($fac_array['has_alere']);
+                // unset($fac_array['clinician_phone']);
+                // unset($fac_array['clinician_name']);
+                // unset($fac_array['hubcontacttelephone']);
 
                 DB::table("apidb.facilitys")->insert($fac_array);
             }
