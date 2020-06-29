@@ -175,15 +175,9 @@ class ConsumptionsController extends Controller
 		// return response()->json($consumptions);
 		$data = [];													
 		foreach ($consumptions as $conskey => $consumption) {
-			if (null !== $consumption->lab->id) {
-
-			} else {
-				return response()->json($consumption);
-			}
-
 			$data[$conskey] = [
-					// 'labid' => $consumption->lab->id,
-					'labname' => $consumption->lab->name,
+					'labid' => $consumption->lab->id ?? '',
+					'labname' => $consumption->lab->name ?? '',
 					'start_of_week' => $consumption->start_of_week,
 					'end_of_week' => $consumption->end_of_week,
 					'week' => $consumption->week,
