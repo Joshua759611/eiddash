@@ -165,14 +165,7 @@ class ConsumptionsController extends Controller
 													if ($request->has('start_of_week'))
 														return $query->whereDate('start_of_week', $request->input('start_of_week'));
 												})->get();
-		// return response()->json($consumptions);
-		// foreach ($consumptions as $key => $consumption) {
-		// 	$details = $consumption->details;
-		// 	$kits = $details->load('kit');
-		// 	return response()->json($kits);
-		// 	return response()->json($consumption->load('details.kit.platform'));
-		// }
-		// return response()->json($consumptions);
+		
 		$data = [];													
 		foreach ($consumptions as $conskey => $consumption) {
 			$data[$conskey] = [
