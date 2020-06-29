@@ -178,9 +178,8 @@ class ConsumptionsController extends Controller
 			if (null !== $consumption->lab->id) {
 
 			} else {
-				print_r($consumption);
+				return response()->json($consumption);
 			}
-			die;
 
 			$data[$conskey] = [
 					// 'labid' => $consumption->lab->id,
