@@ -175,6 +175,13 @@ class ConsumptionsController extends Controller
 		// return response()->json($consumptions);
 		$data = [];													
 		foreach ($consumptions as $conskey => $consumption) {
+			if (null !== $consumption->lab->id) {
+
+			} else {
+				print_r($consumption);
+			}
+			die;
+
 			$data[$conskey] = [
 					// 'labid' => $consumption->lab->id,
 					'labname' => $consumption->lab->name,
