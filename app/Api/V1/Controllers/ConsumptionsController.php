@@ -176,6 +176,7 @@ class ConsumptionsController extends Controller
 		$data = [];													
 		foreach ($consumptions as $conskey => $consumption) {
 			$data[$conskey] = [
+					'consumption' => $consumption->id,
 					'labid' => $consumption->lab->id ?? '',
 					'labname' => $consumption->lab->name ?? '',
 					'start_of_week' => $consumption->start_of_week,
