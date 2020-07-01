@@ -104,6 +104,91 @@ class ConsumptionsController extends Controller
 		return response()->json($response);
 	}
 
+	public function covid_api_create(CommodityRequest $request)
+	{
+		// Presence of the parameters will be checked at the request class
+		$platforms = $request->input('platforms');
+		$insertData = [];
+		foreach ($platforms as $key => $platform) {
+			$machine = Machine::where('machine', 'like', $platform['name'])->get();
+			if (!$machine->isEmpty()) {
+				$data = $this->covid_get_values($machine->first(), $platform);
+				if (!$data)
+					return response()->json([
+							'error' => true,
+							'message' => 'Bad Request. The values provided indicate a negative ending balance. Please ensure that the values give a positive ending balance'
+						], 400);
+				$insertData[$key] = [
+						'machine' => $machine->first()->machine,
+						'tests' => $platform['tests'],
+					];
+			}
+			$insertData[$key]['details'] = $data;
+
+		}
+		
+		try {
+			$consumption = new CovidConsumption;
+			$consumption->start_of_week = $request->input('start_of_week');
+			$consumption->end_of_week = $request->input('end_of_week');
+			$consumption->week = date('W', strtotime($request->input('start_of_week')));
+			$consumption->lab_id = session('lab')->id;
+			if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
+				$consumption->deleted_at = date('Y-m-d H:i:s');
+			$consumption->save();
+			$tests = [];
+			foreach ($insertData as $key => $data) {
+				if (isset($data['machine']))
+					$tests[$data['machine']] = $data['tests'];
+				
+				foreach ($data['details'] as $key => $detail) {
+					$details = new CovidConsumptionDetail;
+					$details->fill($detail);
+					$details->consumption_id = $consumption->id;
+					$details->save();
+				}
+			}
+		} catch (Exception $e) {
+			return response()->json([
+						'error' => true,
+						'message' => $e
+					], 500);
+		}
+		
+		return response()->json($consumption, 200);
+	}
+
+	private function covid_get_values($machine, $platform_data)
+	{
+		$kits = $machine->covid_kits;
+		$data = [];
+		foreach ($kits as $key => $kit) {
+			$begining_balance = $platform_data['begining_balance'];
+			$received = $platform_data['received'];
+			$used = $platform_data['used'];
+			$positive_adjustment = $platform_data['positive_adjustment'];
+			$negative_adjustment = $platform_data['negative_adjustment'];
+			$wastage = $platform_data['wastage'];
+			$requested = $platform_data['requested'];
+			$ending = (((float)$begining_balance[$kit->material_no]+(float)$received[$kit->material_no]+(float)$positive_adjustment[$kit->material_no]) - ((float)$used[$kit->material_no]+(float)$negative_adjustment[$kit->material_no]+(float)$wastage[$kit->material_no]));
+			if ($ending < 0)
+				return false;
+			$data[$kit->id] = [
+					'kit_id' => $kit->id,
+					'begining_balance' => $begining_balance[$kit->material_no],
+					'received' => $received[$kit->material_no],
+					'kits_used' => $used[$kit->material_no],
+					'positive' => $positive_adjustment[$kit->material_no],					
+					'negative' => $negative_adjustment[$kit->material_no],
+					'wastage' => $wastage[$kit->material_no],
+					'ending' => $ending,
+					'requested' => $requested[$kit->material_no],
+				];
+		}
+		
+		return $data;
+	}
+
 	public function create_covid(BlankRequest $request)
 	{
 		$consumptions = json_decode($request->input('consumptions'));
