@@ -12,6 +12,10 @@ class Machine extends Model
     	return $this->hasMany('App\Kits');
     }
 
+    public function covid_kits() {
+        return $this->hasMany('App\CovidKit', 'machine', 'id');
+    }
+
     public function testsforLast3Months($lab = null) {
     	$id = $this->id;
     	$eid = Sample::selectRaw("count(*) as tests")->whereHas('worksheet', function($query) use ($id) {
