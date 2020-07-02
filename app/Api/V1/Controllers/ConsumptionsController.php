@@ -168,7 +168,7 @@ class ConsumptionsController extends Controller
 					], 500);
 		}
 		
-		return response()->json($consumption, 200);
+		return response()->json($consumption->load('details'), 200);
 	}
 
 	private function covid_get_values($machine, $platform_data)
