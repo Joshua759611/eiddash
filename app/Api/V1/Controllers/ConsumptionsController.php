@@ -104,7 +104,7 @@ class ConsumptionsController extends Controller
 		return response()->json($response);
 	}
 
-	public function covid_api_create(CommodityRequest $request)
+	public function covid_api_create(CovidConsumptionRequest $request)
 	{
 		// Presence of the parameters will be checked at the request class
 		$platforms = $request->input('platforms');
@@ -128,9 +128,18 @@ class ConsumptionsController extends Controller
 		}
 		
 		try {
-			$consumption = new CovidConsumption;
-			$consumption->start_of_week = $request->input('start_of_week');
-			$consumption->end_of_week = $request->input('end_of_week');
+			$existing = CovidConsumption::where('start_of_week', date('Y-m-d', strtotime($request->input('start_of_week'))))->where('end_of_week', date('Y-m-d', strtotime($request->input('end_of_week'))))->where('lab_id', session('lab')->id)->get();
+			if ($existing->isEmpty()){
+				$consumption = new CovidConsumption;
+			} else {
+				$consumption = $existing->first();
+				foreach ($consumption->details as $key => $detail) {
+					$detail->delete();
+				}
+			}
+
+			$consumption->start_of_week = date('Y-m-d', strtotime($request->input('start_of_week')));
+			$consumption->end_of_week = date('Y-m-d', strtotime($request->input('end_of_week')));
 			$consumption->week = date('W', strtotime($request->input('start_of_week')));
 			$consumption->lab_id = session('lab')->id;
 			if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
@@ -148,6 +157,10 @@ class ConsumptionsController extends Controller
 					$details->save();
 				}
 			}
+			$consumption->tests = json_encode($tests);
+			$consumption->synced = 1;
+			$consumption->datesynced = date('Y-m-d');
+			$consumption->save();
 		} catch (Exception $e) {
 			return response()->json([
 						'error' => true,
