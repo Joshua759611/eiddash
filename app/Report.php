@@ -95,7 +95,7 @@ class Report
 
 
 
-	        if(env('APP_ENV') == 'production'){
+	        if(env('APP_LOCATION') == 'server'){
 		        try {
 			        Mail::to($cc_array)->bcc($bcc_array)->send(new EidPartnerPositives($contact->id));
 			        DB::table('eid_partner_contacts_for_alerts')->where('id', $contact->id)->update(['lastalertsent' => date('Y-m-d')]);
@@ -138,7 +138,7 @@ class Report
 	        	if(str_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
 	        }
 
-	        if(env('APP_ENV') == 'production'){
+	        if(env('APP_LOCATION') == 'server'){
 		        try {
 			        DB::table('eid_users')->where('id', $contact->id)->update(['datelastsent' => date('Y-m-d')]);
 			     	Mail::to($mail_array)->bcc($bcc_array)->send(new EidCountyPositives($contact->id));
@@ -180,7 +180,7 @@ class Report
 	        	if(str_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $cc_array[] = trim($value);
 	        	if(str_contains($column_name, 'bcc') && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
 	        }
-	        if(env('APP_ENV') == 'production'){
+	        if(env('APP_LOCATION') == 'server'){
 		        try {
 			        Mail::to($cc_array)->bcc($bcc_array)->send(new VlPartnerNonsuppressed($contact->id));
 			        DB::table('vl_partner_contacts_for_alerts')->where('id', $contact->id)->update(['lastalertsent' => date('Y-m-d')]);
@@ -221,7 +221,7 @@ class Report
 
 	        	if(str_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
 	        }
-	        if(env('APP_ENV') == 'production'){
+	        if(env('APP_LOCATION') == 'server'){
 		        try {
 			        DB::table('eid_users')->where('id', $contact->id)->update(['datelastsent' => date('Y-m-d')]);
 			     	Mail::to($mail_array)->bcc($bcc_array)->send(new VlCountyNonsuppressed($contact->id));
