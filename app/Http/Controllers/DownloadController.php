@@ -15,8 +15,9 @@ class DownloadController extends Controller
     }
 
     public function covid(){
-        $path = public_path('downloads/COVID-19_LRF_RB.pdf');
-        return response()->download($path, 'Covid-19 LRF.pdf');
+        // $path = public_path('downloads/COVID-19_LRF_RB.pdf');
+        $path = public_path('downloads/Kenya-COVID19_CIF_v5.docx');
+        return response()->download($path, 'Covid-19 LRF.docx');
     }
 
 	public function user_guide(){
