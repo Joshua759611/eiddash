@@ -323,7 +323,7 @@ class Synch
 		$client = new Client(['base_uri' => 'https://data.kenyahmis.org:7001/openmrs/']);
 
 		while (true) {
-			$samples = CovidSample::where('synched', '!=', 1)->where('repeatt', 0)->whereNotNull('cif_sample_id')->whereNotNull('receivedstatus')->with(['patient'])->limit(20)->get();
+			$samples = CovidSample::where('synched', '!=', 1)->where('repeatt', 0)->whereNotNull('cif_sample_id')->whereNotNull('receivedstatus')->whereNull('time_sent_to_cif')->with(['patient'])->limit(20)->get();
 			$data = [];
 			if(!$samples->count()) break;
 
@@ -350,7 +350,7 @@ class Synch
 
 			if($response->getStatusCode() < 400){
 				$ids = $samples->pluck('id')->flatten()->toArray();
-				CovidSample::whereIn('id', $ids)->update(['synched' => 1, 'datesynched' => date('Y-m-d')]);
+				CovidSample::whereIn('id', $ids)->update(['synched' => 1, 'datesynched' => date('Y-m-d'), 'time_sent_to_cif' => date('Y-m-d H:i:s')]);
 			}else{
 				dd($response->getBody());
 				break;
