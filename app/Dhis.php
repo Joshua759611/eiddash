@@ -25,7 +25,7 @@ class Dhis
         $facilities = Facility::all();
 
         foreach ($facilities as $key => $fac) {
-        	$row = DB::table('vl_facility_dhis')->where(['year' => date('Y', strtotime('-1 month')), 'month' => date('m', strtotime('-1 month')), 'facility' => $fac->id])->first();
+        	$row = DB::table('vl_site_dhis')->where(['year' => date('Y', strtotime('-1 month')), 'month' => date('m', strtotime('-1 month')), 'facility' => $fac->id])->first();
 
 			$response = $client->request('post', '', [
 				'http_errors' => false,
@@ -49,7 +49,7 @@ class Dhis
 							// 10-14 Male Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
 							'categoryOptionCombo' => 'mwIrZsIrqtQ',
-							'value' => $row->male_below_14_suppressed,
+							'value' => $row->male_below_15_suppressed,
 							'comment' => 'comment',
 						],
 						[
@@ -86,7 +86,7 @@ class Dhis
 							// 10-14 Female Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
 							'categoryOptionCombo' => 'o0mJRFDoQnk',
-							'value' => $row->female_below_14_suppressed,
+							'value' => $row->female_below_15_suppressed,
 							'comment' => 'comment',
 						],
 						[
@@ -125,7 +125,7 @@ class Dhis
 							// 10-14 Male Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
 							'categoryOptionCombo' => 'mwIrZsIrqtQ',
-							'value' => $row->male_below_14_nonsuppressed,
+							'value' => $row->male_below_15_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
@@ -162,7 +162,7 @@ class Dhis
 							// 10-14 Female Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
 							'categoryOptionCombo' => 'o0mJRFDoQnk',
-							'value' => $row->female_below_14_nonsuppressed,
+							'value' => $row->female_below_15_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
