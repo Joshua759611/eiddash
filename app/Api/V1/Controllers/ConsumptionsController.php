@@ -142,8 +142,8 @@ class ConsumptionsController extends Controller
 			$consumption->end_of_week = date('Y-m-d', strtotime($request->input('end_of_week')));
 			$consumption->week = date('W', strtotime($request->input('start_of_week')));
 			$consumption->lab_id = session('lab')->id;
-			if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
-				$consumption->deleted_at = date('Y-m-d H:i:s');
+			// if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
+			// 	$consumption->deleted_at = date('Y-m-d H:i:s');
 			$consumption->save();
 			$tests = [];
 			foreach ($insertData as $key => $data) {
