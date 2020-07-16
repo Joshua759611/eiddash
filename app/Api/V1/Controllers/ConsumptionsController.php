@@ -126,7 +126,7 @@ class ConsumptionsController extends Controller
 			$insertData[$key]['details'] = $data;
 
 		}
-		
+		return response()->json($insertData, 200);
 		try {
 			$existing = CovidConsumption::where('start_of_week', date('Y-m-d', strtotime($request->input('start_of_week'))))->where('end_of_week', date('Y-m-d', strtotime($request->input('end_of_week'))))->where('lab_id', session('lab')->id)->get();
 			if ($existing->isEmpty()){
