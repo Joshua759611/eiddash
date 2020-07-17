@@ -278,7 +278,7 @@ class ConsumptionsController extends Controller
 				];
 			foreach ($consumption->details as $key => $detail) {
 				$data[$conskey]['details'][] = [
-								'material_no' => $detail->kit->material_no,
+								'material_no' => $detail->kit->material_no ?? '',
 								'product_description' => $detail->kit->product_description,
 								'begining_balance' => $detail->begining_balance,
 								'received' => $detail->received,
