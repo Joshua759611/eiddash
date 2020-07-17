@@ -126,49 +126,49 @@ class ConsumptionsController extends Controller
 			$insertData[$key]['details'] = $data;
 
 		}
-		return response()->json($insertData, 200);
-		// try {
-		// 	$existing = CovidConsumption::where('start_of_week', date('Y-m-d', strtotime($request->input('start_of_week'))))->where('end_of_week', date('Y-m-d', strtotime($request->input('end_of_week'))))->where('lab_id', session('lab')->id)->get();
-		// 	if ($existing->isEmpty()){
-		// 		$consumption = new CovidConsumption;
-		// 	} else {
-		// 		$consumption = $existing->first();
-		// 		foreach ($consumption->details as $key => $detail) {
-		// 			$detail->delete();
-		// 		}
-		// 	}
-
-		// 	$consumption->start_of_week = date('Y-m-d', strtotime($request->input('start_of_week')));
-		// 	$consumption->end_of_week = date('Y-m-d', strtotime($request->input('end_of_week')));
-		// 	$consumption->week = date('W', strtotime($request->input('start_of_week')));
-		// 	$consumption->lab_id = session('lab')->id;
-		// 	// if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
-		// 	// 	$consumption->deleted_at = date('Y-m-d H:i:s');
-		// 	$consumption->save();
-		// 	$tests = [];
-		// 	foreach ($insertData as $key => $data) {
-		// 		if (isset($data['machine']))
-		// 			$tests[$data['machine']] = $data['tests'];
-				
-		// 		foreach ($data['details'] as $key => $detail) {
-		// 			$details = new CovidConsumptionDetail;
-		// 			$details->fill($detail);
-		// 			$details->consumption_id = $consumption->id;
-		// 			$details->save();
-		// 		}
-		// 	}
-		// 	$consumption->tests = json_encode($tests);
-		// 	$consumption->synced = 1;
-		// 	$consumption->datesynced = date('Y-m-d');
-		// 	$consumption->save();
-		// } catch (Exception $e) {
-		// 	return response()->json([
-		// 				'error' => true,
-		// 				'message' => $e
-		// 			], 500);
-		// }
 		
-		// return response()->json($consumption->load('details'), 200);
+		try {
+			$existing = CovidConsumption::where('start_of_week', date('Y-m-d', strtotime($request->input('start_of_week'))))->where('end_of_week', date('Y-m-d', strtotime($request->input('end_of_week'))))->where('lab_id', session('lab')->id)->get();
+			if ($existing->isEmpty()){
+				$consumption = new CovidConsumption;
+			} else {
+				$consumption = $existing->first();
+				foreach ($consumption->details as $key => $detail) {
+					$detail->delete();
+				}
+			}
+
+			$consumption->start_of_week = date('Y-m-d', strtotime($request->input('start_of_week')));
+			$consumption->end_of_week = date('Y-m-d', strtotime($request->input('end_of_week')));
+			$consumption->week = date('W', strtotime($request->input('start_of_week')));
+			$consumption->lab_id = session('lab')->id;
+			if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
+				$consumption->deleted_at = date('Y-m-d H:i:s');
+			$consumption->save();
+			$tests = [];
+			foreach ($insertData as $key => $data) {
+				if (isset($data['machine']))
+					$tests[$data['machine']] = $data['tests'];
+				
+				foreach ($data['details'] as $key => $detail) {
+					$details = new CovidConsumptionDetail;
+					$details->fill($detail);
+					$details->consumption_id = $consumption->id;
+					$details->save();
+				}
+			}
+			$consumption->tests = json_encode($tests);
+			$consumption->synced = 1;
+			$consumption->datesynced = date('Y-m-d');
+			$consumption->save();
+		} catch (Exception $e) {
+			return response()->json([
+						'error' => true,
+						'message' => $e
+					], 500);
+		}
+		
+		return response()->json($consumption->load('details'), 200);
 	}
 
 	private function covid_get_values($machine, $platform_data)
