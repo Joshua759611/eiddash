@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\BlankRequest;
 use App\Api\V1\Requests\CommodityRequest;
 use App\Api\V1\Requests\CovidConsumptionRequest;
+use App\Api\V1\Requests\CovidConsumptionPullRequest;
 
 use App\Consumption;
 use App\ConsumptionDetail;
@@ -257,7 +258,7 @@ class ConsumptionsController extends Controller
 		return response()->json($consumptions_array);
 	}
 
-	public function getCovidConsumptions(CovidConsumptionRequest $request)
+	public function getCovidConsumptions(CovidConsumptionPullRequest $request)
 	{
 		$consumptions = CovidConsumption::when($request, function ($query) use ($request){
 													if ($request->has('start_of_week'))
