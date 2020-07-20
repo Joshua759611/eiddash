@@ -7,7 +7,8 @@ use DB;
 
 class Dhis 
 {
-	public static $base = 'https://hiskenya.org/api/';
+	// public static $base = 'https://hiskenya.org/api/';
+	public static $base = 'https://test.hiskenya.org/dhiske/';
 
 	public static function send_data()
 	{		
@@ -28,6 +29,7 @@ class Dhis
         	$row = DB::table('vl_site_dhis')->where(['year' => date('Y', strtotime('-1 month')), 'month' => date('m', strtotime('-1 month')), 'facility' => $fac->id])->first();
 
 			$response = $client->request('post', '', [
+	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
 				'http_errors' => false,
 				'verify' => false,
 				'json' => [
@@ -188,7 +190,12 @@ class Dhis
 						],
 					],
 				],
-			]);        	
+			]);       
+			
+			$body = json_decode($response->getBody());
+
+			dd($body);
+
         }
 	}
 }
