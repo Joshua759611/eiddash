@@ -194,7 +194,7 @@ class Dhis
 			
 			$body = json_decode($response->getBody());
 
-			dd($body);
+			// dd($body);
 
         }
 	}
