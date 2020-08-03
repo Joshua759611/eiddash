@@ -26,7 +26,7 @@ class Dhis
         $facilities = Facility::all();
 
         foreach ($facilities as $key => $fac) {
-        	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-1 month')), 'month' => date('m', strtotime('-1 month')), 'facility' => $fac->id])->first();
+        	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-2 month')), 'month' => date('m', strtotime('-2 month')), 'facility' => $fac->id])->first();
 
 			$response = $client->request('post', '', [
 	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
@@ -35,7 +35,7 @@ class Dhis
 				'json' => [
 					'dataSet' => '',
 					'completeDate' => date('Y-m-d'),
-					'period' => date('Ym', strtotime('-1 month')),
+					'period' => date('Ym', strtotime('-2 month')),
 					'orgUnit' => $fac->dhiscode,
 					'attributeOptionCombo' => 'aocID',
 					'dataValues' => [
@@ -193,6 +193,8 @@ class Dhis
 			]);       
 			
 			$body = json_decode($response->getBody());
+
+			if()
 
 			// dd($body);
 
