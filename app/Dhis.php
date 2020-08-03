@@ -194,7 +194,9 @@ class Dhis
 			
 			$body = json_decode($response->getBody());
 
-			if()
+			$status_code = $response->getStatusCode();
+			if($status_code > 399)
+				echo $body;
 
 			// dd($body);
 
