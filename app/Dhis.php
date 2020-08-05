@@ -28,7 +28,7 @@ class Dhis
         foreach ($facilities as $key => $fac) {
         	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-2 month')), 'month' => date('m', strtotime('-2 month')), 'facility' => $fac->id])->first();
 
-        	if(!$row){
+        	if(!$row || !$fac->dhiscode){
         		echo "Facility {$fac->id} missing";
         		continue;
         	}
