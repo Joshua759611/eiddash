@@ -28,6 +28,8 @@ class Dhis
         foreach ($facilities as $key => $fac) {
         	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-2 month')), 'month' => date('m', strtotime('-2 month')), 'facility' => $fac->id])->first();
 
+        	if(!$row) continue;
+
 			$response = $client->request('post', '', [
 	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
 				'http_errors' => false,
