@@ -26,6 +26,9 @@ Route::post('login/facility', 'Auth\\LoginController@facility_login');
 
 Route::prefix('download')->name('download.')->group(function(){
 
+	Route::get('help_desk', 'DownloadController@help_desk');
+	Route::get('help_desk_video', 'DownloadController@help_desk_video');
+
 	Route::get('covid', 'DownloadController@covid');
 	Route::get('covid_sop', 'DownloadController@covid_sop');
 	Route::get('api', 'DownloadController@api')->name('api');

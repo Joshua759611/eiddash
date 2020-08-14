@@ -9,6 +9,16 @@ class DownloadController extends Controller
 {
 	
 
+    public function help_desk(){
+        $path = public_path('downloads/help_desk_sop.pdf');
+        return response()->download($path, 'Support Helpdesk How To Guide.pdf');
+    }
+
+    public function help_desk_video(){
+        $path = public_path('downloads/how_to.mp4');
+        return response()->download($path, 'Support Ticketing system how to.mp4');
+    }
+
     public function covid_sop(){
         $path = public_path('downloads/quarantine_site_sop.pdf');
         return response()->download($path, 'COVID-19 Quarantine Sites Remote Log In Job Aid.pdf');
