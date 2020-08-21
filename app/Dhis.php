@@ -26,7 +26,7 @@ class Dhis
         $facilities = Facility::all();
 
         foreach ($facilities as $key => $fac) {
-        	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-2 month')), 'month' => date('m', strtotime('-2 month')), 'facility' => $fac->id])->first();
+        	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-1 month')), 'month' => date('m', strtotime('-1 month')), 'facility' => $fac->id])->first();
 
         	if(!$row || !$fac->dhiscode){
         		echo "Facility {$fac->id} missing";
@@ -40,7 +40,7 @@ class Dhis
 				'json' => [
 					'dataSet' => '',
 					'completeDate' => date('Y-m-d'),
-					'period' => date('Ym', strtotime('-2 month')),
+					'period' => date('Ym', strtotime('-1 month')),
 					'orgUnit' => $fac->dhiscode,
 					'attributeOptionCombo' => 'aocID',
 					'dataValues' => [
