@@ -108,6 +108,7 @@ class ConsumptionsController extends Controller
 	public function covid_api_create(CovidConsumptionRequest $request)
 	{
 		// Presence of the parameters will be checked at the request class
+		return response()->json($request->all());
 		$platforms = $request->input('platforms');
 		$insertData = [];
 		foreach ($platforms as $key => $platform) {
