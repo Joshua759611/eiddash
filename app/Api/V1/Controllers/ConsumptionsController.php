@@ -205,10 +205,9 @@ class ConsumptionsController extends Controller
 
 	public function create_covid(BlankRequest $request)
 	{
-		return response()->json($request->all());
 		$consumptions = json_decode($request->input('consumptions'));
 		// $consumptions = $request->all();
-		return response()->json($consumptions);
+		// return response()->json($consumptions);
 		$consumptions_array = [];
 		foreach ($consumptions as $key => $consumption) {
 			$consumption = (object) $consumption;
