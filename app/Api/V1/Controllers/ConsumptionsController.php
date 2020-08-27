@@ -237,7 +237,7 @@ class ConsumptionsController extends Controller
 					$detail = (object)$detail;
 					if (null !== $detail->kit) {
 						$detailKit = (object)$detail->kit;
-						$kit = CovidKit::withTrashed()->where('material_no', $detailKit->material_no)->first();
+						$kit = CovidKit::where('material_no', $detailKit->material_no)->first();
 						if ($kit) {
 							$db_detail = new CovidConsumptionDetail;
 							$detail_data = get_object_vars($detail);
