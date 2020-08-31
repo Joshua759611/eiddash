@@ -139,7 +139,7 @@ class ShortCodeController extends Controller
 		}
 		date_default_timezone_set('Africa/Nairobi');
         $dateresponded = date('Y-m-d H:i:s');
-		$response = self::__sendMessage($phone, $msg);
+		$response = \App\Common::sms($phone, $msg);
 		$shortcode = new ShortCodeQueries;
 		$shortcode->testtype = $testtype;
 		$shortcode->phoneno = $phone;
@@ -149,7 +149,8 @@ class ShortCodeController extends Controller
 		$shortcode->datereceived = $dateresponded;
 		$shortcode->status = $status;
 
-		if ($response->code < 400)
+		// if ($response->code < 400)
+		if ($response)
 			$shortcode->dateresponded = $dateresponded;
 		$shortcode->save();
 		return $msg;

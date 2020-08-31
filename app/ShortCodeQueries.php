@@ -157,7 +157,7 @@ class ShortCodeQueries extends Model
 
 		date_default_timezone_set('Africa/Nairobi');
         $dateresponded = date('Y-m-d H:i:s');
-		$response = self::__sendMessage($phone, $msg);
+		$response = Common::sms($phone, $msg);
 		// dd($response);
 		if (!isset($shortcode))
 			$shortcode = new ShortCodeQueries;
@@ -169,7 +169,8 @@ class ShortCodeQueries extends Model
 		$shortcode->datereceived = $dateresponded;
 		$shortcode->status = $status;
 
-		if ($response->code < 400){
+		// if ($response->code < 400){
+		if ($response){
 			$shortcode->dateresponded = $dateresponded;
 		} else {
 			Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail(null, $response));
