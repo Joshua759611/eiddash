@@ -181,24 +181,24 @@ class ShortCodeQueries extends Model
     static function __sendMessage($phone, $message) {
        $client = new Client(['base_uri' => self::$sms_url]);
 
-		// $response = $client->request('post', '', [
-		// 	// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-		// 	'http_errors' => true,
-		// 	'debug' => true,
-		// 	'json' => [
-		// 		// 'sender' => env('SMS_SENDER_ID'),
-  //               'apiKey' => env('SMS_KEY'),
-  //               'shortCode' => env('SMS_SENDER_ID'),
-		// 		'recipient' => $phone,
-		// 		'message' => $message,
-  //               'callbackURL' => self::$sms_callback,
-  //               'enqueue' => 0,
-		// 	],
-		// ]);
+		/*$response = $client->request('post', '', [
+			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+			'http_errors' => false,
+			'json' => [
+				// 'sender' => env('SMS_SENDER_ID'),
+                'apiKey' => env('SMS_KEY'),
+                'shortCode' => env('SMS_SENDER_ID'),
+				'recipient' => $recepient,
+				'message' => $message,
+                'callbackURL' => self::$sms_callback,
+                'enqueue' => 0,
+			],
+		]);*/
+
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
-			'debug' => false,
+			'debug' => true,
 			'json' => [
                 'apikey' => env('SMS_KEY'),
                 'shortcode' => env('SMS_SENDER_ID'),
