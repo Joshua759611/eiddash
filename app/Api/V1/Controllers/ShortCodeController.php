@@ -20,7 +20,7 @@ class ShortCodeController extends Controller
     public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 
-    private $limit = 5;
+    private $limit = 2;
 
     private $msgFormat = "R`MFLCode`-`Patient Number`";
 

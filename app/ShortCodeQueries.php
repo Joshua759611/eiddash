@@ -107,7 +107,7 @@ class ShortCodeQueries extends Model
 						->where('patient_id', '=', $patient->id)
 						->where('repeatt', '=', 0)
 						->orderBy("$table.id", 'desc')
-						->limit($this->limit)
+						->limit(env('SHORTCODE_R_LIMIT'))
 						->get();
 		return $model;
 	}
