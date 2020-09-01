@@ -195,7 +195,7 @@ class ShortCodeQueries extends Model
                 'callbackURL' => self::$sms_callback,
                 'enqueue' => 0,
 			],
-		]);m
+		]);*/
 
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
