@@ -39,9 +39,10 @@ class ShortCodeController extends Controller
 			return response()->json(self::__sendMessage($phone, $message));
 		}
 		$patientTests = $this->getPatientData($messageBreakdown, $patient, $facility); // Get the patient data
+
 		$textMsg = $this->buildTextMessage($patientTests, $status, $testtype); // Get the message to send to the patient.
 		$sendTextMsg = $this->sendTextMessage($textMsg, $patient, $facility, $status, $message, $phone, $testtype); // Save and send the message
-		return response()->json($sendTextMsg);
+		return response()->json($textMsg);
 	}
 
 	private function messageBreakdown($message = null) {
@@ -95,11 +96,12 @@ class ShortCodeController extends Controller
 	}
 
 	private function buildTextMessage($tests = null, &$status, &$testtype){
+		if (empty($tests))
+			return "No test data found for the patient number provided.";
 		$msg = '';
 		$inprocessmsg="Sample Still In process at the ";
 		$inprocessmsg2=" The Result will be automatically sent to your number as soon as it is Available.";
-		if (empty($tests))
-			return $msg;
+		
 		foreach ($tests as $key => $test) {
 			$testtype = (get_class($test) == 'App\ViralsampleCompleteView') ? 2 : 1;
 			$msg .= "Facility: " . $test->facility . " [ " . $test->facilitycode . " ]\n";
@@ -147,6 +149,8 @@ class ShortCodeController extends Controller
 		$shortcode->facility_id = $facility->id ?? null;
 		$shortcode->patient_id = $patient;
 		$shortcode->datereceived = $dateresponded;
+		if ($response)
+			$shortcode->dateresponded = $dateresponded;
 		$shortcode->status = $status;
 
 		// if ($response->code < 400)

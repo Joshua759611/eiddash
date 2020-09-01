@@ -13,8 +13,8 @@ class Common
 {
 	// public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
 	// public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
-    // public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
-    public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
+    public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    // public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
     public static $sms_callback = 'http://vaspro.co.ke/dlr';
     // public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
     public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
@@ -318,29 +318,80 @@ class Common
                 'enqueue' => 0,
 			],
 		]);*/
+
+		/****** VASPRO *******/
+		// $response = $client->request('post', '', [
+		// 	// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+		// 	'http_errors' => false,
+		// 	// 'debug' => true,
+		// 	'json' => [
+  //               'apikey' => env('SMS_KEY'),
+  //               'shortcode' => env('SMS_SENDER_ID'),
+  //               'partnerID' => env('SMS_PARTNER_ID'),
+		// 		'mobile' => $recepient,
+		// 		'message' => $message,
+		// 	],
+		// ]);
+		// if($response->getStatusCode() > 399) {
+  //       	return false;
+  //       } else if($response->getStatusCode() == 200){
+  //       	if (null !== $body->{"respose-code"}){
+  //       		if ($body->{"respose-code"} == 1006)
+  //       			return false;
+  //       	}
+  //       	if (null !== $body->responses && $body->responses[0]->{"response-code"} == 200){
+  //       		return true;	
+  //       	}
+  //       	return false
+  //       }
+  //       else{
+  //       	// die();
+  //       	echo "Status Code is " . $response->getStatusCode();
+  //       	echo $response->getBody();
+  //       	return false;
+  //       }
+        /****** VASPRO *******/
+
+
+		/******* New SOUTHWELL *******/
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
-			// 'debug' => true,
+			'debug' => false,
 			'json' => [
-                'apikey' => env('SMS_KEY'),
-                'shortcode' => env('SMS_SENDER_ID'),
-                'partnerID' => env('SMS_PARTNER_ID'),
-				'mobile' => $recepient,
+                'apiKey' => env('SMS_KEY_SOUTHWELL'),
+                'shortCode' => env('SMS_SENDER_ID_SOUTHWELL'),
+                'recipient' => $recepient,
 				'message' => $message,
+				"callbackURL" => "",
+				"enqueue" => 0,
 			],
 		]);
 
+// 		"apiKey": "4c5373c0eab01c79f0de1d183db0ee70",
+// "shortCode": "VL_EIDKenya",
+// "message": " Message Here",
+// "recipient": "254725227833 ",
+// "callbackURL": "",
+// "enqueue":0
+
+
 		$body = json_decode($response->getBody());
 		// print_r($body);
-        if($response->getStatusCode() > 399) return false;
-        else if($response->getStatusCode() == 200 && $body->responses[0]->{"response-code"} == 200) return true;
-        else{
-        	// die();
-        	echo "Status Code is " . $response->getStatusCode();
-        	echo $response->getBody();
-        	return false;
-        }
+		if($response->getStatusCode() > 399) {
+			return false;
+		} else {
+			if ($body->code == "Success") {
+				if ($body->data->data->sms_reporting->failed == 1){
+					Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $body->data->data->remaining_balance));
+					return false;
+				} else {
+					return true;
+				}
+			}
+		}
+		return false;
+        /******* New SOUTHWELL *******/
 
 	}
 

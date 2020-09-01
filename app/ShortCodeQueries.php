@@ -23,7 +23,8 @@ class ShortCodeQueries extends Model
 
     public function resendSMS()
     {
-    	echo "==> Get unresponded SMS for date('Y')\n";
+    	$year = date('Y');
+    	echo "==> Get unresponded SMS for {$year}\n";
     	$smses = $this->getUnsentSMS();
     	$valid = 0;
     	$invalid = 0;
@@ -173,7 +174,7 @@ class ShortCodeQueries extends Model
 		if ($response){
 			$shortcode->dateresponded = $dateresponded;
 		} else {
-			Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail(null, $response));
+			Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail(null, json_encode($response)));
 		}
 		$shortcode->save();
 		return $msg;
@@ -194,7 +195,7 @@ class ShortCodeQueries extends Model
                 'callbackURL' => self::$sms_callback,
                 'enqueue' => 0,
 			],
-		]);*/
+		]);m
 
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
