@@ -15,7 +15,7 @@ class ShortCodeQueries extends Model
     public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 
-    private $limit = 5;
+    private $limit = 2;
 
     private $msgFormat = "R`MFLCode`-`Patient Number`";
 
@@ -173,8 +173,6 @@ class ShortCodeQueries extends Model
 		// if ($response->code < 400){
 		if ($response){
 			$shortcode->dateresponded = $dateresponded;
-		} else {
-			Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail(null, json_encode($response)));
 		}
 		$shortcode->save();
 		return $msg;

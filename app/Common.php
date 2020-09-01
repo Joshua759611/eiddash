@@ -388,6 +388,9 @@ class Common
 				} else {
 					return true;
 				}
+			} else {
+				$data = (object)['body' => json_encode($body)];
+				Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $data));
 			}
 		}
 		return false;
