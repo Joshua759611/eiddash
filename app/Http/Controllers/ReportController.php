@@ -278,6 +278,7 @@ class ReportController extends Controller
                 return back();
             }
         }
+        ini_set('max_execution_time', 150);
         // End Move this section to middleware
         
         $dateString = '';
