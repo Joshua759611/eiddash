@@ -12,6 +12,7 @@ class Dhis
 
 	public static function send_data()
 	{		
+		ini_set('memory_limit', '-1');
         $client = new Client(['base_uri' => self::$base]);
 
         /*$response = $client->request('get', $url, [
