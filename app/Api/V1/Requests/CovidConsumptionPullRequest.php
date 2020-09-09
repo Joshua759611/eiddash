@@ -6,17 +6,14 @@ use Dingo\Api\Http\FormRequest;
 // use App\Rules\BeforeOrEqual;
 
 
-class CovidConsumptionRequest extends FormRequest
+class CovidConsumptionPullRequest extends FormRequest
 {
     public function rules()
     {
-        $dto = new \DateTime();
-        $dto->setISODate(date('Y'), date('W'));
-        $startThisWeek = $dto->format('Y-m-d');
         return [
-            'start_of_week' => 'required|date|date_format:Y-m-d',//,
-            'end_of_week' => 'required|date|date_format:Y-m-d|after:start_of_week|before:'.$startThisWeek,
-            'platforms' => 'required|array',
+            // 'start_of_week' => 'required|date|date_format:Y-m-d',//,
+            // 'end_of_week' => 'required|date|date_format:Y-m-d|after:start_of_week|before:'.$startThisWeek,
+            // 'platforms' => 'required|array',
 
             // 'test' => 'required|integer|max:2',
             // 'start_date' => ['date_format:Y-m-d', 'required_with:end_date', new BeforeOrEqual($this->input('end_date'), 'end_date')],

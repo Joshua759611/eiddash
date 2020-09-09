@@ -57,6 +57,7 @@ $api->version('v1', function (Router $api) {
 
             $api->post('save_multiple', 'CovidController@save_multiple');
             $api->post('results/{id}', 'CovidController@results');
+            $api->post('consumption', 'ConsumptionsController@covid_api_create');
         });
         
         $api->resource('covid', 'CovidController');

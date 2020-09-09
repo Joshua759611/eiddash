@@ -11,10 +11,11 @@ use App\Mail\TestMail;
 class ShortCodeQueries extends Model
 {
     protected $guarded = [];
-    public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    // public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 
-    private $limit = 5;
+    private $limit = 2;
 
     private $msgFormat = "R`MFLCode`-`Patient Number`";
 
@@ -22,12 +23,21 @@ class ShortCodeQueries extends Model
 
     public function resendSMS()
     {
-    	echo "==> Get unresponded SMS for date('Y')\n";
-    	$smses = $this->getUnsentEmail();
+    	$year = date('Y');
+    	echo "==> Get unresponded SMS for {$year}\n";
+    	$smses = $this->getUnsentSMS();
+    	$valid = 0;
+    	$invalid = 0;
+    	$loop = 0;
+    	$ratio = 0;
     	echo "==> Gotten {$smses->count()} requests\n";
     	foreach ($smses as $key => $sms) {
+    		$newratio = round((@($loop/$smses->count())*100));
+    		if ($ratio != $newratio){
+    			echo $ratio . '%';
+    			$ratio = $newratio;
+    		}
     		$message = $sms->message;
-    		echo "\tSending message {$message}\n";
     		$message = $sms->message;
 			$phone = $sms->phoneno;
 			$patient = null;
@@ -36,17 +46,20 @@ class ShortCodeQueries extends Model
 			$status = 1;
     		$messageBreakdown = $this->messageBreakdown($message);
 			if (!$messageBreakdown) {
+				$invalid++;
 				$message = "The correct message format is {$this->msgFormat}\n {$this->msgFormatDescription}";
-				return response()->json(self::__sendMessage($phone, $message));
+				self::__sendMessage($phone, $message);
 			}
 			$patientTests = $this->getPatientData($messageBreakdown, $patient, $facility); // Get the patient data
 			$textMsg = $this->buildTextMessage($patientTests, $status, $testtype); // Get the message to send to the patient.
 			$sendTextMsg = $this->sendTextMessage($textMsg, $patient, $facility, $status, $message, $phone, $testtype, $sms); // Save and send the message
+			$valid++;
+			$loop++;
     	}
-    	echo "==>Completed sending SMS";
+    	echo "==>Completed sending SMS with valid SMS`s : {$valid} and invalid SMS`s: {$invalid}";
     }
 
-    public function getUnsentEmail()
+    public function getUnsentSMS()
     {
     	return $this->whereNull('dateresponded')->whereYear('created_at', date('Y'))->get();
     }
@@ -94,7 +107,7 @@ class ShortCodeQueries extends Model
 						->where('patient_id', '=', $patient->id)
 						->where('repeatt', '=', 0)
 						->orderBy("$table.id", 'desc')
-						->limit($this->limit)
+						->limit(env('SHORTCODE_R_LIMIT'))
 						->get();
 		return $model;
 	}
@@ -125,7 +138,7 @@ class ShortCodeQueries extends Model
 					$msg .= "EID Result: " . $test->result_name . "\n";
 			} else {
 				$msg .= (get_class($test) == 'App\ViralsampleCompleteView') ? " VL" : " EID";
-				$msg .= " Rejected Sample: " . $test->rejected_reason->name . " - Collect New Sample.\n";
+				$msg .= " Rejected Sample: " . $test->rejected_reason($test->rejectedreason) . " - Collect New Sample.\n";
 			}
 			$lab = $test->lab;
 			if ($test->lab == NULL)
@@ -145,8 +158,8 @@ class ShortCodeQueries extends Model
 
 		date_default_timezone_set('Africa/Nairobi');
         $dateresponded = date('Y-m-d H:i:s');
-		$response = self::__sendMessage($phone, $msg);
-		
+		$response = Common::sms($phone, $msg);
+		// dd($response);
 		if (!isset($shortcode))
 			$shortcode = new ShortCodeQueries;
 		$shortcode->testtype = $testtype;
@@ -157,10 +170,9 @@ class ShortCodeQueries extends Model
 		$shortcode->datereceived = $dateresponded;
 		$shortcode->status = $status;
 
-		if ($response->code < 400){
+		// if ($response->code < 400){
+		if ($response){
 			$shortcode->dateresponded = $dateresponded;
-		} else {
-			Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail(null, $response));
 		}
 		$shortcode->save();
 		return $msg;
@@ -169,17 +181,30 @@ class ShortCodeQueries extends Model
     static function __sendMessage($phone, $message) {
        $client = new Client(['base_uri' => self::$sms_url]);
 
-		$response = $client->request('post', '', [
+		/*$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			'json' => [
 				// 'sender' => env('SMS_SENDER_ID'),
                 'apiKey' => env('SMS_KEY'),
                 'shortCode' => env('SMS_SENDER_ID'),
-				'recipient' => $phone,
+				'recipient' => $recepient,
 				'message' => $message,
                 'callbackURL' => self::$sms_callback,
                 'enqueue' => 0,
+			],
+		]);*/
+
+		$response = $client->request('post', '', [
+			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+			'http_errors' => false,
+			'debug' => true,
+			'json' => [
+                'apikey' => env('SMS_KEY'),
+                'shortcode' => env('SMS_SENDER_ID'),
+                'partnerID' => env('SMS_PARTNER_ID'),
+				'mobile' => $phone,
+				'message' => $message,
 			],
 		]);
 
@@ -187,5 +212,10 @@ class ShortCodeQueries extends Model
 				'code' => $response->getStatusCode(),
 				'body' => json_decode($response->getBody())
 			];
+    }
+
+    public static function sendPendingMessages()
+    {
+    	return self::__sendMessage('254725455925', 'Prepaation for the pending SMS`s');
     }
 }

@@ -18,7 +18,8 @@ class ViralsampleCompleteView extends ViewModel
     	return $this->belongsTo('App\Lab','lab_id');
     }
 
-    public function rejected_reason(){
-    	return $this->belongsTo('App\ViralRejectedReason', 'rejectedreason');
+    public function rejected_reason($rejectedreason)
+    {
+        return Lookup::get_rejected_reason(1, $rejectedreason);
     }
 }

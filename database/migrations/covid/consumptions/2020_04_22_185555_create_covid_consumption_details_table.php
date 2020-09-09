@@ -17,7 +17,7 @@ class CreateCovidConsumptionDetailsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('original_id');
             $table->bigInteger('consumption_id');
-            $table->integer('kit_id');
+            $table->string('kit_id');
             $table->integer('begining_balance')->default(0);
             $table->integer('received')->default(0);
             $table->integer('kits_used')->default(0);
