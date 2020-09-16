@@ -12,6 +12,7 @@ class Dhis
 
 	public static function send_data()
 	{		
+		ini_set('memory_limit', '-1');
         $client = new Client(['base_uri' => self::$base]);
 
         /*$response = $client->request('get', $url, [
@@ -28,20 +29,16 @@ class Dhis
         foreach ($facilities as $key => $fac) {
         	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-1 month')), 'month' => date('m', strtotime('-1 month')), 'facility' => $fac->id])->first();
 
-        	if(!$row || !$fac->dhiscode){
+        	if(!$row || !$fac->DHIScode){
         		echo "Facility {$fac->id} missing";
         		continue;
         	}
 
-			$response = $client->request('post', '', [
-	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
-				'http_errors' => false,
-				'verify' => false,
-				'json' => [
+        	$payload = [
 					'dataSet' => '',
 					'completeDate' => date('Y-m-d'),
 					'period' => date('Ym', strtotime('-1 month')),
-					'orgUnit' => $fac->dhiscode,
+					'orgUnit' => $fac->DHIScode,
 					'attributeOptionCombo' => 'aocID',
 					'dataValues' => [
 						// Male Suppressed
@@ -194,7 +191,14 @@ class Dhis
 							'comment' => 'comment',
 						],
 					],
-				],
+				];
+			dd($payload);
+
+			$response = $client->request('post', '', [
+	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+				'http_errors' => false,
+				'verify' => false,
+				'json' => $payload,
 			]);       
 			
 			$body = json_decode($response->getBody());
