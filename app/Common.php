@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Mail\TestMail;
 use App\Mail\CustomMail;
 use GuzzleHttp\Client;
@@ -382,6 +383,7 @@ class Common
 			return false;
 		} else {
 			if ($body->code == "Success") {
+				Log::channel('shortcode')->info($body);
 				if ($body->data->data->sms_reporting->failed == 1){
 					Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $body->data->data->remaining_balance));
 					return false;
@@ -389,6 +391,7 @@ class Common
 					return true;
 				}
 			} else {
+				Log::channel('shortcode_error')->info($body);
 				$data = (object)['body' => json_encode($body)];
 				Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $data));
 			}

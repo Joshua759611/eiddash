@@ -65,6 +65,20 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+
+        'shortcode' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/shortcode/info/laravel.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
+
+        'shortcode_error' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/shortcode/errors/laravel.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
     ],
 
 ];
