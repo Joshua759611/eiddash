@@ -383,7 +383,7 @@ class Common
 			return false;
 		} else {
 			if ($body->code == "Success") {
-				Log::channel('shortcode')->info(json_encode($body));
+				// Log::channel('shortcode')->info(json_encode($body));
 				if ($body->data->data->sms_reporting->failed == 1){
 					// Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $body->data->data->remaining_balance));
 					return false;
