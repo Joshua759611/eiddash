@@ -378,22 +378,22 @@ class Common
 
 
 		$body = json_decode($response->getBody());
-		print_r($body);
+		// print_r($body);
 		if($response->getStatusCode() > 399) {
 			return false;
 		} else {
 			if ($body->code == "Success") {
-				Log::channel('shortcode')->info($body);
+				Log::channel('shortcode')->info(json_encode($body));
 				if ($body->data->data->sms_reporting->failed == 1){
-					Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $body->data->data->remaining_balance));
+					// Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $body->data->data->remaining_balance));
 					return false;
 				} else {
 					return true;
 				}
 			} else {
-				Log::channel('shortcode_error')->info($body);
-				$data = (object)['body' => json_encode($body)];
-				Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $data));
+				Log::channel('shortcode_error')->info(json_encode($body));
+				// $data = (object)['body' => json_encode($body)];
+				// Mail::to(['baksajoshua09@gmail.com', 'tngugi@gmail.com'])->send(new TestMail(null, "Southwell SMS not going through for the reason " . $data));
 			}
 		}
 		return false;
