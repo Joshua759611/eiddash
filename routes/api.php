@@ -64,6 +64,7 @@ $api->version('v1', function (Router $api) {
         $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
 
             $api->resource('facility', 'FacilityController');
+            $api->resource('quarantine_site', 'QuarantineSiteController');
             $api->post('lablogs', 'LablogController@lablogs');
 
             $api->group(['prefix' => 'covid_sample'], function(Router $api) {
