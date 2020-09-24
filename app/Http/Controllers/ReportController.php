@@ -307,7 +307,6 @@ class ReportController extends Controller
             $data = $this->__getExcel($data, $title, $excelColumns, $briefTitle);
         }
         $title = preg_replace('/[^A-Za-z0-9 ]/', '', $title);
-        dd($title);
         
         return (new ReportExport($data, $excelColumns))->download("$title.csv");
     }
