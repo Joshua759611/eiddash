@@ -531,7 +531,8 @@ class ReportController extends Controller
             $newdataArray[] = $report;
         }
         // dd($newdataArray);
-        $title = "$lab->labname Test Outcomes $request->year";
+        $labname = str_replace("/", " ", $lab->labname);
+        $title = "$labname Test Outcomes $request->year";
         $string = (strlen($lab->labname) > 31) ? substr($lab->labname,0,28).'...' : $lab->labname;
         $sheetTitle = "$string";
 
