@@ -307,6 +307,8 @@ class ReportController extends Controller
             $data = $this->__getDateData($request,$dateString, $excelColumns, $title, $briefTitle);
             $data = $this->__getExcel($data, $title, $excelColumns, $briefTitle);
         }
+        $title = preg_replace('/[^A-Za-z0-9 ]/', '', $title);
+        dd($title);
         
         return (new ReportExport($data, $excelColumns))->download("$title.csv");
     }
@@ -533,7 +535,7 @@ class ReportController extends Controller
         }
         // dd($newdataArray);
         $labname = preg_replace('/[^A-Za-z0-9 ]/', '', $lab->labname);
-        
+
         $title = "$labname Test Outcomes $request->year";
         $string = (strlen($lab->labname) > 31) ? substr($lab->labname,0,28).'...' : $lab->labname;
         $sheetTitle = "$string";
