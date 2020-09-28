@@ -30,7 +30,7 @@ class Dhis
         	$row = DB::connection('api')->table('vl_site_dhis')->where(['year' => date('Y', strtotime('-1 month')), 'month' => date('m', strtotime('-1 month')), 'facility' => $fac->id])->first();
 
         	if(!$row || !$fac->DHIScode){
-        		echo "Facility {$fac->id} missing";
+        		echo "Facility {$fac->id}  {$fac->name} missing";
         		continue;
         	}
 
@@ -43,74 +43,98 @@ class Dhis
 					'dataValues' => [
 						// Male Suppressed
 						[
+							// 0-1 Male Suppressed
+							'dataElement' => 'H3JxUdxxNoe',
+							'categoryOptionCombo' => 'Z9cc22tdFtK',
+							'value' => $row->male_below_1_suppressed,
+							'comment' => 'comment',
+						],
+						[
 							// 1-9 Male Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'HvUBUwhQeSa',
+							// 'categoryOptionCombo' => 'HvUBUwhQeSa',
+							'categoryOptionCombo' => 'Yg1zqrAT9mS',
 							'value' => $row->male_below_10_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 10-14 Male Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'mwIrZsIrqtQ',
+							// 'categoryOptionCombo' => 'mwIrZsIrqtQ',
+							'categoryOptionCombo' => 'gKLYDFU4mSV',
 							'value' => $row->male_below_15_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 15-19 Male Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'PSbJFRX51oB',
+							// 'categoryOptionCombo' => 'PSbJFRX51oB',
+							'categoryOptionCombo' => 'zIYfBTRncpm',
 							'value' => $row->male_below_20_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 20-24 Male Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'UgmXHXhYULO',
+							// 'categoryOptionCombo' => 'UgmXHXhYULO',
+							'categoryOptionCombo' => 'GFh2Bue6iwS',
 							'value' => $row->male_below_25_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// > 25 Male Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'H4g4XCGjy3h',
+							// 'categoryOptionCombo' => 'H4g4XCGjy3h',
+							'categoryOptionCombo' => 'CbHPjpgsMT0',
 							'value' => $row->male_above_25_suppressed,
 							'comment' => 'comment',
 						],
 
 						// Female Suppressed
 						[
+							// 0-1 Female Suppressed
+							'dataElement' => 'H3JxUdxxNoe',
+							'categoryOptionCombo' => 'fQaGWZ8R25L',
+							'value' => $row->female_below_1_suppressed,
+							'comment' => 'comment',
+						],
+						[
 							// 1-9 Female Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'uyQ3KVohPar',
+							// 'categoryOptionCombo' => 'uyQ3KVohPar',
+							'categoryOptionCombo' => 'gTzKy4LS0l7',
 							'value' => $row->female_below_10_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 10-14 Female Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'o0mJRFDoQnk',
+							// 'categoryOptionCombo' => 'o0mJRFDoQnk',
+							'categoryOptionCombo' => 'KwQazknW2Lt',
 							'value' => $row->female_below_15_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 15-19 Female Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'hrqb0jfAF4G',
+							// 'categoryOptionCombo' => 'hrqb0jfAF4G',
+							'categoryOptionCombo' => 'IqQ9Pgr5mZI',
 							'value' => $row->female_below_20_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 20-24 Female Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'BpkVIsemRRn',
+							// 'categoryOptionCombo' => 'BpkVIsemRRn',
+							'categoryOptionCombo' => 'hipCW8yhAri',
 							'value' => $row->female_below_25_suppressed,
 							'comment' => 'comment',
 						],
 						[
 							// > 25 Female Suppressed
 							'dataElement' => 'H3JxUdxxNoe',
-							'categoryOptionCombo' => 'g1Jm3gy8j3O',
+							// 'categoryOptionCombo' => 'g1Jm3gy8j3O',
+							'categoryOptionCombo' => 'HlFzCSip1te',
 							'value' => $row->female_above_25_suppressed,
 							'comment' => 'comment',
 						],
@@ -119,80 +143,104 @@ class Dhis
 
 						// Male Non Suppressed
 						[
+							// 0-1 Male Non Suppressed
+							'dataElement' => 'VyR4Qnz4Qeq',
+							'categoryOptionCombo' => 'Z9cc22tdFtK',
+							'value' => $row->male_below_1_nonsuppressed,
+							'comment' => 'comment',
+						],
+						[
 							// 1-9 Male Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'HvUBUwhQeSa',
+							// 'categoryOptionCombo' => 'HvUBUwhQeSa',
+							'categoryOptionCombo' => 'Yg1zqrAT9mS',
 							'value' => $row->male_below_10_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 10-14 Male Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'mwIrZsIrqtQ',
+							// 'categoryOptionCombo' => 'mwIrZsIrqtQ',
+							'categoryOptionCombo' => 'gKLYDFU4mSV',
 							'value' => $row->male_below_15_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 15-19 Male Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'PSbJFRX51oB',
+							// 'categoryOptionCombo' => 'PSbJFRX51oB',
+							'categoryOptionCombo' => 'zIYfBTRncpm',
 							'value' => $row->male_below_20_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 20-24 Male Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'UgmXHXhYULO',
+							// 'categoryOptionCombo' => 'UgmXHXhYULO',
+							'categoryOptionCombo' => 'GFh2Bue6iwS',
 							'value' => $row->male_below_25_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// > 25 Male Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'H4g4XCGjy3h',
+							// 'categoryOptionCombo' => 'H4g4XCGjy3h',
+							'categoryOptionCombo' => 'CbHPjpgsMT0',
 							'value' => $row->male_above_25_nonsuppressed,
 							'comment' => 'comment',
 						],
 
 						// Female Non Suppressed
 						[
+							// 0-1 Female Non Suppressed
+							'dataElement' => 'VyR4Qnz4Qeq',
+							'categoryOptionCombo' => 'fQaGWZ8R25L',
+							'value' => $row->female_below_10_nonsuppressed,
+							'comment' => 'comment',
+						],
+						[
 							// 1-9 Female Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'uyQ3KVohPar',
+							// 'categoryOptionCombo' => 'uyQ3KVohPar',
+							'categoryOptionCombo' => 'gTzKy4LS0l7',
 							'value' => $row->female_below_10_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 10-14 Female Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'o0mJRFDoQnk',
+							// 'categoryOptionCombo' => 'o0mJRFDoQnk',
+							'categoryOptionCombo' => 'KwQazknW2Lt',
 							'value' => $row->female_below_15_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 15-19 Female Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'hrqb0jfAF4G',
+							// 'categoryOptionCombo' => 'hrqb0jfAF4G',
+							'categoryOptionCombo' => 'IqQ9Pgr5mZI',
 							'value' => $row->female_below_20_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// 20-24 Female Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'BpkVIsemRRn',
+							// 'categoryOptionCombo' => 'BpkVIsemRRn',
+							'categoryOptionCombo' => 'hipCW8yhAri',
 							'value' => $row->female_below_25_nonsuppressed,
 							'comment' => 'comment',
 						],
 						[
 							// > 25 Female Non Suppressed
 							'dataElement' => 'VyR4Qnz4Qeq',
-							'categoryOptionCombo' => 'g1Jm3gy8j3O',
+							// 'categoryOptionCombo' => 'g1Jm3gy8j3O',
+							'categoryOptionCombo' => 'HlFzCSip1te',
 							'value' => $row->female_above_25_nonsuppressed,
 							'comment' => 'comment',
 						],
 					],
 				];
-			dd($payload);
+			// dd($payload);
 
 			$response = $client->request('post', '', [
 	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
