@@ -326,7 +326,7 @@ class Nat
 			$invalid = $key . '_invalid';
 			$$sup = self::get_county_ages_current_query(true, $value);
 			$$nonsup = self::get_county_ages_current_query(false, $value);
-			$$invalid = self::get_county_ages_current_query(false, $value, trye);
+			$$invalid = self::get_county_ages_current_query(false, $value, true);
 		}
 
 		foreach ($counties as $county) {
