@@ -220,7 +220,7 @@ class Nat
 		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
 	}
 
-	public static function get_county_ages_current_query($suppressed=true, $ages=null)
+	public static function get_county_ages_current_query($suppressed=true, $ages=null, $invalid=false)
 	{
 		$year='2019';
     	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
@@ -239,13 +239,14 @@ class Nat
 			}
 		}
 
-		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4, 5) ';
 		$sql .= 'AND justification != 10 and facility_id != 7148 ';
 		$sql .= 'GROUP BY patient_id) gv ';
 		$sql .= 'ON v.id=gv.id) tb ';
 		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
 		// if($suppression){
 			if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
+			else if($invalid) $sql .= 'WHERE rcategory = 5 ';
 			else{
 				$sql .= 'WHERE rcategory IN (3,4) ';
 			}
@@ -322,8 +323,10 @@ class Nat
 		foreach ($ages as $key => $value) {
 			$sup = $key . '_suppressed';
 			$nonsup = $key . '_nonsuppressed';
+			$invalid = $key . '_invalid';
 			$$sup = self::get_county_ages_current_query(true, $value);
 			$$nonsup = self::get_county_ages_current_query(false, $value);
+			$$invalid = self::get_county_ages_current_query(false, $value, trye);
 		}
 
 		foreach ($counties as $county) {
@@ -332,12 +335,16 @@ class Nat
 			foreach ($ages as $key => $value) {
 				$sup = $key . '_suppressed';
 				$nonsup = $key . '_nonsuppressed';
+				$invalid = $key . '_invalid';
 
 				$row[$sup . '_male'] = $$sup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
 				$row[$sup . '_female'] = $$sup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 				
 				$row[$nonsup . '_male'] = $$nonsup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
 				$row[$nonsup . '_female'] = $$nonsup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+				
+				$row[$invalid . '_male'] = $$invalid->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row[$invalid . '_female'] = $$invalid->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 			}
 			$data[] = $row;
 		}
