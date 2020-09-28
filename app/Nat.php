@@ -323,7 +323,7 @@ class Nat
 			if($i == 20) break;
 		}
 
-		$data = array_fill(0, 47, []);
+		// $data = array_fill(0, 47, []);
 
 		$counties = DB::table('countys')->orderBy('id', 'asc')->get();
 
