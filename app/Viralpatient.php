@@ -18,6 +18,11 @@ class Viralpatient extends BaseModel
         return $this->belongsTo('App\Facility');
     }
 
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
+    }
+
     public function scopeExisting($query, $facility_id, $ccc_number)
     {
         return $query->where(['facility_id' => $facility_id, 'patient' => $ccc_number]);

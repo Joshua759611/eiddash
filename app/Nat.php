@@ -303,6 +303,91 @@ class Nat
 		self::email_csv('county_fine_age_suppression', $data);
 	}
 
+
+	public static function get_county_teenage_breakdown()
+	{
+		// $sql = "select count(*) from viralpatients where dob > '2000-01-01' and id IN (select distinct patient_id from viralsamples where datetested > '2019-08-01');";
+
+		$data = [];
+		$ages = [];
+		$i=0;
+		$limit = 200;
+		$offset = 0;
+
+		while(true){
+			$f = $i;
+			$i += 1;
+			$s = $i;
+			// $ages['a_' . $f . '-' . $s] = [$f, ($s+1)];
+			$ages[] = 'a_' . $f . '-' . $s;
+			if($i == 20) break;
+		}
+
+		$data = array_fill(0, 47, []);
+
+		$counties = DB::table('countys')->orderBy('id', 'asc')->get();
+
+		foreach ($counties as $county) {
+			$row = ['Period' => 'Aug 2019 - July 2020', 'County' => $county->name];
+
+			foreach ($ages as $key => $value) {
+				$sup = $value . '_suppressed';
+				$nonsup = $value . '_nonsuppressed';
+				$invalid = $value . '_invalid';
+
+				$row[$sup . '_male'] = 0;
+				$row[$sup . '_female'] = 0;
+				
+				$row[$nonsup . '_male'] = 0;
+				$row[$nonsup . '_female'] = 0;
+				
+				$row[$invalid . '_male'] = 0;
+				$row[$invalid . '_female'] = 0;
+			}
+			$data[] = $row;
+		}
+
+		while (true) {
+			$patients = Viralpatient::where('dob', '>', '2000-01-01')
+				->whereRaw("id IN (select distinct patient_id from viralsamples where datetested BETWEEN '2019-08-01' AND '2020-07-31' )")
+				->limit($limit)->offset($offset)->get();
+
+			if(!$patients->count()) break;
+
+			foreach ($patients as $patient) {
+				$sample = Viralsample::where(['patient_id' => $patient->id])
+					->whereBetween('datetested', ['2019-08-01', '2020-07-31'])
+					->whereBetween('rcategory', [1, 4])
+					->orderBy('datetested', 'desc')
+					->first();
+
+				if(!$sample){
+					$sample = Viralsample::where(['patient_id' => $patient->id])
+						->whereBetween('datetested', ['2019-08-01', '2020-07-31'])
+						->whereBetween('rcategory', [1, 5])
+						->orderBy('datetested', 'desc')
+						->first();
+				}
+
+				$age_key = (int) $sample->age;
+
+				if(in_array($sample->rcategory, [1,2])) $r = '_suppressed';
+				else if(in_array($sample->rcategory, [3,4])) $r = '_nonsuppressed';
+				else if(in_array($sample->rcategory, [5])) $r = '_invalid';
+
+				if($patient->sex == 1) $g = '_male';
+				else if($patient->sex == 2) $g = '_female';
+
+				$county_index = ($patient->view_facility->county_id - 1);
+
+				$data[$county_index][$ages[$age_key] . $r . $g]++;
+			}
+			$offset += $limit;
+		}
+		self::email_csv('county_accurate_age_suppression_children', $data);
+
+	}
+
 	public static function get_county_fine_ages_teens()
 	{
 		$data = [];
