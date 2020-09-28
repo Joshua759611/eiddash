@@ -348,7 +348,7 @@ class Nat
 			}
 			$data[] = $row;
 		}
-		self::email_csv('county_fine_age_suppression_children_valid', $data);
+		self::email_csv('county_fine_age_suppression_children', $data);
 	}
 
 
