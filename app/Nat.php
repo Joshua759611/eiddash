@@ -349,25 +349,27 @@ class Nat
 
 		while (true) {
 			$patients = Viralpatient::where('dob', '>', '2000-01-01')
-				->whereRaw("id IN (select distinct patient_id from viralsamples where datetested BETWEEN '2019-08-01' AND '2020-07-31' )")
+				->whereRaw("id IN (select distinct patient_id from viralsamples where datetested BETWEEN '2019-08-01' AND '2020-07-31' and repeatt=0)")
 				->limit($limit)->offset($offset)->get();
 
 			if(!$patients->count()) break;
 
 			foreach ($patients as $patient) {
-				$sample = Viralsample::where(['patient_id' => $patient->id])
+				$sample = Viralsample::where(['patient_id' => $patient->id, 'repeatt' => 0])
 					->whereBetween('datetested', ['2019-08-01', '2020-07-31'])
 					->whereBetween('rcategory', [1, 4])
 					->orderBy('datetested', 'desc')
 					->first();
 
 				if(!$sample){
-					$sample = Viralsample::where(['patient_id' => $patient->id])
+					$sample = Viralsample::where(['patient_id' => $patient->id, 'repeatt' => 0])
 						->whereBetween('datetested', ['2019-08-01', '2020-07-31'])
-						->whereBetween('rcategory', [1, 5])
+						// ->whereBetween('rcategory', [1, 5])
 						->orderBy('datetested', 'desc')
 						->first();
 				}
+
+				if($sample->age > 19) continue;
 
 				$age_key = (int) $sample->age;
 
