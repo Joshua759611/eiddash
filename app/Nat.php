@@ -403,7 +403,7 @@ class Nat
 			$f = $i;
 			$i += 1;
 			$s = $i;
-			$ages['a_' . $f . '-' . $s] = [$f, ($s+1)];
+			$ages['a_' . $f . '-' . $s] = [$f, $s];
 			if($i == 20) break;
 		}
 		$ages['a_0-20'] = [0, 20];
@@ -438,7 +438,7 @@ class Nat
 			}
 			$data[] = $row;
 		}
-		self::email_csv('county_fine_age_suppression_children', $data);
+		self::email_csv('county_using_dob_suppression_children', $data);
 	}
 
 
