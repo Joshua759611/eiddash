@@ -222,6 +222,8 @@ class Nat
 
 	public static function get_county_ages_current_query($suppressed=true, $ages=null, $invalid=false)
 	{
+		$start_dob = date('Y-m-d', strtotime('-' . $ages[1] . ' years +1 day'));
+		$end_dob = date('Y-m-d', strtotime('-' . $ages[0] . ' years'));
 		$year='2019';
     	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
 		$sql .= 'FROM ';
@@ -233,10 +235,11 @@ class Nat
 		$sql .= "WHERE ( datetested between '2019-08-01' and '2020-07-31' ) ";
 		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
 		if($ages){
-			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
+			/*if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
 			else{
 				$sql .= "AND age > {$ages[0]} AND age < {$ages[1]} ";
-			}
+			}*/
+			$sql .= "AND dob BETWEEN '{$start_dob}' AND '{$end_dob}' ";
 		}
 
 		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4, 5) ';
@@ -246,7 +249,7 @@ class Nat
 		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
 		// if($suppression){
 			if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
-			else if($invalid) $sql .= 'WHERE rcategory = 5 ';
+			else if($invalid) $sql .= 'WHERE rcategory IN (0,5) ';
 			else{
 				$sql .= 'WHERE rcategory IN (3,4) ';
 			}
@@ -401,9 +404,9 @@ class Nat
 			$i += 1;
 			$s = $i;
 			$ages['a_' . $f . '-' . $s] = [$f, ($s+1)];
-			if($i == 19) break;
+			if($i == 20) break;
 		}
-		$ages['a_0-19'] = [0, 19];
+		$ages['a_0-20'] = [0, 20];
 
 		$counties = DB::table('countys')->get();
 
