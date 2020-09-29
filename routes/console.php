@@ -25,6 +25,10 @@ Artisan::command('dhis', function () {
     \App\Dhis::send_data();
 })->describe('Send VL data to DHIS.');
 
+Artisan::command('dhis:year', function () {
+    \App\Dhis::send_yearly_data();
+})->describe('Send VL data for the year to DHIS.');
+
 Artisan::command('alere', function () {
     \App\Poc::alereq();
 })->describe('Display an inspiring quote');
