@@ -7,8 +7,8 @@ use DB;
 
 class Dhis 
 {
-	// public static $base = 'https://hiskenya.org/api/';
-	public static $base = 'https://test.hiskenya.org/dhiske/';
+	public static $base = 'https://hiskenya.org/api/';
+	// public static $base = 'https://test.hiskenya.org/dhiske/';
 
 	public static function send_data()
 	{		
