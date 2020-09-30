@@ -260,7 +260,7 @@ class Dhis
 			$status_code = $response->getStatusCode();
 			if($status_code > 399) echo 'Failed';
 			else{
-				DB::connection('api')->table('vl_site_dhis')->where('ID', $row->ID)->update(['time_sent_to_dhis' => date('Y-m-d H:i:s')])
+				DB::connection('api')->table('vl_site_dhis')->where('ID', $row->ID)->update(['time_sent_to_dhis' => date('Y-m-d H:i:s')]);
 			}
 
 			// dd($body);
