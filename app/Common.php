@@ -404,7 +404,7 @@ class Common
 
 	public static function test_sms()
 	{
-		self::sms("254725455925", "This is a test email sent at ". date('Y-m-d H:i:s'));
+		return self::sms("254725455925", "This is a test email sent at ". date('Y-m-d H:i:s'));
 	}
 
 }
