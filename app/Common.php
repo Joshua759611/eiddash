@@ -337,12 +337,12 @@ class Common
 
 		if($response->getStatusCode() > 399) {
         	return false;
-        } else/* if($response->getStatusCode() == 200)*/{
-        	$body = $body->responses[0];
-        	if (null !== $body->{"respose-code"}){
-        		if ($body->{"respose-code"} == 1006)
-        			return false;
-        	}
+        } else if($response->getStatusCode() == 200 && $body->responses[0]->{"response-code"} == 200){
+        	// $body = $body->responses[0];
+        	// if (null !== $body->{"respose-code"}){
+        	// 	if ($body->{"respose-code"} == 1006)
+        	// 		return false;
+        	// }
         	return true;
         }
         // else{
