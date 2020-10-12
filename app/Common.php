@@ -339,8 +339,8 @@ class Common
 		if($response->getStatusCode() > 399) {
         	return false;
         } else if($response->getStatusCode() == 200){
-        	if (null !== $body->{"respose-code"}){
-        		if ($body->{"respose-code"} == 1006)
+        	if (null !== $body->responses[0]->{"respose-code"}){
+        		if ($body->responses[0]->{"respose-code"} == 1006)
         			return false;
         	}
         	if (null !== $body->responses && $body->responses[0]->{"response-code"} == 200){
