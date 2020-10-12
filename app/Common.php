@@ -339,7 +339,6 @@ class Common
 
 	public static function sms($recepient, $message)
 	{
-		$client = new Client(['base_uri' => self::$sms_url]);
 		/*$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
@@ -355,6 +354,7 @@ class Common
 		]);*/
 
 		/****** VASPRO *******/
+		// $client = new Client(['base_uri' => self::$sms_url]);
 		// $response = $client->request('post', '', [
 		// 	// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 		// 	'http_errors' => false,
@@ -389,10 +389,11 @@ class Common
 
 
 		/******* New SOUTHWELL *******/
+		$client = new Client(['base_uri' => env("SMS_SOUTHWELL_URL")]);
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
-			'debug' => false,
+			'debug' => true,
 			'json' => [
                 'apiKey' => env('SMS_KEY_SOUTHWELL'),
                 'shortCode' => env('SMS_SENDER_ID_SOUTHWELL'),
@@ -412,7 +413,7 @@ class Common
 
 
 		$body = json_decode($response->getBody());
-		// print_r($body);
+		print_r($body);
 		if($response->getStatusCode() > 399) {
 			return false;
 		} else {
@@ -433,6 +434,11 @@ class Common
 		return false;
         /******* New SOUTHWELL *******/
 
+	}
+
+	public static function test_sms()
+	{
+		self::sms("254725455925", "This is a test email sent at ". date('Y-m-d H:i:s'));
 	}
 
 }
