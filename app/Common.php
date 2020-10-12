@@ -334,27 +334,23 @@ class Common
 			],
 		]);
 		$body = json_decode($response->getBody());
-		print_r($response->getStatusCode());
-		// print_r($body->responses[0]);
 
 		if($response->getStatusCode() > 399) {
         	return false;
-        } else if($response->getStatusCode() == 200){
-        	if (null !== $body->responses[0]->{"respose-code"}){
-        		if ($body->responses[0]->{"respose-code"} == 1006)
+        } else/* if($response->getStatusCode() == 200)*/{
+        	$body = $body->responses[0];
+        	if (null !== $body->{"respose-code"}){
+        		if ($body->{"respose-code"} == 1006)
         			return false;
         	}
-        	if (null !== $body->responses && $body->responses[0]->{"response-code"} == 200){
-        		return true;	
-        	}
-        	return false;
+        	return true;
         }
-        else{
-        	// die();
-        	echo "Status Code is " . $response->getStatusCode();
-        	echo $response->getBody();
-        	return false;
-        }
+        // else{
+        // 	// die();
+        // 	echo "Status Code is " . $response->getStatusCode();
+        // 	echo $response->getBody();
+        // 	return false;
+        // }
         /****** CELCO *******/
 
 
