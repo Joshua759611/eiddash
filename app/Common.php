@@ -334,7 +334,7 @@ class Common
 			],
 		]);
 		$body = json_decode($response->getBody());
-		print_r($body);
+		print_r($body->responses[0]);
 
 		if($response->getStatusCode() > 399) {
         	return false;
