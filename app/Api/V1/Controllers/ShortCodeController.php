@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GenerealController;
 use App\Api\V1\Requests\ShortCodeRequest;
+use App\Common;
 use App\SampleCompleteView;
 use App\ViralsampleCompleteView;
 use App\Patient;
@@ -37,7 +38,7 @@ class ShortCodeController extends Controller
 		$messageBreakdown = $this->messageBreakdown($message);
 		if (!$messageBreakdown) {
 			$message = "The correct message format is {$this->msgFormat}\n {$this->msgFormatDescription}";
-			return response()->json(self::__sendMessage($phone, $message));
+			return response()->json(Common::sms($phone, $message));
 		}
 		$patientTests = $this->getPatientData($messageBreakdown, $patient, $facility); // Get the patient data
 
@@ -142,7 +143,7 @@ class ShortCodeController extends Controller
 		}
 		date_default_timezone_set('Africa/Nairobi');
         $dateresponded = date('Y-m-d H:i:s');
-		$response = \App\Common::sms($phone, $msg);
+		$response = Common::sms($phone, $msg);
 		$shortcode = new ShortCodeQueries;
 		$shortcode->testtype = $testtype;
 		$shortcode->phoneno = $phone;

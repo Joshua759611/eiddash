@@ -49,7 +49,7 @@ class ShortCodeQueries extends Model
 			if (!$messageBreakdown) {
 				$invalid++;
 				$message = "The correct message format is {$this->msgFormat}\n {$this->msgFormatDescription}";
-				self::__sendMessage($phone, $message);
+				Common::sms($phone, $message);
 			}
 			$patientTests = $this->getPatientData($messageBreakdown, $patient, $facility); // Get the patient data
 			$textMsg = $this->buildTextMessage($patientTests, $status, $testtype); // Get the message to send to the patient.
@@ -217,6 +217,6 @@ class ShortCodeQueries extends Model
 
     public static function sendPendingMessages()
     {
-    	return self::__sendMessage('254725455925', 'Prepaation for the pending SMS`s');
+    	return Common::sms('254725455925', 'Prepaation for the pending SMS`s');
     }
 }
