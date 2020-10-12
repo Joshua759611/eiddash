@@ -369,7 +369,7 @@ class Common
 		]);
 		$body = json_decode($response->getBody());
 		print_r($body);
-		
+
 		if($response->getStatusCode() > 399) {
         	return false;
         } else if($response->getStatusCode() == 200){
@@ -380,7 +380,7 @@ class Common
         	if (null !== $body->responses && $body->responses[0]->{"response-code"} == 200){
         		return true;	
         	}
-        	return false
+        	return false;
         }
         else{
         	// die();
