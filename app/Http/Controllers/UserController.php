@@ -242,7 +242,6 @@ class UserController extends Controller
     public function updateState(Request $request, $user, $status)
     {
         $user = self::__unHashUser($user);
-        dd($user);
         $status = strtolower($status);
         if ($status == 'deactivate') {
             $user->delete();
@@ -254,7 +253,7 @@ class UserController extends Controller
 
     private static function __unHashUser($hashed){
         $user = [];
-        foreach (User::get() as $key => $value) {
+        foreach (User::withTrashed()->get() as $key => $value) {
             if ($hashed == md5($value->id)) {
                 $user = $value;
                 break;
