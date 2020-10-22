@@ -71,7 +71,7 @@ class UserController extends Controller
             $statusChange = "<a href='".url("user/status/$id/deactivate")."'>Deactivate</a>";
             if (null !== $value->deleted_at)
                 $statusChange = "<a href='".url("user/status/$id/activate")."'>Activate</a>";
-            $delete = url("user/delete/$id");
+            // $delete = url("user/delete/$id");
             $last_access = (null === $value->last_access) ? "" : date('M d, Y (H:i)', strtotime($value->last_access));
             $status = (null === $value->deleted_at) ? "<span class='label label-success'>Active</span>" : "<span class='label label-danger'>Inactive</span>";
             $row .= '<tr>';
@@ -82,7 +82,7 @@ class UserController extends Controller
             $row .= '<td>'.$value->user_type.'</td>';
             $row .= '<td>'.$last_access.'</td>';
             $row .= '<td>'.$status.'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | '.$statusChange.' | <a href="'.$delete.'">Delete</a></td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | '.$statusChange;
             $row .= '</tr>';
         }
 
