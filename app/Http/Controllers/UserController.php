@@ -242,6 +242,7 @@ class UserController extends Controller
     public function updateState(Request $request, $user, $status)
     {
         $user = self::__unHashUser($user);
+        dd($user);
         $status = strtolower($status);
         if ($status == 'deactivate') {
             $user->delete();
