@@ -148,7 +148,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('users', 'UserController@index')->name('users');
 	Route::get('user/add', 'UserController@create')->name('user.add');
 	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
-	Route::get('user/status/{user?}', 'UserController@updateState');
+	Route::get('user/status/{user}/{status}', 'UserController@updateState');
 	Route::resource('user', 'UserController');
 
 	Route::group(['middleware' => ['only_utype:1,10']], function () {
