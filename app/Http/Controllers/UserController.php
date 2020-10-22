@@ -23,7 +23,7 @@ class UserController extends Controller
         $row = "";
         $newUsers = [];
         
-        $users = User::select('users.*','user_types.user_type')->join('user_types', 'user_types.id', '=', 'users.user_type_id')
+        $users = User::withTrashed()->select('users.*','user_types.user_type')->join('user_types', 'user_types.id', '=', 'users.user_type_id')
                     ->where('users.user_type_id', '<>', 8)->orderBy('last_access', 'desc')
                     ->when($usertype, function ($query) use ($usertype){
                         if ($usertype != 10)
@@ -32,7 +32,7 @@ class UserController extends Controller
         if (auth()->user()->user_type_id == 4) {
             $users = $users->where('user_type_id', '=', auth()->user()->user_type_id)->where('level', '=', auth()->user()->level)->orderBy('last_access', 'desc');
 
-            $subusers = User::selectRaw('distinct users.id, users.*,user_types.user_type')
+            $subusers = User::withTrashed()->selectRaw('distinct users.id, users.*,user_types.user_type')
                                 ->join('user_types', 'user_types.id', '=', 'users.user_type_id')
                                 ->join('view_facilitys', 'view_facilitys.subcounty_id', '=', 'users.level')
                                 ->where('view_facilitys.county_id', '=', auth()->user()->level)->orderBy('last_access', 'desc')->get();
