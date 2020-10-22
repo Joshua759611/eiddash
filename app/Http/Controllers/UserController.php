@@ -23,7 +23,7 @@ class UserController extends Controller
         $row = "";
         $newUsers = [];
         
-        $users = User::select('users.*','user_types.user_type')->join('user_types', 'user_types.id', '=', 'users.user_type_id')
+        $users = User::withTrashed()->select('users.*','user_types.user_type')->join('user_types', 'user_types.id', '=', 'users.user_type_id')
                     ->where('users.user_type_id', '<>', 8)->orderBy('last_access', 'desc')
                     ->when($usertype, function ($query) use ($usertype){
                         if ($usertype != 10)
@@ -32,7 +32,7 @@ class UserController extends Controller
         if (auth()->user()->user_type_id == 4) {
             $users = $users->where('user_type_id', '=', auth()->user()->user_type_id)->where('level', '=', auth()->user()->level)->orderBy('last_access', 'desc');
 
-            $subusers = User::selectRaw('distinct users.id, users.*,user_types.user_type')
+            $subusers = User::withTrashed()->selectRaw('distinct users.id, users.*,user_types.user_type')
                                 ->join('user_types', 'user_types.id', '=', 'users.user_type_id')
                                 ->join('view_facilitys', 'view_facilitys.subcounty_id', '=', 'users.level')
                                 ->where('view_facilitys.county_id', '=', auth()->user()->level)->orderBy('last_access', 'desc')->get();
@@ -68,8 +68,10 @@ class UserController extends Controller
         foreach ($users as $key => $value) {
             $id = md5($value->id);
             $passreset = url("user/passwordReset/$id");
-            $statusChange = url("user/status/$id");
-            $delete = url("user/delete/$id");
+            $statusChange = "<a href='".url("user/status/$id/deactivate")."'>Deactivate</a>";
+            if (null !== $value->deleted_at)
+                $statusChange = "<a href='".url("user/status/$id/activate")."'>Activate</a>";
+            // $delete = url("user/delete/$id");
             $last_access = (null === $value->last_access) ? "" : date('M d, Y (H:i)', strtotime($value->last_access));
             $status = (null === $value->deleted_at) ? "<span class='label label-success'>Active</span>" : "<span class='label label-danger'>Inactive</span>";
             $row .= '<tr>';
@@ -80,7 +82,7 @@ class UserController extends Controller
             $row .= '<td>'.$value->user_type.'</td>';
             $row .= '<td>'.$last_access.'</td>';
             $row .= '<td>'.$status.'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Deactivate</a> | <a href="'.$delete.'">Delete</a></td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | '.$statusChange;
             $row .= '</tr>';
         }
 
@@ -237,9 +239,21 @@ class UserController extends Controller
         }
     }
 
+    public function updateState(Request $request, $user, $status)
+    {
+        $user = self::__unHashUser($user);
+        $status = strtolower($status);
+        if ($status == 'deactivate') {
+            $user->delete();
+        } else if ($status == 'activate') {
+            $user->restore();
+        }
+        return back();
+    }
+
     private static function __unHashUser($hashed){
         $user = [];
-        foreach (User::get() as $key => $value) {
+        foreach (User::withTrashed()->get() as $key => $value) {
             if ($hashed == md5($value->id)) {
                 $user = $value;
                 break;
