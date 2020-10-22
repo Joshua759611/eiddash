@@ -788,10 +788,10 @@ class ReportController extends Controller
                 $briefTitle .= "vl DORMANT ";
             } else if ($request->indicatortype == 10) {
                 $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples sent to the lab', 'POC Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, null)) as pocsamples, COUNT($table.id) as totaltests";
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, 0)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, 0)) as pocsamples, COUNT($table.id) as totaltests";
 
-                $title .= "VL SITES DIONG REMOTE SAMPLE ENTRY FOR ";
-                $briefTitle .= "vl SITES DIONG REMOTE SAMPLE ENTRY for";
+                $title .= "VL SITES DOING REMOTE SAMPLE ENTRY FOR ";
+                $briefTitle .= "vl SITES DOING REMOTE SAMPLE ENTRY for";
             }
 
             $model = ViralsampleCompleteView::selectRaw($selectStr)
@@ -924,10 +924,10 @@ class ReportController extends Controller
                 $briefTitle .= "EID DORMANT SITES ";
             } else if ($request->indicatortype == 10) {
                 $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples & sent to central lab', 'POC Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, null)) as pocsamples, COUNT($table.id) as totaltests";
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, 0)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, 0)) as pocsamples, COUNT($table.id) as totaltests";
 
-                $title .= "EID SITES DIONG REMOTE SAMPLE ENTRY FOR ";
-                $briefTitle .= "EID SITES DIONG REMOTE SAMPLE ENTRY ";
+                $title .= "EID SITES DOING REMOTE SAMPLE ENTRY FOR ";
+                $briefTitle .= "EID SITES DOING REMOTE SAMPLE ENTRY ";
             }
             
             if ($request->indicatortype == 7) {
