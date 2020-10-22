@@ -237,6 +237,13 @@ class UserController extends Controller
         }
     }
 
+    public function updateState(Request $request, $user = null)
+    {
+        $user = self::__unHashUser($user);
+        $user->delete();
+        return back();
+    }
+
     private static function __unHashUser($hashed){
         $user = [];
         foreach (User::get() as $key => $value) {
