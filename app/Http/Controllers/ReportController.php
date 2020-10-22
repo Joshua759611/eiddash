@@ -786,8 +786,8 @@ class ReportController extends Controller
                 $title .= "VL DORMANT SITES FOR ";
                 $briefTitle .= "vl DORMANT ";
             } else if ($request->indicatortype == 10) {
-                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT($table.id) as totaltests";
+                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples sent to the lab', 'POC Samples', 'Total Samples'];
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, null)) as pocsamples, COUNT($table.id) as totaltests";
 
                 $title .= "VL SITES DIONG REMOTE SAMPLE ENTRY FOR ";
                 $briefTitle .= "vl SITES DIONG REMOTE SAMPLE ENTRY for";
@@ -922,8 +922,8 @@ class ReportController extends Controller
                 $title = "EID DORMANT SITES FOR ";
                 $briefTitle .= "EID DORMANT SITES ";
             } else if ($request->indicatortype == 10) {
-                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT($table.id) as totaltests";
+                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples & sent to central lab', 'POC Samples', 'Total Samples'];
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, null)) as pocsamples, COUNT($table.id) as totaltests";
 
                 $title .= "EID SITES DIONG REMOTE SAMPLE ENTRY FOR ";
                 $briefTitle .= "EID SITES DIONG REMOTE SAMPLE ENTRY ";
@@ -1297,7 +1297,7 @@ class ReportController extends Controller
         $briefTitle .= " - ".$dateString;
         $title = strtoupper($title);
         $briefTitle = strtoupper($briefTitle);
-        dd($model->toSql());
+        
     	return $model;
     }
 
