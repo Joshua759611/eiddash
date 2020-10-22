@@ -417,7 +417,7 @@
                                 <label><input type="radio" name="indicatortype" value="15" class="i-checks" required>VL Sample Referral Network</label>
                             @endif
                             <br />
-                            @if(Auth::user()->user_type_id == 10)
+                            {{-- @if(Auth::user()->user_type_id == 10)
                                 <hr>
                                 <h4>Maryland Support Reports</h4>
                                 <hr>
@@ -433,7 +433,7 @@
                                 <label><input type="radio" name="indicatortype" value="20" class="i-checks" required>VL No Data Summary</label>
                             @endif
                             <!-- Highest value 22 -->
-                            {{-- @forelse($reports as $report)
+                            @forelse($reports as $report)
                                 <label> <input type="radio" name="indicatortype" value="{{ $report->code }}" class="i-checks" required> {{ $report->name }} </label>
                             @empty
                                 <div class="alert alert-warning">
