@@ -1190,6 +1190,8 @@ class ReportController extends Controller
             $model = $model->where('view_facilitys.county_id', '=', auth()->user()->level);
         if (auth()->user()->user_type_id == 5) 
             $model = $model->where('view_facilitys.subcounty_id', '=', auth()->user()->level);
+        if (auth()->user()->user_type_id == 8)
+            $model = $model->whereRaw("($table.facility_id = {auth()->user()->level} OR $table.lab_id = {auth()->user()->level} OR $table.user_id = {auth()->user()->level})")
 
     	if (isset($request->specificDate)) {
     		$dateString = date('d-M-Y', strtotime($request->specificDate));
