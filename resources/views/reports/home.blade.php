@@ -115,7 +115,7 @@
                                     </div>
                                 @endif
                                 @if(!(Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 5))
-                                    @if(Auth::user()->user_type_id != 7 || Auth::user()->level == 85)
+                                    @if(Auth::user()->user_type_id != 7 || Auth::user()->user_type_id == 8 || Auth::user()->level == 85)
                                     <div class="row">
                                         <label class="col-sm-3 control-label">
                                             <input type="radio" name="category" value="county" class="i-checks" required>Select County
@@ -133,7 +133,7 @@
                                     </div>
                                     @endif
                                 @endif
-                                @if(!(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 6 || Auth::user()->user_type_id == 7))
+                                @if(!(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 6 || Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 8))
                                     <div class="row">
                                         <label class="col-sm-3 control-label">
                                             <input type="radio" name="category" value="subcounty" class="i-checks" required>Select Sub County
@@ -150,7 +150,7 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if(Auth::user()->user_type_id != 6)
+                                @if(Auth::user()->user_type_id != 8)
                                 <div class="row">
                                     <label class="col-sm-3 control-label">
                                         <input type="radio" name="category" value="facility" class="i-checks" required>Select Facility
@@ -340,7 +340,7 @@
                                 @endif
                             </div>
                         </div> 
-                        @if($testtype == 'VL' && in_array(Auth::user()->user_type_id, [3,10]))
+                        @if($testtype == 'VL' && in_array(Auth::user()->user_type_id, [3,8,10]))
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Select Age Group</label>
                             <div class="col-sm-9">
