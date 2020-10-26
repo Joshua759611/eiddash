@@ -788,7 +788,7 @@ class ReportController extends Controller
                 $briefTitle .= "vl DORMANT ";
             } else if ($request->indicatortype == 10) {
                 $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples sent to the lab', 'POC Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, 0)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, 0)) as pocsamples, COUNT($table.id) as totaltests";
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, NULL)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, NULL)) as pocsamples, COUNT($table.id) as totaltests";
 
                 $title .= "VL SITES DOING REMOTE SAMPLE ENTRY FOR ";
                 $briefTitle .= "vl SITES DOING REMOTE SAMPLE ENTRY for";
@@ -924,7 +924,7 @@ class ReportController extends Controller
                 $briefTitle .= "EID DORMANT SITES ";
             } else if ($request->indicatortype == 10) {
                 $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples & sent to central lab', 'POC Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, 0)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, 0)) as pocsamples, COUNT($table.id) as totaltests";
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, NULL)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, NULL)) as pocsamples, COUNT($table.id) as totaltests";
 
                 $title .= "EID SITES DOING REMOTE SAMPLE ENTRY FOR ";
                 $briefTitle .= "EID SITES DOING REMOTE SAMPLE ENTRY ";
