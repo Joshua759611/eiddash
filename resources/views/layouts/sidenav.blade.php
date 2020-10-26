@@ -53,7 +53,11 @@
             @if(Auth::user()->user_type_id == 8)
                 <li><a href="{{ url('results/EID') }}">EID Batch Results</a></li>
                 <hr />
+                <li><a href="{{ url('reports/EID') }}">EID Reports</a></li>
+                <hr />
                 <li><a href="{{ url('results/VL') }}">VL Batch Results</a></li>
+                <hr />
+                <li><a href="{{ url('reports/VL') }}">VL Reports</a></li>
                 <hr />
             @else
                 @if(in_array(Auth::user()->user_type_id, [14, 15]))
