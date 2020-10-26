@@ -1191,7 +1191,8 @@ class ReportController extends Controller
         if (auth()->user()->user_type_id == 5) 
             $model = $model->where('view_facilitys.subcounty_id', '=', auth()->user()->level);
         if (auth()->user()->user_type_id == 8){
-            $user_level = auth()->user()->level;
+            $user_level = auth()->user()->facility_id;
+            dd($user_level);
             $model = $model->whereRaw("($table.facility_id = {$user_level} OR $table.lab_id = {$user_level} OR $table.user_id = {$user_level})");
         }
 
