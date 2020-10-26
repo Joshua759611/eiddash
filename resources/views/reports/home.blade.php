@@ -115,7 +115,7 @@
                                     </div>
                                 @endif
                                 @if(!(Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 5))
-                                    @if(Auth::user()->user_type_id != 7 || Auth::user()->user_type_id == 8 || Auth::user()->level == 85)
+                                    @if(!(Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 8) || Auth::user()->level == 85)
                                     <div class="row">
                                         <label class="col-sm-3 control-label">
                                             <input type="radio" name="category" value="county" class="i-checks" required>Select County
