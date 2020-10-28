@@ -2,12 +2,14 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client;
 use DB;
 
 class Dhis 
 {
 	public static $base = 'https://hiskenya.org/api/28/dataValueSets';
+	public static $kmhfl_base = 'http://api.kmhfltest.health.go.ke/';
 	// public static $base = 'https://test.hiskenya.org/dhiske/';
 
 	public static function send_yearly_data()
@@ -267,4 +269,86 @@ class Dhis
 
         }
 	}
+
+	public static function kmhfl_login()
+	{
+		Cache::forget('kmhfl_token');
+        $client = new Client(['base_uri' => self::$kmhfl_base]);
+
+		$response = $client->request('post', 'o/token/', [
+            // 'auth' => [env('KMHFL_USERNAME'), env('KMHFL_PASSWORD')],
+            'auth' => [env('KMHFL_CLIENT_ID'), env('KMHFL_CLIENT_SECRET')],
+			'http_errors' => false,
+			'verify' => false,
+			'debug' => true,
+			'form_params' => [
+				'grant_type' => 'password',
+				'scope' => 'read',
+				'username' => env('KMHFL_USERNAME'),
+				'password' => env('KMHFL_PASSWORD'),
+			],
+		]);   
+		$body = json_decode($response->getBody());
+
+		$status_code = $response->getStatusCode();  
+
+		if($status_code > 399) dd($body);
+		Cache::put('kmhfl_token', $body->access_token, 60);
+		return $body->access_token; 
+
+		echo "Status code is {$status_code} \n"; 
+		dd($body);
+	}
+
+	public static function get_kmhfl_token()
+	{
+		if!(Cache::has('kmhfl_token')) self::kmhfl_login();
+		return Cache::get('kmhfl_token');
+	}
+
+
+
+	public static function kmhfl_facilities()
+	{
+        $client = new Client(['base_uri' => self::$kmhfl_base]);
+        $page = 1;
+
+
+        while(true){
+
+			$response = $client->request('post', 'api/facilities/facilities', [
+	            'headers' => [
+	            	'Authorization' => 'Bearer ' . self::get_kmhfl_token(),
+	            ],
+				'http_errors' => false,
+				'verify' => false,
+				'debug' => true,
+				'query' => [
+					'format' => 'json',
+					'page' => $page,
+				],
+			]); 
+
+
+
+
+			$body = json_decode($response->getBody());  
+			$status_code = $response->getStatusCode(); 
+			if($status_code > 399) dd($body);
+
+			foreach ($body->results as $key => $result) {
+				# code...
+			}
+
+			if($page >= $body->current_page) break;
+
+			$page++;
+
+		}
+
+		echo "Status code is {$status_code} \n"; 
+		dd($body);
+
+	}
+
 }

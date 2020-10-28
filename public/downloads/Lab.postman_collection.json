@@ -281,7 +281,7 @@
 						},
 						{
 							"key": "patient_identifier",
-							"value": "10263-kljsd",
+							"value": "10263-kljsds",
 							"type": "text"
 						},
 						{
@@ -301,7 +301,7 @@
 						},
 						{
 							"key": "prophylaxis",
-							"value": "AF2A",
+							"value": "AF2Aa",
 							"type": "text"
 						},
 						{
@@ -581,5 +581,6 @@
 			},
 			"response": []
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }

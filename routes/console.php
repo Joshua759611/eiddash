@@ -25,6 +25,10 @@ Artisan::command('dhis', function () {
     \App\Dhis::send_data();
 })->describe('Send VL data to DHIS.');
 
+Artisan::command('kmhfl', function () {
+    \App\Dhis::kmhfl_facilities();
+})->describe('Talk with KMHFL.');
+
 Artisan::command('dhis:year', function () {
     \App\Dhis::send_yearly_data();
 })->describe('Send VL data for the year to DHIS.');
