@@ -1656,7 +1656,7 @@ class Random
         CREATE OR REPLACE VIEW sample_complete_view AS
         (
           SELECT s.*, b.original_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, b.facility_id, b.user_id, b.batch_complete,
-          p.national_patient_id, p.patient, p.sex, p.dob, p.mother_id, m.national_mother_id, m.patient_id as mother_vl_patient_id, m.ccc_no as mother_ccc_no, p.dateinitiatedontreatment, p.ccc_no, 
+          p.original_patient_id, p.patient, p.sex, p.dob, p.mother_id, m.national_mother_id, m.patient_id as mother_vl_patient_id, m.ccc_no as mother_ccc_no, p.dateinitiatedontreatment, p.ccc_no, 
           p.hei_validation, p.enrollment_ccc_no, p.enrollment_status, p.referredfromsite, p.otherreason,
 
 
