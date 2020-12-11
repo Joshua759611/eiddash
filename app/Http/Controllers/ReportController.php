@@ -308,6 +308,7 @@ class ReportController extends Controller
         }
         $title = preg_replace('/[^A-Za-z0-9 ]/', '', $title);
         
+        set_time_limit(600);
         return (new ReportExport($data, $excelColumns))->download("$title.csv");
     }
 
