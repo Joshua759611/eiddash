@@ -309,7 +309,8 @@ class ReportController extends Controller
         }
         $title = preg_replace('/[^A-Za-z0-9 ]/', '', $title);
         set_time_limit(600);
-        return (new ReportExport($data, $excelColumns))->store("$title.csv", "public/temp");
+        return Excel::store(new ReportExport($data, $excelColumns), 'public/temp/invoices.xlsx');
+        // return (new ReportExport($data, $excelColumns))->store("$title.csv");
     }
 
     protected function __getOutcomesByPlartform($request) {
