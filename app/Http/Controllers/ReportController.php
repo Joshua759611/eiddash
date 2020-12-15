@@ -308,9 +308,8 @@ class ReportController extends Controller
             $data = $this->__getExcel($data, $title, $excelColumns, $briefTitle);
         }
         $title = preg_replace('/[^A-Za-z0-9 ]/', '', $title);
-        
         set_time_limit(600);
-        return (new ReportExport($data, $excelColumns))->download("$title.csv");
+        return (new ReportExport($data, $excelColumns))->store("$title.csv", "public/temp");
     }
 
     protected function __getOutcomesByPlartform($request) {
@@ -1303,7 +1302,7 @@ class ReportController extends Controller
         $briefTitle .= " - ".$dateString;
         $title = strtoupper($title);
         $briefTitle = strtoupper($briefTitle);
-        
+        // dd($model->toSql());
     	return $model;
     }
 
