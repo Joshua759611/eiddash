@@ -10,6 +10,7 @@ class Console
 
 	public static function all_eid_outcomes($year)
 	{
+		ini_set('memory_limit', '-1');
         $table = 'sample_complete_view';
         $selectStr = "$table.id, $table.patient, $table.original_batch_id, IF(lab.name IS NULL, poclab.name, lab.name) as labdesc, view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility, view_facilitys.facilitycode, $table.gender_description, $table.dob, $table.age, pcrtype.alias as pcrtype, $table.enrollment_ccc_no, $table.datecollected, $table.datereceived, $table.datetested, $table.datedispatched";
 
@@ -30,7 +31,6 @@ class Console
         $model = $model->whereRaw("YEAR(datetested)={$year}");
 
         $data = $model->get()->toArray();
-        return (new ReportExport($data, $excelColumns))->download("$title.csv");
 
         $filename = 'eid_all_outcomes_for' . $year . '.csv';
         \Maatwebsite\Excel\Facades\Excel::store(new \App\Exports\ReportExport($data, $excelColumns), $filename);
