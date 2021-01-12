@@ -23,4 +23,9 @@ class SampleCompleteView extends ViewModel
     		return null;
     	return DB::table('hei_validation')->where('id','=',$hei_validation)->first();
     }
+
+    public function rejected_reason($rejectedreason)
+    {
+        return Lookup::get_rejected_reason(1, $rejectedreason);
+    }
 }

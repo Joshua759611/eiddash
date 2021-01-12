@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(GeneralConsumablesSeeder::class);
         // $this->call(AllocationContactSeeder::class);
         // $this->call(ReportsSeeder::class);
-        $this->call(CovidKitsSeeder::class);
+        // $this->call(CovidKitsSeeder::class);
+        $this->call(ManualMachineSeeder::class);
     }
 }

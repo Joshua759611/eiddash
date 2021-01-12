@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\BlankRequest;
 use App\Api\V1\Requests\CommodityRequest;
 use App\Api\V1\Requests\CovidConsumptionRequest;
+use App\Api\V1\Requests\CovidConsumptionPullRequest;
 
 use App\Consumption;
 use App\ConsumptionDetail;
@@ -14,6 +15,7 @@ use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
 use App\Kits;
+use App\Machine;
 use DB;
 /**
  * 
@@ -103,17 +105,118 @@ class ConsumptionsController extends Controller
 		return response()->json($response);
 	}
 
+	public function covid_api_create(CovidConsumptionRequest $request)
+	{
+		// Presence of the parameters will be checked at the request class
+		$platforms = $request->input('platforms');
+		$insertData = [];
+		foreach ($platforms as $key => $platform) {
+			$machine = Machine::where('machine', 'like', $platform['name'])->get();
+			if (!$machine->isEmpty()) {
+				$data = $this->covid_get_values($machine->first(), $platform);
+				if (!$data)
+					return response()->json([
+							'error' => true,
+							'message' => 'Bad Request. The values provided indicate a negative ending balance. Please ensure that the values give a positive ending balance'
+						], 400);
+				$insertData[$key] = [
+						'machine' => $machine->first()->machine,
+						'tests' => $platform['tests'],
+					];
+			}
+			$insertData[$key]['details'] = $data;
+
+		}
+		
+		try {
+			$existing = CovidConsumption::where('start_of_week', date('Y-m-d', strtotime($request->input('start_of_week'))))->where('end_of_week', date('Y-m-d', strtotime($request->input('end_of_week'))))->where('lab_id', session('lab')->id)->get();
+			if ($existing->isEmpty()){
+				$consumption = new CovidConsumption;
+			} else {
+				$consumption = $existing->first();
+				foreach ($consumption->details as $key => $detail) {
+					$detail->delete();
+				}
+			}
+
+			$consumption->start_of_week = date('Y-m-d', strtotime($request->input('start_of_week')));
+			$consumption->end_of_week = date('Y-m-d', strtotime($request->input('end_of_week')));
+			$consumption->week = date('W', strtotime($request->input('start_of_week')));
+			$consumption->lab_id = session('lab')->id;
+			if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
+				$consumption->deleted_at = date('Y-m-d H:i:s');
+			$consumption->save();
+			$tests = [];
+			foreach ($insertData as $key => $data) {
+				if (isset($data['machine']))
+					$tests[$data['machine']] = $data['tests'];
+				
+				foreach ($data['details'] as $key => $detail) {
+					$details = new CovidConsumptionDetail;
+					$details->fill($detail);
+					$details->consumption_id = $consumption->id;
+					$details->save();
+				}
+			}
+			$consumption->tests = json_encode($tests);
+			$consumption->synced = 1;
+			$consumption->datesynced = date('Y-m-d');
+			$consumption->save();
+		} catch (Exception $e) {
+			return response()->json([
+						'error' => true,
+						'message' => $e
+					], 500);
+		}
+		
+		return response()->json($consumption->load('details'), 200);
+	}
+
+	private function covid_get_values($machine, $platform_data)
+	{
+		$kits = $machine->covid_kits;
+		$data = [];
+		foreach ($kits as $key => $kit) {
+			$begining_balance = $platform_data['begining_balance'];
+			$received = $platform_data['received'];
+			$used = $platform_data['used'];
+			$positive_adjustment = $platform_data['positive_adjustment'];
+			$negative_adjustment = $platform_data['negative_adjustment'];
+			$wastage = $platform_data['wastage'];
+			$requested = $platform_data['requested'];
+			$ending = (((float)$begining_balance[$kit->material_no]+(float)$received[$kit->material_no]+(float)$positive_adjustment[$kit->material_no]) - ((float)$used[$kit->material_no]+(float)$negative_adjustment[$kit->material_no]+(float)$wastage[$kit->material_no]));
+			if ($ending < 0)
+				return false;
+			$data[$kit->id] = [
+					'kit_id' => $kit->id,
+					'begining_balance' => $begining_balance[$kit->material_no],
+					'received' => $received[$kit->material_no],
+					'kits_used' => $used[$kit->material_no],
+					'positive' => $positive_adjustment[$kit->material_no],					
+					'negative' => $negative_adjustment[$kit->material_no],
+					'wastage' => $wastage[$kit->material_no],
+					'ending' => $ending,
+					'requested' => $requested[$kit->material_no],
+				];
+		}
+		
+		return $data;
+	}
+
 	public function create_covid(BlankRequest $request)
 	{
 		$consumptions = json_decode($request->input('consumptions'));
+		// $consumptions = $request->all();
+		// return response()->json($consumptions);
 		$consumptions_array = [];
 		foreach ($consumptions as $key => $consumption) {
-			$existing = CovidConsumption::existing($consumption->start_of_week)->first();
+			$consumption = (object) $consumption;
+			$existing = CovidConsumption::existing($consumption->start_of_week, $consumption->lab_id)->first();
 			if ($existing){
 				$consumptions_array[] = ['original_id' => $consumption->id, 'national_id' => $existing->id ];
 				continue;
 			}
-
+						
 			DB::beginTransaction();
 			try
 			{
@@ -125,55 +228,68 @@ class ConsumptionsController extends Controller
 				$db_consumption->synced = 1;
 				$db_consumption->datesynced = date('Y-m-d');
 				unset($db_consumption->id);
+				unset($db_consumption->national_id);
 				unset($db_consumption->details);
 				$db_consumption->save();
 
 				// Inserting the covid details
 				foreach ($consumption->details as $key => $detail) {
-					$kit = CovidKit::where('material_no', $detail->kit->material_no)->first();
-					$db_detail = new CovidConsumptionDetail;
-					$detail_data = get_object_vars($detail);
-					$db_detail->consumption_id = $db_consumption->id;
-					$db_detail->kit_id = $kit->id;
-					$db_detail->original_id = $detail->id;
-					$db_detail->synced = 1;
-					$db_detail->datesynced = date('Y-m-d');
-					unset($db_detail->id);
-					$db_detail->save();
+					$detail = (object)$detail;
+					if (null !== $detail->kit) {
+						$detailKit = (object)$detail->kit;
+						$kit = CovidKit::where('material_no', $detailKit->material_no)->first();
+						if ($kit) {
+							$db_detail = new CovidConsumptionDetail;
+							$detail_data = get_object_vars($detail);
+							$db_detail->fill($detail_data);
+							$db_detail->consumption_id = $db_consumption->id;
+							$db_detail->kit_id = $kit->material_no;
+							$db_detail->original_id = $detail->id;
+							$db_detail->synced = 1;
+							$db_detail->datesynced = date('Y-m-d');
+							unset($db_detail->id);
+							unset($db_detail->kit);
+							$save = $db_detail->save();
+						}
+					}
 				}
 				DB::commit();				
 				$consumptions_array[] = ['original_id' => $db_consumption->original_id, 'national_id' => $db_consumption->id ];
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				DB::rollback();
 				return response()->json([
 						'error' => true,
-						'message' => 'Insert failed',
-						'code' => 500
+						'message' => 'Insert failed: Unexpected error occured while inserting lab' . json_decode($request->input('lab')) . ' data.',
+						'code' => 500,
+						'detailed' => $e
 					], 500);
 			}
 		}
 		return response()->json($consumptions_array);
 	}
 
-	public function getCovidConsumptions(CovidConsumptionRequest $request)
+	public function getCovidConsumptions(CovidConsumptionPullRequest $request)
 	{
-		$consumptions = CovidConsumption::with(['lab', 'details.kit'])
-												->when($request, function ($query) use ($request){
+		$consumptions = CovidConsumption::when($request, function ($query) use ($request){
 													if ($request->has('start_of_week'))
 														return $query->whereDate('start_of_week', $request->input('start_of_week'));
 												})->get();
+		
 		$data = [];													
 		foreach ($consumptions as $conskey => $consumption) {
 			$data[$conskey] = [
-					'lab' => $consumption->lab->labdesc,
+					'consumption' => $consumption->id,
+					'labid' => $consumption->lab->id ?? '',
+					'labname' => $consumption->lab->name ?? '',
 					'start_of_week' => $consumption->start_of_week,
 					'end_of_week' => $consumption->end_of_week,
-					'week' => $consumption->week
+					'week' => $consumption->week,
+					'tests' => json_decode($consumption->tests)
 				];
 			foreach ($consumption->details as $key => $detail) {
 				$data[$conskey]['details'][] = [
-								'material_no' => $detail->kit->material_no,
-								'product_description' => $detail->kit->product_description,
+								'material_no' => $detail->kit->material_no ?? '',
+								'product_description' => $detail->kit->product_description ?? '',
 								'begining_balance' => $detail->begining_balance,
 								'received' => $detail->received,
 								'used' => $detail->kits_used,

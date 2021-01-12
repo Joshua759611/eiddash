@@ -17,7 +17,10 @@ class CommodityRequest extends FormRequest
     public function authorize()
     {
     	$apikey = $this->headers->get('apikey');
+        if (!$apikey)
+            return false;
         $apilab = \App\Lab::select('id', 'name')->where('apikey', '=', $apikey)->get();
+        
         if($apilab->isEmpty()) return false;
         else{
             if(!session()->has('lab'));

@@ -8,6 +8,6 @@ class CovidConsumptionDetail extends BaseModel
 {
     public function kit()
     {
-    	return $this->belongsTo(CovidKit::class, 'kit_id', 'id');
+    	return $this->belongsTo(CovidKit::class, 'kit_id', 'material_no');
     }
 }

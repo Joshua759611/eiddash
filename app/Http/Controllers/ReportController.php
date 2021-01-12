@@ -307,7 +307,10 @@ class ReportController extends Controller
             $data = $this->__getDateData($request,$dateString, $excelColumns, $title, $briefTitle);
             $data = $this->__getExcel($data, $title, $excelColumns, $briefTitle);
         }
-        
+        $title = preg_replace('/[^A-Za-z0-9 ]/', '', $title);
+        set_time_limit(600);
+        // dd($data);
+        // return Excel::store(new ReportExport($data, $excelColumns), 'public/temp/invoices.xlsx');
         return (new ReportExport($data, $excelColumns))->download("$title.csv");
     }
 
@@ -532,7 +535,9 @@ class ReportController extends Controller
             $newdataArray[] = $report;
         }
         // dd($newdataArray);
-        $title = "$lab->labname Test Outcomes $request->year";
+        $labname = preg_replace('/[^A-Za-z0-9 ]/', '', $lab->labname);
+
+        $title = "$labname Test Outcomes $request->year";
         $string = (strlen($lab->labname) > 31) ? substr($lab->labname,0,28).'...' : $lab->labname;
         $sheetTitle = "$string";
 
@@ -784,11 +789,11 @@ class ReportController extends Controller
                 $title .= "VL DORMANT SITES FOR ";
                 $briefTitle .= "vl DORMANT ";
             } else if ($request->indicatortype == 10) {
-                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT($table.id) as totaltests";
+                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples sent to the lab', 'POC Samples', 'Total Samples'];
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, NULL)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, NULL)) as pocsamples, COUNT($table.id) as totaltests";
 
-                $title .= "VL SITES DIONG REMOTE SAMPLE ENTRY FOR ";
-                $briefTitle .= "vl SITES DIONG REMOTE SAMPLE ENTRY for";
+                $title .= "VL SITES DOING REMOTE SAMPLE ENTRY FOR ";
+                $briefTitle .= "vl SITES DOING REMOTE SAMPLE ENTRY for";
             }
 
             $model = ViralsampleCompleteView::selectRaw($selectStr)
@@ -920,11 +925,11 @@ class ReportController extends Controller
                 $title = "EID DORMANT SITES FOR ";
                 $briefTitle .= "EID DORMANT SITES ";
             } else if ($request->indicatortype == 10) {
-                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples', 'Total Samples'];
-                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, null)) as remotelogged, COUNT($table.id) as totaltests";
+                $excelColumns = ['County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Remote Logged Samples & sent to central lab', 'POC Samples', 'Total Samples'];
+                $selectStr =  "view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility , view_facilitys.facilitycode, COUNT(IF($table.site_entry = 1, 1, NULL)) as remotelogged, COUNT(IF($table.site_entry = 2, 1, NULL)) as pocsamples, COUNT($table.id) as totaltests";
 
-                $title .= "EID SITES DIONG REMOTE SAMPLE ENTRY FOR ";
-                $briefTitle .= "EID SITES DIONG REMOTE SAMPLE ENTRY ";
+                $title .= "EID SITES DOING REMOTE SAMPLE ENTRY FOR ";
+                $briefTitle .= "EID SITES DOING REMOTE SAMPLE ENTRY ";
             }
             
             if ($request->indicatortype == 7) {
@@ -1188,6 +1193,10 @@ class ReportController extends Controller
             $model = $model->where('view_facilitys.county_id', '=', auth()->user()->level);
         if (auth()->user()->user_type_id == 5) 
             $model = $model->where('view_facilitys.subcounty_id', '=', auth()->user()->level);
+        if (auth()->user()->user_type_id == 8){
+            $user_level = auth()->user()->facility_id;
+            $model = $model->whereRaw("($table.facility_id = {$user_level} OR $table.lab_id = {$user_level} OR $table.user_id = {$user_level})");
+        }
 
     	if (isset($request->specificDate)) {
     		$dateString = date('d-M-Y', strtotime($request->specificDate));

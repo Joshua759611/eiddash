@@ -1,9 +1,11 @@
 <?php
 namespace App\Api\V1\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GenerealController;
 use App\Api\V1\Requests\ShortCodeRequest;
+use App\Common;
 use App\SampleCompleteView;
 use App\ViralsampleCompleteView;
 use App\Patient;
@@ -16,10 +18,11 @@ use GuzzleHttp\Client;
  */
 class ShortCodeController extends Controller
 {
-    public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    // public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+    public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 
-    private $limit = 5;
+    private $limit = 2;
 
     private $msgFormat = "R`MFLCode`-`Patient Number`";
 
@@ -35,12 +38,13 @@ class ShortCodeController extends Controller
 		$messageBreakdown = $this->messageBreakdown($message);
 		if (!$messageBreakdown) {
 			$message = "The correct message format is {$this->msgFormat}\n {$this->msgFormatDescription}";
-			return response()->json(self::__sendMessage($phone, $message));
+			return response()->json(Common::sms($phone, $message));
 		}
 		$patientTests = $this->getPatientData($messageBreakdown, $patient, $facility); // Get the patient data
+
 		$textMsg = $this->buildTextMessage($patientTests, $status, $testtype); // Get the message to send to the patient.
 		$sendTextMsg = $this->sendTextMessage($textMsg, $patient, $facility, $status, $message, $phone, $testtype); // Save and send the message
-		return response()->json($sendTextMsg);
+		return response()->json($textMsg);
 	}
 
 	private function messageBreakdown($message = null) {
@@ -88,17 +92,18 @@ class ShortCodeController extends Controller
 						->where('patient_id', '=', $patient->id)
 						->where('repeatt', '=', 0)
 						->orderBy("$table.id", 'desc')
-						->limit($this->limit)
+						->limit(env('SHORTCODE_R_LIMIT'))
 						->get();
 		return $model;
 	}
 
 	private function buildTextMessage($tests = null, &$status, &$testtype){
+		if (empty($tests))
+			return "No test data found for the patient number provided.";
 		$msg = '';
 		$inprocessmsg="Sample Still In process at the ";
 		$inprocessmsg2=" The Result will be automatically sent to your number as soon as it is Available.";
-		if (empty($tests))
-			return $msg;
+		
 		foreach ($tests as $key => $test) {
 			$testtype = (get_class($test) == 'App\ViralsampleCompleteView') ? 2 : 1;
 			$msg .= "Facility: " . $test->facility . " [ " . $test->facilitycode . " ]\n";
@@ -138,7 +143,7 @@ class ShortCodeController extends Controller
 		}
 		date_default_timezone_set('Africa/Nairobi');
         $dateresponded = date('Y-m-d H:i:s');
-		$responseCode = self::__sendMessage($phone, $msg);
+		$response = Common::sms($phone, $msg);
 		$shortcode = new ShortCodeQueries;
 		$shortcode->testtype = $testtype;
 		$shortcode->phoneno = $phone;
@@ -146,9 +151,12 @@ class ShortCodeController extends Controller
 		$shortcode->facility_id = $facility->id ?? null;
 		$shortcode->patient_id = $patient;
 		$shortcode->datereceived = $dateresponded;
+		if ($response)
+			$shortcode->dateresponded = $dateresponded;
 		$shortcode->status = $status;
 
-		if ($responseCode < 400)
+		// if ($response->code < 400)
+		if ($response)
 			$shortcode->dateresponded = $dateresponded;
 		$shortcode->save();
 		return $msg;
@@ -157,20 +165,38 @@ class ShortCodeController extends Controller
     static function __sendMessage($phone, $message) {
        $client = new Client(['base_uri' => self::$sms_url]);
 
+		// $response = $client->request('post', '', [
+		// 	// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+		// 	'http_errors' => false,
+		// 	'json' => [
+		// 		// 'sender' => env('SMS_SENDER_ID'),
+  //               'apiKey' => env('SMS_KEY'),
+  //               'shortCode' => env('SMS_SENDER_ID'),
+		// 		'recipient' => $phone,
+		// 		'message' => $message,
+  //               'callbackURL' => self::$sms_callback,
+  //               'enqueue' => 0,
+		// 	],
+		// ]);
+		// return $response->getStatusCode();
+
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
+			'debug' => false,
 			'json' => [
-				// 'sender' => env('SMS_SENDER_ID'),
-                'apiKey' => env('SMS_KEY'),
-                'shortCode' => env('SMS_SENDER_ID'),
-				'recipient' => $phone,
+                'apikey' => env('SMS_KEY'),
+                'shortcode' => env('SMS_SENDER_ID'),
+                'partnerID' => env('SMS_PARTNER_ID'),
+				'mobile' => $phone,
 				'message' => $message,
-                'callbackURL' => self::$sms_callback,
-                'enqueue' => 0,
 			],
 		]);
-		return $response->getStatusCode();
+
+		return (object)[
+				'code' => $response->getStatusCode(),
+				'body' => json_decode($response->getBody())
+			];
 
 		// $body = json_decode($response->getBody());
   //       if($response->getStatusCode() == 402) die();

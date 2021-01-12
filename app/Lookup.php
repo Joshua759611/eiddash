@@ -190,6 +190,17 @@ class Lookup
         ];        
     }
 
+    public static function get_rejected_reason($test, $rejectedreason)
+    {
+        self::cacher();
+
+        if($test == 1) $reasons = Cache::get('rejected_reasons');
+        else if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        else return '';
+
+        return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
+    }
+
     public static function filler($sample, $i)
     {
         $filler =  ['total' => 0, 'non_sup' => 0, 'pregnant' => 0, 'breast_feeding' => 0, 'adolescents' => 0, 'children' => 0, 'adults' => 0, 'no_age' => 0];
