@@ -3,7 +3,7 @@
 namespace App;
 
 
-class Console extends Model
+class Console 
 {
 
 
