@@ -31,7 +31,7 @@ class Console
 
         // $data = $model->get()->toArray();
 
-        $filename = 'eid_all_outcomes_for' . $year . '.csv';
+        $filename = 'eid_all_outcomes_for_' . $year . '.csv';
         // \Maatwebsite\Excel\Facades\Excel::store(new \App\Exports\ReportExport($data, $excelColumns), $filename);
         \Maatwebsite\Excel\Facades\Excel::store(new \App\Exports\QueryExport($model, $excelColumns), $filename);
 	}
