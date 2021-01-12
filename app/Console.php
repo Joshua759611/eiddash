@@ -27,6 +27,7 @@ class Console
         $model = $model->leftJoin('pcrtype', 'pcrtype.id', '=', "$table.pcrtype");
         $model = $model->leftJoin('results as ir', 'ir.id', '=', "$table.result");
         $model = $model->whereRaw("YEAR(datetested)={$year}");
+        $model = $model->where(['repeatt' => 0, "$table.flag" => 1]);
 
         // $data = $model->get()->toArray();
 
