@@ -6,8 +6,6 @@ namespace App;
 class Console 
 {
 
-
-
 	public static function all_eid_outcomes($year)
 	{
 		ini_set('memory_limit', '-1');
@@ -30,9 +28,10 @@ class Console
         $model = $model->leftJoin('results as ir', 'ir.id', '=', "$table.result");
         $model = $model->whereRaw("YEAR(datetested)={$year}");
 
-        $data = $model->get()->toArray();
+        // $data = $model->get()->toArray();
 
         $filename = 'eid_all_outcomes_for' . $year . '.csv';
-        \Maatwebsite\Excel\Facades\Excel::store(new \App\Exports\ReportExport($data, $excelColumns), $filename);
+        // \Maatwebsite\Excel\Facades\Excel::store(new \App\Exports\ReportExport($data, $excelColumns), $filename);
+        \Maatwebsite\Excel\Facades\Excel::store(new \App\Exports\QueryExport($model, $excelColumns), $filename);
 	}
 }
