@@ -25,6 +25,7 @@ class Console
         $model = $model->leftJoin('entry_points', 'entry_points.id', '=', "$table.entry_point");
         $model = $model->leftJoin('mothers', 'mothers.id', '=', "$table.mother_id")->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status');
         $model = $model->leftJoin('view_facilitys as poclab', 'poclab.id', '=', "$table.lab_id");
+        $model = $model->leftJoin('pcrtype', 'pcrtype.id', '=', "$table.pcrtype");
         $model = $model->leftJoin('results as ir', 'ir.id', '=', "$table.result");
         $model = $model->whereRaw("YEAR(datetested)={$year}");
 
