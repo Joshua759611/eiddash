@@ -66,7 +66,8 @@ class Viralsample extends BaseModel
         $samples = \App\Viralsample::where('patient_id', $this->patient_id)
                 ->when(true, function($query) use ($s){
                     if($s->datetested) return $query->where('datetested', '<', $s->datetested);
-                    return $query->where('datecollected', '<', $s->datecollected);
+                    if($s->datecollected) return $query->where('datecollected', '<', $s->datecollected);
+                    return $query->where('id', '<', 0);
                 })
                 ->where('repeatt', 0)
                 ->whereIn('rcategory', [1, 2, 3, 4])
