@@ -302,7 +302,7 @@ class Dhis
 
 	public static function get_kmhfl_token()
 	{
-		if!(Cache::has('kmhfl_token')) self::kmhfl_login();
+		if(!Cache::has('kmhfl_token')) self::kmhfl_login();
 		return Cache::get('kmhfl_token');
 	}
 
