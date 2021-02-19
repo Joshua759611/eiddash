@@ -29,6 +29,7 @@ class ShortCodeController extends Controller
     private $msgFormatDescription = "This message should always begin with `R` this is immediatly followed by the MFLCode without any character between the `R` and the `MFLCode`. The MFLCode is immediatly followed by a hyphen (-). The hyphen is immediately followed by the patient number as it appears on the patient file.\nN/B The shortcode does not contain any spaces in it and there is no hyphen after the `R`";
 
 	public function shortcode(ShortCodeRequest $request) {
+		Log::channel('shortcode')->info(json_encode($request->all()));
 		$message = $request->input('smsmessage');
 		$phone = $request->input('smsphoneno');
 		$patient = null;
