@@ -79,6 +79,13 @@ return [
             'level' => 'debug',
             'days' => 7,
         ],
+
+        'consumption' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/consumption/consumption.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
     ],
 
 ];
