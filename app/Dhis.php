@@ -14,27 +14,42 @@ class Dhis
 
 	public static function send_yearly_data()
 	{
-		for ($months=1; $months < 12; $months++) { 
-			$y = date('Y', strtotime("-{$months} month"));
+		for ($months=1; $months < 13; $months++) { 
+			/*$y = date('Y', strtotime("-{$months} month"));
 			if($y < date('Y')) break;
+			self::send_data($months);*/
 
-			self::send_data($months);
+	        $y = date('Y', strtotime("-{$months} month"));
+			if($y < date('Y') && $months > 1) break;
+	        $m = date('m', strtotime("-{$months} month"));
+	        $period = date('Ym', strtotime("-{$months} month"));
+	        self::send_data($y, $m, $period);
+
 		}
 	}
 
-	public static function send_data($months=null)
+	public static function send_year_data($year=null)
+	{
+		if(!$year) $year = date('Y');
+		for ($month=1; $month < 13; $month++) { 
+			if($year == date('Y') && $month > date('m')) break;
+	        self::send_data($year, $month, ($year . $month));
+		}
+	}
+
+	public static function send_data($y, $m, $dhis_period)
 	{		
 		ini_set('memory_limit', '-1');
         $client = new Client(['base_uri' => self::$base]);
 
-        if(!$months) $months = 1;
-
-        $facilities = Facility::all();
+        $facilities = Facility::whereNotNull('DHIScode')->where('DHIScode', '!=', 0)->get();
 
         foreach ($facilities as $key => $fac) {
-        	$row = DB::connection('api')->table('vl_site_dhis')
-        		->where(['year' => date('Y', strtotime("-{$months} month")), 'month' => date('m', strtotime("-{$months} month")), 'facility' => $fac->id])
-        		->first();
+        	$locator = ['year' => $y, 'month' => $m, 'facility' => $fac->id];
+
+        	$row = DB::connection('api')->table('vl_site_dhis')->where($locator)->first();
+        	$tat_row = DB::connection('api')->table('vl_site_summary')->where($locator)->first();
+        	$eid_row = DB::connection('api')->table('site_summary')->where($locator)->first();
 
         	if(!$row || !$fac->DHIScode){
         		echo "Facility {$fac->id}  {$fac->name} missing";
@@ -44,10 +59,62 @@ class Dhis
         	$payload = [
 				'dataSet' => 'c39u6D2m0au',
 				'completeDate' => date('Y-m-d'),
-				'period' => date('Ym', strtotime("-{$months} month")),
+				'period' => $dhis_period,
 				'orgUnit' => $fac->DHIScode,
 				// 'attributeOptionCombo' => 'aocID',
 				'dataValues' => [
+					// EID
+					[
+						// EID PCR Pos
+						'dataElement' => 'StJk9dFjTkz',
+						'categoryOptionCombo' => 'OzshuDqmXQI',
+						'value' => ($eid_row->allpos ?? 0) ,
+						'comment' => 'comment',						
+					],
+					[
+						// EID_First PCR done
+						'dataElement' => 'GanOcMkc1LP',
+						'categoryOptionCombo' => 'OzshuDqmXQI',
+						'value' => ($eid_row->firstdna ?? 0) ,
+						'comment' => 'comment',						
+					],
+					[
+						//EID_PCR Within two months
+						'dataElement' => 'ERjQ66wE0cM',
+						'categoryOptionCombo' => 'OzshuDqmXQI',
+						'value' => ($eid_row->firstdna ?? 0) ,
+						'comment' => 'comment',						
+					],
+
+
+
+					// VL TAT
+					[
+						'dataElement' => 'KusVcTBr9z9',
+						'categoryOptionCombo' => 'OzshuDqmXQI',
+						'value' => ($tat_row->tat1 ?? 0) ,
+						'comment' => 'comment',						
+					],
+					[
+						'dataElement' => 'BLcaZZLsttN',
+						'categoryOptionCombo' => 'OzshuDqmXQI',
+						'value' => ($tat_row->tat2 ?? 0) ,
+						'comment' => 'comment',						
+					],
+					[
+						'dataElement' => 'THgFjWmCzAX',
+						'categoryOptionCombo' => 'OzshuDqmXQI',
+						'value' => ($tat_row->tat3 ?? 0) ,
+						'comment' => 'comment',						
+					],
+					[
+						'dataElement' => 'JdbBCrLZeRL',
+						'categoryOptionCombo' => 'OzshuDqmXQI',
+						'value' => ($tat_row->tat4 ?? 0) ,
+						'comment' => 'comment',						
+					],
+
+
 					// Male Suppressed
 					[
 						// 0-1 Male Suppressed

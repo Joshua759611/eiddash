@@ -29,9 +29,13 @@ Artisan::command('kmhfl', function () {
     \App\Dhis::kmhfl_facilities();
 })->describe('Talk with KMHFL.');
 
-Artisan::command('dhis:year', function () {
+Artisan::command('dhis:current', function () {
     \App\Dhis::send_yearly_data();
-})->describe('Send VL data for the year to DHIS.');
+})->describe('Send VL/EID data for the current year to DHIS.');
+
+Artisan::command('dhis:year {year?}', function ($year=null) {
+    \App\Dhis::send_year_data($year);
+})->describe('Send VL/EID data for the chosen year to DHIS.');
 
 Artisan::command('alere', function () {
     \App\Poc::alereq();
