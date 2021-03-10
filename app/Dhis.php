@@ -20,7 +20,7 @@ class Dhis
 			self::send_data($months);*/
 
 	        $y = date('Y', strtotime("-{$months} month"));
-			// if($y < date('Y') && $months > 1) break;
+			if($y < date('Y') && $months > 1) break;
 	        $m = date('m', strtotime("-{$months} month"));
 	        $period = date('Ym', strtotime("-{$months} month"));
 	        self::send_data($y, $m, $period);
