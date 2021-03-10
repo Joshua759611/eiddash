@@ -42,7 +42,7 @@ class Dhis
 		ini_set('memory_limit', '-1');
         $client = new Client(['base_uri' => self::$base]);
 
-        $facilities = Facility::whereNotNull('DHIScode')->where('DHIScode', '!=', 0)->get();
+        $facilities = Facility::whereNotNull('DHIScode')->where('DHIScode', '!=', '0')->get();
 
         foreach ($facilities as $key => $fac) {
         	$locator = ['year' => $y, 'month' => $m, 'facility' => $fac->id];
@@ -314,7 +314,7 @@ class Dhis
 					],
 				],
 			];
-			
+
 			$response = $client->request('post', '', [
 	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
 				'http_errors' => false,
