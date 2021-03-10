@@ -20,7 +20,7 @@ class Dhis
 			self::send_data($months);*/
 
 	        $y = date('Y', strtotime("-{$months} month"));
-			if($y < date('Y') && $months > 1) break;
+			// if($y < date('Y') && $months > 1) break;
 	        $m = date('m', strtotime("-{$months} month"));
 	        $period = date('Ym', strtotime("-{$months} month"));
 	        self::send_data($y, $m, $period);
@@ -314,8 +314,7 @@ class Dhis
 					],
 				],
 			];
-			// dd($payload);
-
+			
 			$response = $client->request('post', '', [
 	            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
 				'http_errors' => false,
@@ -331,9 +330,6 @@ class Dhis
 			else{
 				DB::connection('api')->table('vl_site_dhis')->where('ID', $row->ID)->update(['time_sent_to_dhis' => date('Y-m-d H:i:s')]);
 			}
-
-			// dd($body);
-
         }
 	}
 
