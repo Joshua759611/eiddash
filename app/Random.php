@@ -74,6 +74,29 @@ class Random
 		}
 	}
 
+	public static function line_list($facility_id)
+	{
+		$sql = "
+            SELECT patient as `CCC Number`, age, if(sex=1, 'Male', 'Female') AS Gender, initiation_date as 'Date Initiated on ART', datetested as `Date Tested`, result
+            FROM viralsamples_view v
+            RIGHT JOIN
+            (
+                SELECT id, patient_id, max(datetested) as maxdate
+                FROM viralsamples_view
+                WHERE patient != '' AND patient != 'null' AND patient is not null 
+                AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) AND justification != 10
+                AND datetested BETWEEN '2020-01-01' AND '2020-12-31' 
+                AND facility_id={$facility_id}
+                GROUP BY patient_id
+            ) gv ON v.id=gv.id
+		";
+
+		$rows = DB::select($sql);
+		$facility = Facility::find($facility_id);
+		$file_name = str_replace(' ', '_', $facility->name) . '_line_list_2020';
+		Common::csv_download($rows, $file_name);
+	}
+
 	public static function set_partner_facilities()
 	{
 		$facilities = \App\Facility::all();

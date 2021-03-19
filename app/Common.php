@@ -59,6 +59,7 @@ class Common
 		}
 
 		foreach ($data as $key => $value) {
+			if(is_object($value)) $value = get_object_vars($value);
 			fputcsv($fp, $value);
 		}
 		// ob_flush();
