@@ -94,7 +94,7 @@ class Random
 		$rows = DB::select($sql);
 		$facility = Facility::find($facility_id);
 		$file_name = str_replace(' ', '_', $facility->name) . '_line_list_2020';
-		Common::csv_download($rows, $file_name);
+		Common::csv_download($rows, $file_name, true, true);
 	}
 
 	public static function set_partner_facilities()
