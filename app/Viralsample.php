@@ -87,22 +87,22 @@ class Viralsample extends BaseModel
         $interpretation = $this->interpretation;
         $lower_interpretation = strtolower($interpretation);
         // < ldl
-        if(str_contains($interpretation, ['<'])){
+        if(str_contains($interpretation, '<')){
             $str = "LDL:Lower Detectable Limit ";
             $str .= "i.e. Below Detectable levels by machine ";
-            if(str_contains($interpretation, ['839'])){
+            if(str_contains($interpretation, '839')){
                 $str .= "( Abbott DBS  &lt;839 copies/ml )";
             }
-            else if(str_contains($interpretation, ['40'])){
+            else if(str_contains($interpretation, '40')){
                 $str .= "( Abbott Plasma  &lt;40 copies/ml )";
             }
-            else if(str_contains($interpretation, ['150'])){
+            else if(str_contains($interpretation, '150')){
                 $str .= "( Abbott Plasma  &lt;150 copies/ml )";
             }
-            else if(str_contains($interpretation, ['20'])){
+            else if(str_contains($interpretation, '20')){
                 $str .= "( Roche Plasma  &lt;20 copies/ml )";
             }
-            else if(str_contains($interpretation, ['30'])){
+            else if(str_contains($interpretation, '30')){
                 $str .= "( Pantha Plasma  &lt;30 copies/ml )";
             }
             else{
@@ -110,7 +110,7 @@ class Viralsample extends BaseModel
                 $str .= "( &lt;{$n} copies/ml )";
             }
         }
-        else if(str_contains($result, ['<']) && str_contains($lower_interpretation, ['not detected'])){
+        else if(str_contains($result, '<') && str_contains($lower_interpretation, 'not detected')){
             $str = "No circulating virus ie. level of HIV in blood is below the threshold needed for detection by this test. Doesn’t mean client Is Negative";
         }
         else if($result == "Target Not Detected"){
