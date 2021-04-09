@@ -11,6 +11,8 @@ class GenexpertTest extends Model
 	protected $connection = 'node';
 	protected $table = 'genexperttests';
 
+	protected $guarded = ['ID'];
+
 	
     public function scopeActive($query)
     {
