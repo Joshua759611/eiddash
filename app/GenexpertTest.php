@@ -10,6 +10,7 @@ class GenexpertTest extends Model
 	protected $primaryKey = 'ID';
 	protected $connection = 'node';
 	protected $table = 'genexperttests';
+    public $timestamps = false;
 
 	protected $guarded = ['ID'];
 
