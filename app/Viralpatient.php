@@ -25,7 +25,7 @@ class Viralpatient extends BaseModel
 
     public function scopeExisting($query, $facility_id, $ccc_number)
     {
-        return $query->where(['facility_id' => $facility_id, 'patient' => $ccc_number]);
+        return $query->where(['facility_id' => $facility_id, 'patient' => $ccc_number])->where('patient', '!=', '');
     }
 
     public function scopeLocate($query, $original)
