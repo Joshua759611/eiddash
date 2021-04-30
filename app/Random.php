@@ -123,6 +123,7 @@ class Random
 
 	public static function drt_export($title_row, $data)
 	{		
+		// dd($title_row);
 		Excel::store(new NhrlExport($title_row, $data), 'drt-filled.xlsx', 'local');
 	}
 
