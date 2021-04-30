@@ -38,11 +38,12 @@ class DrtImport implements OnEachRow, WithHeadingRow
     	} catch (\Exception $e) {
     		$date = '2020-08-01';    		
     	}
-    	
+
     	$facility = Facility::where('facilitycode', $row['facility_code'])->first();
     	if(!$facility){
     		$row['Error'] = 'Facility Not Found';
     		$this->drt_rows[] = $row;
+    		if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
     		return;
     	}
     	$ccc = trim(str_after($row['ccc_number'], 'CCC'));
@@ -50,6 +51,7 @@ class DrtImport implements OnEachRow, WithHeadingRow
     	if(!$patient){
     		$row['Error'] = 'Patient Not Found';
     		$this->drt_rows[] = $row;
+    		if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
     		return;
     	}
 
@@ -75,8 +77,6 @@ class DrtImport implements OnEachRow, WithHeadingRow
 		}
 		$this->drt_rows[] = $row;
 
-		if($row['no'] == 475){
-			\App\Random::drt_export($this->header_row, $this->drt_rows);
-		}
+		if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
     }
 }
