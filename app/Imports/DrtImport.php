@@ -33,7 +33,12 @@ class DrtImport implements OnEachRow, WithHeadingRow
     		$this->header_row[] = 'Error';
     	}
 
-    	$date = Carbon::createFromFormat('Y.m.d', $row['date_of_drt_requested'])->toDateString();
+    	try {
+	    	$date = Carbon::createFromFormat('Y.m.d', $row['date_of_drt_requested'])->toDateString();    		
+    	} catch (\Exception $e) {
+    		$date = '2020-08-01';    		
+    	}
+    	
     	$facility = Facility::where('facilitycode', $row['facility_code'])->first();
     	if(!$facility){
     		$row['Error'] = 'Facility Not Found';
