@@ -25,6 +25,7 @@ class DrtImport implements OnEachRow, WithHeadingRow
 
     public function onRow(Row $row)
     {
+    	$row = $row->toArray();
     	if(!$this->header_row){
     		foreach ($row as $key => $value) {
     			$this->header_row[] = $key;
