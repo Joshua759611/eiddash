@@ -46,13 +46,13 @@ class DrtImport implements OnEachRow, WithHeadingRow
     		$this->drt_rows[] = $row;
     	}
 
-    	if(!is_numeric($row['vl_before_transition'])){
+    	if(!is_numeric($row['vl_before_transistion'])){
     		$sample = $patient->sample()->where('datetested', '<', $date)
     			->where(['repeatt' => 0])
     			->orderBy('datetested', 'DESC')
     			->first();
 
-    		if($sample) $row['vl_before_transition'] = $sample->result;
+    		if($sample) $row['vl_before_transistion'] = $sample->result;
     	}
 
 
@@ -62,9 +62,9 @@ class DrtImport implements OnEachRow, WithHeadingRow
 			->first();
 
 
-		if($sample) $row['vl_after_transition'] = $sample->result;
+		if($sample) $row['vl_after_transistion'] = $sample->result;
 		else{
-			$row['vl_after_transition'] = 'Sample Found';
+			$row['vl_after_transistion'] = 'Sample Found';
 		}
 		$this->drt_rows[] = $row;
 
