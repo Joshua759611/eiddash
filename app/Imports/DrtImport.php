@@ -33,6 +33,9 @@ class DrtImport implements OnEachRow, WithHeadingRow
     		$this->header_row[] = 'Error';
     	}
 
+    	if($row['no'] == 475) dd('Hello');
+    	if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
+
     	try {
 	    	$date = Carbon::createFromFormat('Y.m.d', $row['date_of_drt_requested'])->toDateString();    		
     	} catch (\Exception $e) {
