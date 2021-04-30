@@ -5,6 +5,7 @@ namespace App;
 use Excel;
 use App\Imports\NhrlImport;
 use App\Imports\FacilityImport;
+use App\Imports\DrtImport;
 use DB;
 use App\Facility;
 
@@ -113,6 +114,16 @@ class Random
 	public static function uon_fac()
 	{		
 		Excel::import(new FacilityImport(23), public_path('uon_facilities.xlsx'));	
+	}
+
+	public static function drt_samples()
+	{		
+		Excel::import(new DrtImport, public_path('drt_samples.xlsx'));	
+	}
+
+	public static function drt_export($title_row, $data)
+	{		
+		Excel::store(new NhrlExport($title_row, $data), 'drt-filled.xlsx');
 	}
 
 
@@ -2010,4 +2021,6 @@ class Random
         	$s->save();
 		}
     }    
+
+
 }
