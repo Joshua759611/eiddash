@@ -38,12 +38,14 @@ class DrtImport implements OnEachRow, WithHeadingRow
     	if(!$facility){
     		$row['Error'] = 'Facility Not Found';
     		$this->drt_rows[] = $row;
+    		return;
     	}
     	$ccc = trim(str_after($row['ccc_number'], 'CCC'));
     	$patient = Viralpatient::where(['facility_id' => $facility->id, 'patient' => $ccc])->first();
     	if(!$patient){
     		$row['Error'] = 'Patient Not Found';
     		$this->drt_rows[] = $row;
+    		return;
     	}
 
     	if(!is_numeric($row['vl_before_transistion'])){
