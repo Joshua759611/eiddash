@@ -33,8 +33,7 @@ class DrtImport implements OnEachRow, WithHeadingRow
     		$this->header_row[] = 'Error';
     	}
 
-    	if($row['no'] == 475) dd('Hello');
-    	if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
+    	// if(count($this->drt_rows == 475)) \App\Random::drt_export($this->header_row, $this->drt_rows);
 
     	try {
 	    	$date = Carbon::createFromFormat('Y.m.d', $row['date_of_drt_requested'])->toDateString();    		
@@ -45,16 +44,16 @@ class DrtImport implements OnEachRow, WithHeadingRow
     	$facility = Facility::where('facilitycode', $row['facility_code'])->first();
     	if(!$facility){
     		$row['Error'] = 'Facility Not Found';
-    		$this->drt_rows[] = $row;
-    		if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
+    		$this->drt_rows[] = array_values($row);
+    		if(count($this->drt_rows == 475)) \App\Random::drt_export($this->header_row, $this->drt_rows);
     		return;
     	}
     	$ccc = trim(str_after($row['ccc_number'], 'CCC'));
     	$patient = Viralpatient::where(['facility_id' => $facility->id, 'patient' => $ccc])->first();
     	if(!$patient){
     		$row['Error'] = 'Patient Not Found';
-    		$this->drt_rows[] = $row;
-    		if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
+    		$this->drt_rows[] = array_values($row);
+    		if(count($this->drt_rows == 475)) \App\Random::drt_export($this->header_row, $this->drt_rows);
     		return;
     	}
 
@@ -78,8 +77,8 @@ class DrtImport implements OnEachRow, WithHeadingRow
 		else{
 			$row['vl_after_transistion'] = 'Sample Found';
 		}
-		$this->drt_rows[] = $row;
+		$this->drt_rows[] = array_values($row);
 
-		if($row['no'] == 475) \App\Random::drt_export($this->header_row, $this->drt_rows);
+		if(count($this->drt_rows == 475)) \App\Random::drt_export($this->header_row, $this->drt_rows);
     }
 }
