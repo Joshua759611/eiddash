@@ -52,6 +52,7 @@ class Report
 
 	public static function my_string_contains($str, $search_array)
 	{
+		if(!is_array($search_array)) return str_contains($str, $search_array);
 		foreach ($search_array as $value) {
 			if(str_contains($str, $value)) return true;
 		}
