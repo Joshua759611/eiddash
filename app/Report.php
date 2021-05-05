@@ -50,6 +50,14 @@ class Report
 		self::clean_emails($body->paging->next, $iter++);
 	}
 
+	public static function my_string_contains($str, $search_array)
+	{
+		foreach ($search_array as $value) {
+			if(str_contains($str, $value)) return true;
+		}
+		return false;
+	}
+
 	public static function eid_partner($partner_contact=null)
 	{
 		$partner_contacts = EidPartner::when($partner_contact, function($query) use ($partner_contact){
@@ -68,7 +76,7 @@ class Report
 	        	$value = trim($value);
 
 	        	// Check if email address is blocked
-	        	if(str_contains($column_name, ['ccc', 'bcc', 'mainrecipientmail'])){
+	        	if(self::my_string_contains($column_name, ['ccc', 'bcc', 'mainrecipientmail'])){
 	        		$b = BlockedEmail::where('email', $value)->first();
 	        		if($b){
 	        			$contact->$column_name=null;
@@ -80,14 +88,14 @@ class Report
 	        	else{}
     			// echo "\t\t Column {$column_name} Value {$value} \n";	
 
-	        	if(str_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $cc_array[] = $value;
-	        	/*else if(str_contains($column_name, 'ccc') && !filter_var($value, FILTER_VALIDATE_EMAIL)){
+	        	if(self::my_string_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $cc_array[] = $value;
+	        	/*else if(self::my_string_contains($column_name, 'ccc') && !filter_var($value, FILTER_VALIDATE_EMAIL)){
 		        	echo "\t\t Email {$column_name} {$value} is invalid \n";	        		
 	        	}*/
 	        	else{}
 
-	        	if(str_contains($column_name, 'bcc') && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $bcc_array[] = $value;
-	        	/*else if(str_contains($column_name, 'bcc') && !filter_var($value, FILTER_VALIDATE_EMAIL)){
+	        	if(self::my_string_contains($column_name, 'bcc') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = $value;
+	        	/*else if(self::my_string_contains($column_name, 'bcc') && !filter_var($value, FILTER_VALIDATE_EMAIL)){
 		        	echo "\t\t Email {$column_name} {$value} is invalid \n";	        		
 	        	}*/
 	        	else{}
@@ -125,7 +133,7 @@ class Report
 	        	$value = trim($value);
 
 	        	// Check if email address is blocked
-	        	if(str_contains($column_name, ['email'])){
+	        	if(self::my_string_contains($column_name, ['email'])){
 	        		$b = BlockedEmail::where('email', $value)->first();
 	        		if($b){
 	        			$contact->$column_name=null;
@@ -135,7 +143,7 @@ class Report
 	        		}
 	        	}
 
-	        	if(str_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
+	        	if(self::my_string_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
 	        }
 
 	        if(env('APP_LOCATION') == 'server'){
@@ -167,7 +175,7 @@ class Report
 	        	$value = trim($value);
 
 	        	// Check if email address is blocked
-	        	if(str_contains($column_name, ['ccc', 'bcc', 'mainrecipientmail'])){
+	        	if(self::my_string_contains($column_name, ['ccc', 'bcc', 'mainrecipientmail'])){
 	        		$b = BlockedEmail::where('email', $value)->first();
 	        		if($b){
 	        			$contact->$column_name=null;
@@ -177,8 +185,8 @@ class Report
 	        		}
 	        	}
 
-	        	if(str_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $cc_array[] = trim($value);
-	        	if(str_contains($column_name, 'bcc') && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
+	        	if(self::my_string_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $cc_array[] = trim($value);
+	        	if(self::my_string_contains($column_name, 'bcc') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
 	        }
 	        if(env('APP_LOCATION') == 'server'){
 		        try {
@@ -209,7 +217,7 @@ class Report
 	        	$value = trim($value);
 
 	        	// Check if email address is blocked
-	        	if(str_contains($column_name, ['email'])){
+	        	if(self::my_string_contains($column_name, ['email'])){
 	        		$b = BlockedEmail::where('email', $value)->first();
 	        		if($b){
 	        			$contact->$column_name=null;
@@ -219,7 +227,7 @@ class Report
 	        		}
 	        	}
 
-	        	if(str_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !str_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
+	        	if(self::my_string_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
 	        }
 	        if(env('APP_LOCATION') == 'server'){
 		        try {
