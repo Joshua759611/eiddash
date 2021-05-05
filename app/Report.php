@@ -227,7 +227,7 @@ class Report
 	        		}
 	        	}
 
-	        	if(self::my_string_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
+	        	if(self::my_string_contains($column_name, ['email']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
 	        }
 	        if(env('APP_LOCATION') == 'server'){
 		        try {
