@@ -94,7 +94,7 @@ class Report
 	        	}*/
 	        	else{}
 
-	        	if(self::my_string_contains($column_name, 'bcc') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = $value;
+	        	if(self::my_string_contains($column_name, ['bcc']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = $value;
 	        	/*else if(self::my_string_contains($column_name, 'bcc') && !filter_var($value, FILTER_VALIDATE_EMAIL)){
 		        	echo "\t\t Email {$column_name} {$value} is invalid \n";	        		
 	        	}*/
@@ -143,7 +143,7 @@ class Report
 	        		}
 	        	}
 
-	        	if(self::my_string_contains($column_name, 'email') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
+	        	if(self::my_string_contains($column_name, ['email']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
 	        }
 
 	        if(env('APP_LOCATION') == 'server'){
@@ -186,7 +186,7 @@ class Report
 	        	}
 
 	        	if(self::my_string_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $cc_array[] = trim($value);
-	        	if(self::my_string_contains($column_name, 'bcc') && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
+	        	if(self::my_string_contains($column_name, ['bcc']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
 	        }
 	        if(env('APP_LOCATION') == 'server'){
 		        try {
