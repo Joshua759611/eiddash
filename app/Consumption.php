@@ -65,6 +65,20 @@ class Consumption extends Model
         }
     }
 
+    public function reviewed($testtype=null){
+        $details = $this->details->when($testtype, function($query) use ($testtype){
+                            if ($testtype == 'EID')
+                                return $query->where('testtype', '=', 1);
+                            else if ($testtype == 'VL')
+                                return $query->where('testtype', '=', 2);
+                            else if ($testtype == 'CONSUMABLES')
+                                return $query->where('testtype', '=', NULL);         
+                        })->count();
+        if ($details > 0)
+            return true;
+        return false;
+    }
+
     private function saveConsumptionDetails($consumption, $inconsumption)
     {
         $existing = ConsumptionDetail::existing($consumption->id, $inconsumption->type, $inconsumption->machine)->get();

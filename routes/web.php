@@ -60,6 +60,9 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('approveallocation', 'AllocationsController@save_allocation_approval')->name('approveallocation');
 
 		Route::resource('labcontacts', 'AllocationContactsController');
+
+		Route::get('consumption/{testtype?}', 'ConsumptionController@index')->name('consumptions');
+		Route::get('viewconsumption/{testtype?}/{year?}/{month?}', 'ConsumptionController@view_consumption')->name('viewconsumption');
 	});
 
 	Route::middleware(['only_utype:14,15'])->group(function(){

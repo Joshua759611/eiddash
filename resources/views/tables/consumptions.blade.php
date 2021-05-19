@@ -29,62 +29,32 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Allocation Month</th>
-                                    <th>Lab</th>
-                                    <th>Allocation Status</th>
-                                    <th>Approval Satus</th>
+                                    <th>Labs Consumption Submitted</th>
+                                    <th>Consumption Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            @forelse($data->labs as $key => $lab)
+                            @forelse($consumptions_data as $key => $consumption)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ date("F", mktime(null, null, null, $data->month, 1, $data->year)) }}, {{ $data->year }}</td>
-                                    <td>{{ $lab->labdesc ?? $lab->name }}</td>
+                                    <td>{{ date("F", mktime(null, null, null, $consumption->month)) }}, {{ $consumption->year }}</td>
+                                    <td>{{ $consumption->consumption_labs }} Out of {{ $consumption->all_labs }}</td>
                                     <td>
-                                    @if($lab->allocations->count() > 0)
-                                        <span class="label label-success">Complete</span>
+                                    @if($consumption->consumption_labs < $consumption->all_labs)
+                                        Incomplete
+                                    @elseif($consumption->consumption_labs > $consumption->all_labs)
+                                        Erroneous Data
                                     @else
-                                        <span class="label label-warning">Incomplete</span>
+                                        Complete
                                     @endif
                                     </td>
                                     <td>
-                                    @php
-                                        $pending = 0;
-                                        $complete = 0;
-                                        if (!$lab->allocations->isEmpty()) {
-                                            foreach($lab->allocations as $allocation) {
-                                                if ($allocation->details->where('approve', 0)->count() > 0)
-                                                    $pending ++;
-                                                if ($allocation->details->where('approve', 1)->count() > 0)
-                                                    $complete ++;
-                                                if ($allocation->details->where('approve', 2)->count() > 0)
-                                                    $complete ++;
-                                            }
-                                        }
-                                    @endphp
-                                    @if($lab->allocations->count() > 0)
-                                        @if(($pending > 0) && ($complete > 0))
-                                            <span class="label label-warning">Update Pending Approval</span>
-                                        @elseif(($pending > 0) && ($complete == 0))
-                                            <span class="label label-warning">Pending Approval</span>
-                                        @else
-                                            <span class="label label-success">Complete</span>
-                                        @endif
-                                    @else
-                                        N/A
-                                    @endif 
-                                    </td>
-                                    <td>
-                                    @if($lab->allocations->count() > 0)
-                                        <a href="{{ url('approveallocation/'.$lab->id.'/'.$data->testtype.'/'.$data->year.'/'.$data->month) }}" class="btn btn-info">View</a>
-                                    @else
-                                        N/A
-                                    @endif
+                                        <a href="{{ url('viewconsumption/'.$consumption->testtype.'/'.$consumption->year.'/'.$consumption->month) }}">View</a>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="6"><center>No Allocation Data Available</center></td></tr>
+                                <tr><td colspan="7"><center>No Consumption Data Available</center></td></tr>
                             @endforelse
                             </tbody>
                         </table>

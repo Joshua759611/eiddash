@@ -140,6 +140,10 @@
             <hr />
             <li><a href="{{ url('labcontacts') }}">Lab Contacts List</a></li>
             <hr />
+            <li><a href="{{ url('consumption/eid') }}">EID Consumptions List</a></li>
+            <hr />
+            <li><a href="{{ url('consumption/vl') }}">VL Consumptions List</a></li>
+            <hr />
         @endif
         </ul>
     </div>
