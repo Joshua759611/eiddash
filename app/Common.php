@@ -371,6 +371,7 @@ class Common
 		$body = json_decode($response->getBody());
 
 		if($response->getStatusCode() > 399) {
+			Log::channel('shortcode')->info($response->getBody());
         	return false;
         } else if($response->getStatusCode() == 200 && $body->responses[0]->{"response-code"} == 200){
         	// $body = $body->responses[0];
@@ -378,6 +379,7 @@ class Common
         	// 	if ($body->{"respose-code"} == 1006)
         	// 		return false;
         	// }
+        	Log::channel('shortcode_error')->info($response->getBody());
         	return true;
         }
         // else{
