@@ -28,7 +28,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Allocation Month</th>
+                                    <th>Consumption Month</th>
                                     <th>Labs Consumption Submitted</th>
                                     <th>Consumption Status</th>
                                     <th>Action</th>
