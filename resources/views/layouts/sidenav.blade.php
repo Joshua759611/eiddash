@@ -144,6 +144,10 @@
             <hr />
             <li><a href="{{ url('labcontacts') }}">Lab Contacts List</a></li>
             <hr />
+            <li><a href="{{ url('allocationdrfs') }}">Lab Performance/Equipment Tracker</a></li>
+            <hr />
+            <li><a href="{{ url('labcontacts') }}">EID/VL Stock Card</a></li>
+            <hr />
         @endif
         </ul>
     </div>
