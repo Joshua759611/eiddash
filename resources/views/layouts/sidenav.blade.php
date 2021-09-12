@@ -130,6 +130,10 @@
                 <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
             @endif
         @elseif(Auth::user()->user_type_id == 12)
+            <li><a href="{{ url('consumption/eid') }}">EID Consumptions Reports</a></li>
+            <hr />
+            <li><a href="{{ url('consumption/vl') }}">VL Consumptions Reports</a></li>
+            <hr />
             <li><a href="{{ url('allocations/EID') }}">EID Allocation List</a></li>
             <hr />
             <li><a href="{{ url('allocations/VL') }}">VL Allocation List</a></li>
@@ -140,9 +144,9 @@
             <hr />
             <li><a href="{{ url('labcontacts') }}">Lab Contacts List</a></li>
             <hr />
-            <li><a href="{{ url('consumption/eid') }}">EID Consumptions List</a></li>
+            <li><a href="{{ url('allocationdrfs') }}">Lab Performance/Equipment Tracker</a></li>
             <hr />
-            <li><a href="{{ url('consumption/vl') }}">VL Consumptions List</a></li>
+            <li><a href="{{ url('labcontacts') }}">EID/VL Stock Card</a></li>
             <hr />
         @endif
         </ul>
