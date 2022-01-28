@@ -6,6 +6,7 @@ use DB;
 use Illuminate\Http\Request;
 use App\Facility;
 use App\Lookup;
+use App\PartnerFacilityContact;
 
 class FacilityController extends Controller
 {
@@ -180,6 +181,90 @@ class FacilityController extends Controller
             $table .= '</tr>';
         }
         return view('tables.editable', ['row' => $table, 'columns' => $columns, 'function' => 'update'])->with('pageTitle', 'Without G4S');
+    }
+
+    public function partnercontacts()
+    {
+        $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results', 'Edit']);
+        
+        $partners = PartnerFacilityContact::get();
+        if ($partners->isEmpty()) {
+            $table = '<tr><th colspan="7"><center>No Contact Available</center></th></tr>';
+        }
+        
+        $table = '';
+        foreach ($partners as $key => $partner) {
+            $county_label = $partner->county->name ?? '<strong>N/A</strong>';
+            $subcounty_label = $partner->subcounty->name ?? '<strong>N/A</strong>';
+            $partner_label = $partner->partner->name ?? '<strong>N/A</strong>';
+            $critical_results_label = "<label class'label label-danger'>Not Allowed</label>";
+            if ($partner->critical_results)
+                $critical_results_label = "<label class'label label-success'>Allowed</label>";
+            $table .= '<tr>';
+            $table .= '<td>'.$partner->name ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td>'.$partner->email ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td>'.$partner->telephone ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td>'.$county_label.'</td>';
+            $table .= '<td>'.$subcounty_label.'</td>';
+            $table .= '<td>'.$partner_label.'</td>';
+            $table .= '<td>'.$critical_results_label.'</td>';
+            $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
+            $table .= '</tr>';
+        }
+        return view('tables.editable', [
+                            'row' => $table,
+                            'columns' => $columns,
+                            'create_endpoint' => 'createpartnercontacts',
+                            'create_text' => 'Create Partner Facility Contact',
+                            'function' => 'update'
+                        ])->with('pageTitle', 'Partner Facility Contacts');
+    }
+
+    public function createpartnercontacts(Request $request)
+    {
+        if ($request->method() == 'GET') {
+            $data = [
+                'counties' => DB::table('countys')->get(),
+                'subcounties' => DB::table('districts')->get(),
+                'partners' => DB::table('partners')->get(),
+            ];
+            return view('forms.partnercontacts', $data)->with('pageTitle', 'Create Partner Facility Contact');
+        } else {
+            $validate = $request->validate([
+                'name' => 'required',
+                'email' => 'required|unique:partner_facility_contacts',
+            ]);
+            $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
+            $contact = new PartnerFacilityContact;
+            $contact->fill($form_data);
+            $contact->save();
+
+            return redirect()->route('partnercontacts');
+        }        
+    }
+
+    public function updatepartnercontacts(Request $request, PartnerFacilityContact $contact)
+    {
+        if ($request->method() == "GET") {
+            $data = [
+                'counties' => DB::table('countys')->get(),
+                'subcounties' => DB::table('districts')->get(),
+                'partners' => DB::table('partners')->get(),
+                'contact' => $contact,
+            ];
+            return view('forms.partnercontacts', $data)->with('pageTitle', 'Update Partner Facility Contact');
+        } else {
+            $validate = $request->validate([
+                'name' => 'required',
+                'email' => 'required|unique:partner_facility_contacts',
+            ]);
+            $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
+            
+            $contact->fill($form_data);
+            $contact->update();
+
+            return redirect()->route('partnercontacts');
+        }
     }
 
     /**
