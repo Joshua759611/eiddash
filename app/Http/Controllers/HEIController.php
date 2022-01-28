@@ -150,7 +150,6 @@ class HEIController extends Controller
 
     public static function __getPatients($year=null,$month=null,$duration=null,$validation=null,$count=false)
     {
-        // dd($duration . " <--> " . $validation);
         if(!($duration == 'outcomes' || $duration || 'cumulative' || $duration == null))
             return back();
         
@@ -207,7 +206,9 @@ class HEIController extends Controller
         } else {
             $model = $model->whereRaw("(sample_complete_view.hei_validation = 0 or sample_complete_view.hei_validation is null)");
         }
-        // dd($model->toSql());
+
+        $model = $model->where('sample_complete_view.facility_id', '<>', 7148);
+        
         if ($count == true) {
             return $model->first()->patients;
         } else {
