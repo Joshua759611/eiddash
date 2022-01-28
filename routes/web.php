@@ -123,6 +123,13 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('search/{testtype}/{facility}', 'PatientsController@search');
 		});
 	});
+
+
+	Route::group(['middleware' => ['only_utype:1, 10']], function () {
+		Route::get('partnercontacts', 'FacilityController@partnercontacts')->name('partnercontacts');
+		Route::any('createpartnercontacts', 'FacilityController@createpartnercontacts')->name('createpartnercontacts');
+		Route::any('updatepartnercontacts/{contact?}', 'FacilityController@updatepartnercontacts')->name('updatepartnercontacts');
+	});
 	
 	Route::get('results/{testtype?}', 'ResultController@index')->name('results');
 	Route::get('results/{id}/{testtype}/{type}', 'ResultController@specific')->name('specific.results');

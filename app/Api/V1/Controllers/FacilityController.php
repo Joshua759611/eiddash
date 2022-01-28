@@ -8,6 +8,7 @@ use App\Api\V1\Requests\BlankRequest;
 use App\Jobs\NewFacility;
 
 use App\Facility;
+use App\PartnerFacilityContact;
 use DB;
 
 class FacilityController extends Controller
@@ -121,6 +122,11 @@ class FacilityController extends Controller
     public function destroy(Facility $facility)
     {
         //
+    }
+
+    public function partnerfacilitycontacts()
+    {
+        return response()->json(PartnerFacilityContact::get(), 200);
     }
 }
 

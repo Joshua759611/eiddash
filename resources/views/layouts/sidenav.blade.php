@@ -19,6 +19,10 @@
         @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 10)
             <li><a href="{{ url('user/add') }}">Add Users</a></li>
             <hr />
+            <li>
+                <a href="{{ url('partnercontacts') }}"><span class="nav-label">Partner Contacts</span></a>
+            </li>
+            <hr />
         @endif
         @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 10)
             <li><a href="{{ url('reports/permission/setup') }}">Reports Setup</a></li>
