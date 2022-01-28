@@ -144,5 +144,7 @@ $api->version('v1', function (Router $api) {
 
         });
 
+        $api->get('partnerfacilitycontacts', 'FacilityController@partnerfacilitycontacts');
+
     });
 });
