@@ -209,7 +209,7 @@ class PullController extends Controller
             })
             ->where(['repeatt' => 0, 'justification' => 12])          
             ->orderBy('datecollected', 'desc')
-            ->paginate(50);
+            ->paginate(1000);
 
         return $result;
         
