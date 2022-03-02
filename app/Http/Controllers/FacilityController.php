@@ -243,25 +243,25 @@ class FacilityController extends Controller
         }        
     }
 
-    public function updatepartnercontacts(Request $request, PartnerFacilityContact $contact)
+    public function updatepartnercontacts($id, Request $request)
     {
-        if ($request->method() == "GET") {
+        if ($request->method() == 'GET') {
             $data = [
                 'counties' => DB::table('countys')->get(),
                 'subcounties' => DB::table('districts')->get(),
                 'partners' => DB::table('partners')->get(),
-                'contact' => $contact,
+                'contact' => PartnerFacilityContact::find($id),
             ];
             return view('forms.partnercontacts', $data)->with('pageTitle', 'Update Partner Facility Contact');
         } else {
             $validate = $request->validate([
                 'name' => 'required',
-                'email' => 'required|unique:partner_facility_contacts',
+                'email' => 'required',
             ]);
             $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
-            
+            $contact = PartnerFacilityContact::find($id);
             $contact->fill($form_data);
-            $contact->update();
+            $contact->save();
 
             return redirect()->route('partnercontacts');
         }
