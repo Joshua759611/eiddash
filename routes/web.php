@@ -129,6 +129,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('partnercontacts', 'FacilityController@partnercontacts')->name('partnercontacts');
 		Route::any('createpartnercontacts', 'FacilityController@createpartnercontacts')->name('createpartnercontacts');
 		Route::any('updatepartnercontacts/{contact?}', 'FacilityController@updatepartnercontacts')->name('updatepartnercontacts');
+		Route::any('updatepartnerstatusactive/{contact?}', 'FacilityController@updatepartnerstatusactive')->name('updatepartnerstatusactive');
+		Route::any('updatepartnerstatusinactive/{contact?}', 'FacilityController@updatepartnerstatusinactive')->name('updatepartnerstatusinactive');
 	});
 	
 	Route::get('results/{testtype?}', 'ResultController@index')->name('results');

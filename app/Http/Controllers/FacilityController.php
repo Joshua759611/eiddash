@@ -185,7 +185,7 @@ class FacilityController extends Controller
 
     public function partnercontacts()
     {
-        $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results', 'Edit']);
+        $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results', 'Edit', 'Action']);
         
         $partners = PartnerFacilityContact::get();
         if ($partners->isEmpty()) {
@@ -209,6 +209,11 @@ class FacilityController extends Controller
             $table .= '<td>'.$partner_label.'</td>';
             $table .= '<td>'.$critical_results_label.'</td>';
             $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
+            if($partner->critical_results == 0){
+                $table .= '<td><a href="'.env('APP_URL').'/updatepartnerstatusactive/'.$partner->id.'" class="btn btn-default">Activate</a></td>';
+            }else{
+                $table .= '<td><a href="'.env('APP_URL').'/updatepartnerstatusinactive/'.$partner->id.'" class="btn btn-default">Deactivate</a></td>';
+            }
             $table .= '</tr>';
         }
         return view('tables.editable', [
@@ -430,5 +435,30 @@ class FacilityController extends Controller
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->paginate(10);
         return $facilities;
+    }
+
+    public function updatepartnerstatusactive($id)
+    {
+        $partner = PartnerFacilityContact::find($id);
+
+        if($partner->critical_results == 0){
+
+            $partner->critical_results = 1;
+            $partner->save();
+            return redirect()->route('partnercontacts');
+        }
+    }
+
+        public function updatepartnerstatusinactive($id)
+    {
+        $partner = PartnerFacilityContact::find($id);
+
+        if($partner->critical_results == 1){
+
+            $partner->critical_results = 0;
+            $partner->save();
+        }
+
+        return redirect()->route('partnercontacts');
     }
 }
