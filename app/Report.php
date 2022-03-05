@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Mail\CountyEidPositivesMailBuilder;
 use DB;
 use Exception;
 use GuzzleHttp\Client;
@@ -150,13 +151,13 @@ class Report
 	        if(env('APP_LOCATION') == 'server'){
 		        try {
 			        DB::table('eid_users')->where('id', $contact->id)->update(['datelastsent' => date('Y-m-d')]);
-			     	Mail::to($mail_array)->bcc($bcc_array)->send(new EidCountyPositives($contact->id));
+			     	Mail::to($mail_array)->bcc($bcc_array)->send(new CountyEidPositivesMailBuilder($contact->id));
 		        } catch (Exception $e) {
 		        	echo $e->getMessage();		        	
 		        }
 		    }
 		    else{
-		    	Mail::to(self::$email_array)->send(new EidCountyPositives($contact->id));
+		    	Mail::to(self::$email_array)->send(new CountyEidPositivesMailBuilder($contact->id));
 		    }
 		}
 	}
