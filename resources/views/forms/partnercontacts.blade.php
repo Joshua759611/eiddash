@@ -56,11 +56,8 @@
                         <label class="col-sm-4 control-label">Notifaction Type</label>
                         <div class="col-sm-8">
                             <label class="control-label">Critical Results</label>
-                            <input type="checkbox" class="i-checks" name="critical_results" value="1" 
-                                @if(isset($contact) && $contact->critical_results)
-                                    checked
-                                @endif
-                             />
+                            <input  type="hidden" name="critical_results" value="0"/>
+                            <input type="checkbox" name="critical_results" value="1" {{ old('critical_results', isset($contact) ? 'checked' : '') }}/>
                         </div>
                     </div>
                     <div class="form-group">
