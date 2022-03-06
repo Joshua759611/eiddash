@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Facility;
 use App\Lookup;
 use App\PartnerFacilityContact;
+use App\PartnerFacilityContactsChangeLog;
 
 class FacilityController extends Controller
 {
@@ -267,8 +268,25 @@ class FacilityController extends Controller
             $contact->fill($form_data);
             $contact->save();
 
+
+            PartnerFacilityContactsChangeLog::create([
+                'partner_contact_id' => $contact['id'],
+                'county_id' => $contact['county_id'],
+                'subcounty_id' => $contact['subcounty_id'],
+                'partner_id' => $contact['partner_id'],
+                'name' => $contact['name'],
+                'email' => $contact['email'],
+                'telephone' => $contact['telephone'],
+                'type' => $contact['type'],
+                'critical_results' => $contact['critical_results'],
+                'contact_change_date' => $contact['updated_at'],
+                'contact_deleted_at' => $contact['deleted_at'],
+                'contact_updated_by' => auth()->user()->id,
+            ]);
+
             return redirect()->route('partnercontacts');
         }
+
     }
 
     /**
@@ -440,6 +458,21 @@ class FacilityController extends Controller
     {
         PartnerFacilityContact::find($id)->delete();
 
+        PartnerFacilityContactsChangeLog::create([
+            'partner_contact_id' => $contact->id,
+            'county_id' => $contact['county_id'],
+            'subcounty_id' => $contact['subcounty_id'],
+            'partner_id' => $contact['partner_id'],
+            'name' => $contact['name'],
+            'email' => $contact['email'],
+            'telephone' => $contact['telephone'],
+            'type' => $contact['type'],
+            'critical_results' => $contact['critical_results'],
+            'contact_change_date' => $contact['updated_at'],
+            'contact_deleted_at' => $contact['deleted_at'],
+            'contact_updated_by' => $contact['id'],
+        ]);
+
         return redirect()->route('partnercontacts');
     }
 
@@ -450,3 +483,7 @@ class FacilityController extends Controller
         return redirect()->route('partnercontacts');
     }
 }
+
+
+
+
