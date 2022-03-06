@@ -208,7 +208,11 @@ class FacilityController extends Controller
             $table .= '<td>'.$subcounty_label.'</td>';
             $table .= '<td>'.$partner_label.'</td>';
             $table .= '<td>'.$critical_results_label.'</td>';
-            $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
+            if($partner->deleted_at==NULL){
+                $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
+            }else{
+                $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default" disabled>Edit</a></td>';
+            }
             if($partner->deleted_at == NULL){
                 $table .= '<td><a title="Once deactivated the user will not be able to receive alerts" href="'.env('APP_URL').'/disable_notification/'.$partner->id.'" class="btn btn-default" style="color: orangered;"> Deactivate</a></td>';
             }else{
