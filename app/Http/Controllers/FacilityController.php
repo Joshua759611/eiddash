@@ -186,8 +186,7 @@ class FacilityController extends Controller
     public function partnercontacts()
     {
         $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results', 'Edit', 'Action']);
-        
-        $partners = PartnerFacilityContact::get();
+        $partners = PartnerFacilityContact::withTrashed()->get();
         if ($partners->isEmpty()) {
             $table = '<tr><th colspan="7"><center>No Contact Available</center></th></tr>';
         }
@@ -209,10 +208,10 @@ class FacilityController extends Controller
             $table .= '<td>'.$partner_label.'</td>';
             $table .= '<td>'.$critical_results_label.'</td>';
             $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
-            if($partner->critical_results == 0){
-                $table .= '<td><a href="'.env('APP_URL').'/updatepartnerstatusactive/'.$partner->id.'" class="btn btn-default">Activate</a></td>';
+            if($partner->deleted_at == NULL){
+                $table .= '<td><a title="Once deactivated the user will not be able to receive alerts" href="'.env('APP_URL').'/disable_notification/'.$partner->id.'" class="btn btn-default" style="color: orangered;"> Deactivate</a></td>';
             }else{
-                $table .= '<td><a href="'.env('APP_URL').'/updatepartnerstatusinactive/'.$partner->id.'" class="btn btn-default">Deactivate</a></td>';
+                $table .= '<td><a title="Activate this user account to get alearts" href="'.env('APP_URL').'/enable_notification/'.$partner->id.'"  class="btn btn-default" style="color: green;"> Activate </a></td>';
             }
             $table .= '</tr>';
         }
@@ -437,27 +436,16 @@ class FacilityController extends Controller
         return $facilities;
     }
 
-    public function updatepartnerstatusactive($id)
+    public function disable_notification($id)
     {
-        $partner = PartnerFacilityContact::find($id);
+        PartnerFacilityContact::find($id)->delete();
 
-        if($partner->critical_results == 0){
-
-            $partner->critical_results = 1;
-            $partner->save();
-            return redirect()->route('partnercontacts');
-        }
+        return redirect()->route('partnercontacts');
     }
 
-        public function updatepartnerstatusinactive($id)
+        public function enable_notification($id)
     {
-        $partner = PartnerFacilityContact::find($id);
-
-        if($partner->critical_results == 1){
-
-            $partner->critical_results = 0;
-            $partner->save();
-        }
+            PartnerFacilityContact::withTrashed()->find($id)->restore();
 
         return redirect()->route('partnercontacts');
     }
