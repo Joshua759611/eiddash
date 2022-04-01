@@ -10,7 +10,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PartnerFacilityContact extends BaseModel
 {
-    use SoftDeletes;
+        use SoftDeletes;
+
+        protected $dates = ['deleted_at'];
+
 
     public function getCountyAttribute()
     {

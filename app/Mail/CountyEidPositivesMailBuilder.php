@@ -2,38 +2,51 @@
 
 namespace App\Mail;
 
+use App\SampleAlertView;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
 
-use DB;
-use \App\SampleAlertView;
-
-class EidPartnerPositives extends Mailable
+class CountyEidPositivesMailBuilder extends Mailable
 {
     use Queueable, SerializesModels;
 
-
+    public $data;
+    /**
+     * @var array
+     */
     public $summary;
     public $samples;
-    public $title;
+    /**
+     * @var mixed|string
+     */
     public $name;
+    /**
+     * @var string
+     */
     public $division;
+    /**
+     * @var string
+     */
+    public $title;
+    /**
+     * @var string
+     */
     public $path;
-    public $time_period;
-    public $partner_contact_id;
+    public $user_id;
 
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param $user_id
      */
-    public function __construct($partner_contact_id)
+    public function __construct($user_id)
     {
-        $this->partner_contact_id = $partner_contact_id;
+        $this->user_id = $user_id;
     }
 
     /**
@@ -43,16 +56,18 @@ class EidPartnerPositives extends Mailable
      */
     public function build()
     {
-        ini_set("memory_limit", "-1");
+        return $this->communicationData();
+    }
+
+    public function communicationData()
+    {
         $min_date = date("Y-m-d", strtotime("-1 year"));
         $this->time_period = date("d-M-Y", strtotime($min_date)) . ' TO ' . date('d-M-Y');
-        $contact = DB::table('eid_partner_contacts_for_alerts')->where('id', $this->partner_contact_id)->get()->first();
+        $contact = DB::table('eid_users')->where('id', $this->user_id)->get()->first();
         $samples = SampleAlertView::where('facility_id', '!=', 7148)
             ->whereIn('pcrtype', [1, 2, 3])
-            ->where(['result' => 2, 'repeatt' => 0, 'hei_validation' => 0, 'partner_id' => $contact->partner])
-            ->when(($contact->split == 1), function($query) use ($contact){
-                return $query->where('county_id', $contact->county);
-            })
+            ->where(['result' => 2, 'repeatt' => 0, 'hei_validation' => 0, 'county_id' => $contact->partner])
+            // ->whereYear('datetested', date('Y'))
             ->where('datetested', '>', $min_date)
             ->orderBy('facility_id')
             ->orderBy('datetested', 'ASC')
@@ -61,10 +76,7 @@ class EidPartnerPositives extends Mailable
         $validated_samples = SampleAlertView::selectRaw("facility_id, count(distinct patient_id) as total")
             ->where('facility_id', '!=', 7148)
             ->whereIn('pcrtype', [1, 2, 3])
-            ->where(['result' => 2, 'repeatt' => 0, 'partner_id' => $contact->partner])
-            ->when(($contact->split == 1), function($query) use ($contact){
-                return $query->where('county_id', $contact->county);
-            })
+            ->where(['result' => 2, 'repeatt' => 0, 'county_id' => $contact->partner])
             ->where('datetested', '>', $min_date)
             ->where('hei_validation', '>', 0)
             ->groupBy('facility_id')
@@ -74,19 +86,12 @@ class EidPartnerPositives extends Mailable
         $facilities = SampleAlertView::selectRaw("distinct facility_id")
             ->whereIn('pcrtype', [1, 2, 3])
             ->where('datetested', '>', $min_date)
-            ->where(['result' => 2, 'repeatt' => 0, 'partner_id' => $contact->partner])
-            ->when(($contact->split == 1), function($query) use ($contact){
-                return $query->where('county_id', $contact->county);
-            })
+            ->where(['result' => 2, 'repeatt' => 0, 'county_id' => $contact->partner])
             ->get()->pluck('facility_id')->toArray();
 
         $totals = SampleAlertView::selectRaw("facility_id, enrollment_status, facilitycode, facility, county, subcounty, partner, count(distinct patient_id) as total")
             ->whereIn('pcrtype', [1, 2, 3])
-            ->where(['result' => 2, 'repeatt' => 0, 'partner_id' => $contact->partner])
-            ->when(($contact->split == 1), function($query) use ($contact){
-                return $query->where('county_id', $contact->county);
-            })
-            // ->whereIn('facility_id', $facilities)
+            ->where(['result' => 2, 'repeatt' => 0, 'county_id' => $contact->partner])
             ->where('datetested', '>', $min_date)
             ->groupBy('facility_id', 'enrollment_status')
             ->orderBy('facility_id')
@@ -117,46 +122,44 @@ class EidPartnerPositives extends Mailable
             // $data[$i]['unknown'] = $data[$i]['positives'] - ($data[$i]['treatment'] + $data[$i]['ltfu'] + $data[$i]['dead'] + $data[$i]['adult'] + $data[$i]['transfer'] + $data[$i]['otherreasons']);
             $data[$i]['unknown'] = $data[$i]['positives'] - $validated;
 
-           
-           if($data[$i]['positives'] == 0) $data[$i]['unknown_percentage'] = 0;
-           else{
-                $data[$i]['unknown_percentage'] = (int) (($data[$i]['unknown'] / $data[$i]['positives']) * 100); 
-           }
-           $i++;
+
+            if($data[$i]['positives'] == 0) $data[$i]['unknown_percentage'] = 0;
+            else{
+                $data[$i]['unknown_percentage'] = (int) (($data[$i]['unknown'] / $data[$i]['positives']) * 100);
+            }
+            $i++;
         }
+
         $this->summary = $data;
         $this->samples = $samples;
-        $this->name = DB::table('partners')->where('id', $contact->partner)->first()->name ?? '';
-        $this->division = 'Partner';
-        
-        $addendum = '';
-        if($contact->split == 1) $county = DB::table('countys')->where(['id' => $contact->county])->first()->name ?? '';
-        if($contact->split == 1) $addendum = " IN " . strtoupper($county) . " COUNTY";
+        $this->name = $data[0]['county'] ?? '';
+        $this->division = 'County';
 
-        if(!is_dir(storage_path('app/hei/partner'))) mkdir(storage_path('app/hei/partner'), 0777, true);
+        if($samples->isEmpty()){
+            $this->title = $this->time_period .  ' COMPLETED HEI FOLLOW UP SUMMARY FOR ' . strtoupper($this->name) . ' COUNTY SITES ';
+        }
+        else{
+            $this->title = $this->time_period .  ' HEI FOR FOLLOW UP & ONLINE DOCUMENTATION FOR ' . strtoupper($this->name) . ' COUNTY SITES ';
+        }
 
-        $path = storage_path('app/hei/partner/' . $contact->id .   '.pdf');
+        if(!is_dir(storage_path('app/hei/county'))) mkdir(storage_path('app/hei/county'), 0777, true);
+
+        $path = storage_path('app/hei/county/' . $contact->id .   '.pdf');
         $this->path = $path;
         if(file_exists($path)) unlink($path);
 
-        if($samples->isEmpty()){
-            $this->title = $this->time_period .  ' COMPLETED HEI FOLLOW UP SUMMARY FOR ' . strtoupper($this->name) . ' SITES ' . $addendum; 
-        }
-        else{
-            $this->title = $this->time_period .  ' HEI FOR FOLLOW UP & ONLINE DOCUMENTATION FOR ' . strtoupper($this->name) . ' SITES ' . $addendum;             
-        }
-
         $pdf_data['summary'] = $data;
         $pdf_data['samples'] = $samples;
-        $pdf_data['title'] = $this->title; 
+        $pdf_data['title'] = $this->title;
 
         $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.hei_followup', $pdf_data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
-
         $this->attach($this->path, ['as' => $this->title . '.pdf']);
         $this->attach(public_path('downloads/HEIValidationToolGuide.pdf'));
-        return $this->subject($this->title)->view('mail.hei_validation');
+
+        return $this->subject($this->title)->view('mail.hei_validation', ['sample' => $samples, 'time_period' => $this->time_period, 'division' => $this->division, 'path' => $path]);
+
     }
 }
