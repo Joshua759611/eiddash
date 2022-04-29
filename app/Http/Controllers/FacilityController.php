@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Facility;
 use App\Lookup;
 use App\PartnerFacilityContact;
+use App\PartnerFacilityContactsChangeLog;
 
 class FacilityController extends Controller
 {
@@ -185,9 +186,8 @@ class FacilityController extends Controller
 
     public function partnercontacts()
     {
-        $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results', 'Edit']);
-        
-        $partners = PartnerFacilityContact::get();
+        $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results', 'Edit', 'Action']);
+        $partners = PartnerFacilityContact::withTrashed()->get();
         if ($partners->isEmpty()) {
             $table = '<tr><th colspan="7"><center>No Contact Available</center></th></tr>';
         }
@@ -208,7 +208,16 @@ class FacilityController extends Controller
             $table .= '<td>'.$subcounty_label.'</td>';
             $table .= '<td>'.$partner_label.'</td>';
             $table .= '<td>'.$critical_results_label.'</td>';
-            $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
+            if($partner->deleted_at==NULL){
+                $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
+            }else{
+                $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default" disabled>Edit</a></td>';
+            }
+            if($partner->deleted_at == NULL){
+                $table .= '<td><a title="Once deactivated the user will not be able to receive alerts" href="'.env('APP_URL').'/disable_notification/'.$partner->id.'" class="btn btn-default" style="color: orangered;"> Deactivate</a></td>';
+            }else{
+                $table .= '<td><a title="Activate this user account to get alearts" href="'.env('APP_URL').'/enable_notification/'.$partner->id.'"  class="btn btn-default" style="color: green;"> Activate </a></td>';
+            }
             $table .= '</tr>';
         }
         return view('tables.editable', [
@@ -243,28 +252,45 @@ class FacilityController extends Controller
         }        
     }
 
-    public function updatepartnercontacts(Request $request, PartnerFacilityContact $contact)
+    public function updatepartnercontacts($id, Request $request)
     {
-        if ($request->method() == "GET") {
+        if ($request->method() == 'GET') {
             $data = [
                 'counties' => DB::table('countys')->get(),
                 'subcounties' => DB::table('districts')->get(),
                 'partners' => DB::table('partners')->get(),
-                'contact' => $contact,
+                'contact' => PartnerFacilityContact::find($id),
             ];
             return view('forms.partnercontacts', $data)->with('pageTitle', 'Update Partner Facility Contact');
         } else {
             $validate = $request->validate([
                 'name' => 'required',
-                'email' => 'required|unique:partner_facility_contacts',
+                'email' => 'required',
             ]);
             $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
-            
+            $contact = PartnerFacilityContact::find($id);
             $contact->fill($form_data);
-            $contact->update();
+            $contact->save();
+
+
+            PartnerFacilityContactsChangeLog::create([
+                'partner_contact_id' => $contact['id'],
+                'county_id' => $contact['county_id'],
+                'subcounty_id' => $contact['subcounty_id'],
+                'partner_id' => $contact['partner_id'],
+                'name' => $contact['name'],
+                'email' => $contact['email'],
+                'telephone' => $contact['telephone'],
+                'type' => $contact['type'],
+                'critical_results' => $contact['critical_results'],
+                'contact_change_date' => $contact['updated_at'],
+                'contact_deleted_at' => $contact['deleted_at'],
+                'contact_updated_by' => auth()->user()->id,
+            ]);
 
             return redirect()->route('partnercontacts');
         }
+
     }
 
     /**
@@ -431,4 +457,37 @@ class FacilityController extends Controller
             ->paginate(10);
         return $facilities;
     }
+
+    public function disable_notification($id)
+    {
+        PartnerFacilityContact::find($id)->delete();
+
+        PartnerFacilityContactsChangeLog::create([
+            'partner_contact_id' => $contact->id,
+            'county_id' => $contact['county_id'],
+            'subcounty_id' => $contact['subcounty_id'],
+            'partner_id' => $contact['partner_id'],
+            'name' => $contact['name'],
+            'email' => $contact['email'],
+            'telephone' => $contact['telephone'],
+            'type' => $contact['type'],
+            'critical_results' => $contact['critical_results'],
+            'contact_change_date' => $contact['updated_at'],
+            'contact_deleted_at' => $contact['deleted_at'],
+            'contact_updated_by' => $contact['id'],
+        ]);
+
+        return redirect()->route('partnercontacts');
+    }
+
+        public function enable_notification($id)
+    {
+            PartnerFacilityContact::withTrashed()->find($id)->restore();
+
+        return redirect()->route('partnercontacts');
+    }
 }
+
+
+
+
