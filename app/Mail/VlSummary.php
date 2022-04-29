@@ -47,8 +47,8 @@ class VlSummary extends Mailable
 
         $contact = DB::table('partner_facility_contacts')->where('id', $this->user_id)->get()->first();
 
-        $startdate = date('Y-m-d', strtotime('-8 days'));
-        $enddate = date('Y-m-d', strtotime('-1 days'));
+        $startdate = date('Y-m-d', strtotime('-7 days'));
+        $enddate = date('Y-m-d', strtotime('0 days'));
         // $startdate = date('Y-m-d', strtotime('-180 days'));
         // $enddate = date("Y-m-d", strtotime('-70 days'));
 

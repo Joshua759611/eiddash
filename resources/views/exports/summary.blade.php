@@ -45,10 +45,10 @@
 			<tr>
 				<th>#</th>
 				<th>Lab</th>
-				<th>Samples Recieved in 2022</th>
+				<th>Samples Recieved</th>
 				<th>Samples Tested</th>
-				<th>Samples Untested</th>
-				<th>Samples whose results has been dispatched</th>
+				{{-- <th>Samples Untested</th> --}}
+				<th>Samples whose result has been dispatched</th>
 				{{-- <th>Samples whose results have been read</th> --}}
 
 			</tr>
@@ -61,7 +61,7 @@
 					<td> {{  $row->name ?? ''}} </td>
 					<td> {{ $row->recieved[0] ?? ''}} </td>
 					<td> {{  $row->tests[0] ?? '' }} </td>
-					<td> {{ $row->untested[0] ?? '' }} </td>
+					{{-- <td> {{ $row->untested[0] ?? '' }} </td> --}}
 					<td> {{ $row->dispatch[0] ?? '' }} </td>
 					{{-- <td> {{ $row->dispatch[0] ?? '' }} </td> --}}
 					

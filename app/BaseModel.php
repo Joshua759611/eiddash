@@ -14,7 +14,7 @@ class BaseModel extends Model
     // protected $keepRevisionOf = [];
     protected $dontKeepRevisionOf = ['synched', 'datesynched', 'created_at', 'updated_at'];
     
-    protected $guarded = ['id', 'created_at', 'updated_at', 'batch', 'kemri_id', 'national_sample_id', 'national_patient_id', 'national_batch_id', 'time_sent_to_edarp', 'edarp_error', 'tat5', 'time_received', 'areaname', 'label_id', 'sample_received_by'];
+    protected $guarded = ['id', 'created_at', 'updated_at', 'batch', 'kemri_id', 'national_sample_id', 'national_patient_id', 'national_batch_id', 'time_sent_to_edarp', 'edarp_error', 'tat5', 'time_received', 'areaname', 'label_id', 'sample_received_by','dateviewed'];
 
 
 
