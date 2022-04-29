@@ -15,6 +15,7 @@ use App\Mail\EidCountyPositives;
 use App\Mail\VlPartnerNonsuppressed;
 use App\Mail\VlCountyNonsuppressed;
 use App\Mail\PasswordEmail;
+use App\Mail\VlSummary;
 
 class Report
 {
@@ -243,6 +244,54 @@ class Report
 		    }
 		}
 	}
+
+	public static function vl_summary()
+	{
+		// $county_contacts = EidUser::when($county_id, function($query) use ($county_id){
+        //         return $query->where('partner', $county_id);
+        //     })->where(['flag' => 1, 'account' => 7])->where('id', '>', 384)->get();
+		$county_contacts = DB::table('partner_facility_contacts')
+		->where('lab_summary','=',1)
+		->whereNull('deleted_at')
+		->get();
+		// ['rosaga@healthit.uonbi.ac.ke','jmugah@healthit.uonbi.ac.ke','mnjatha@healthit.uonbi.ac.ke','elvokip@gmail.com'];
+
+		foreach ($county_contacts as $key => $contact) {
+	        $mail_array = [$contact->email];
+	        // $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@clintonhealthaccess.org'];
+
+	        // foreach ($contact->toArray() as $column_name => $value) {
+	        // 	$value = trim($value);
+
+	        // 	// Check if email address is blocked
+	        // 	if(self::my_string_contains($column_name, ['email'])){
+	        // 		$b = BlockedEmail::where('email', $value)->first();
+	        // 		if($b){
+	        // 			$contact->$column_name=null;
+	        // 			$contact->save();
+	        // 			echo "Removed blocked email {$value} \n";
+	        // 			continue;
+	        // 		}
+	        // 	}
+
+	        // 	if(self::my_string_contains($column_name, ['email']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $mail_array[] = trim($value);
+	        // }
+	        if(env('APP_LOCATION') == 'server'){
+		        try {
+			        // DB::table('eid_users')->where('id', $contact->id)->update(['datelastsent' => date('Y-m-d')]);
+			     	// Mail::to($mail_array)->bcc($bcc_array)->send(new VlSummary($contact->id));
+			     	Mail::to($mail_array)->send(new VlSummary($contact->id));
+
+		        } catch (Exception $e) {
+		        	echo $e->getMessage();			        	
+		        }
+		    }
+		    else{
+		    	Mail::to(self::$email_array)->send(new VlSummary($contact->id));
+		    }
+		}
+	}
+
 
     public static function send_communication()
     {
