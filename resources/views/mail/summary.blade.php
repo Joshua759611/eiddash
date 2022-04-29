@@ -1,5 +1,5 @@
 <p>
-	{{ $name }},
+	Dear {{ $name }},
 	<br />
 
 

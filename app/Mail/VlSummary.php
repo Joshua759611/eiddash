@@ -129,6 +129,7 @@ class VlSummary extends Mailable
 
        
          $this->title = "SUMMARY OF HIV-VIRAL LOAD STATUS REPORT BETWEEN {$range} ";
+         $this->name = DB::table('partner_facility_contacts')->where('id', $contact->id)->first()->name ?? '';
      
 
         $header = "<div align='center' style='text-align: center; align-content: center;'>
