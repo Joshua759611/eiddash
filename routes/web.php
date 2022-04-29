@@ -129,6 +129,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('partnercontacts', 'FacilityController@partnercontacts')->name('partnercontacts');
 		Route::any('createpartnercontacts', 'FacilityController@createpartnercontacts')->name('createpartnercontacts');
 		Route::any('updatepartnercontacts/{contact?}', 'FacilityController@updatepartnercontacts')->name('updatepartnercontacts');
+		Route::any('enable_notification/{contact?}', 'FacilityController@enable_notification')->name('enable_notification');
+		Route::any('disable_notification/{contact?}', 'FacilityController@disable_notification')->name('disable_notification');
 	});
 	
 	Route::get('results/{testtype?}', 'ResultController@index')->name('results');

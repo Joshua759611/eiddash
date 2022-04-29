@@ -84,6 +84,10 @@ Artisan::command('report:suppression-county {contact_id?}', function ($contact_i
     $this->info($str);
 })->describe('Send suppression follow up report for counties.');
 
+Artisan::command('report:vl_summary', function () {
+    $str = \App\Report::vl_summary();
+    $this->info($str);
+})->describe('Send VL summary to national users');
 
 Artisan::command('delete:pdfs', function(){
     $str = \App\Report::delete_folder(storage_path('app/hei'));
