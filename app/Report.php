@@ -2,7 +2,9 @@
 
 namespace App;
 
-use App\Mail\CountyEidPositivesMailBuilder;
+
+use App\Mail\CriticalResults;
+
 use DB;
 use Exception;
 use GuzzleHttp\Client;
@@ -20,6 +22,17 @@ use App\Mail\VlSummary;
 
 class Report
 {
+    public static $my_classes = [
+        'eid' => [
+            'sampleview_class' => \App\SampleView::class,
+            'view_table' => 'samples_view',
+        ],
+
+        'vl' => [
+            'sampleview_class' => \App\ViralsampleView::class,
+            'view_table' => 'viralsamples_view',
+        ],
+    ];
 
 	public static $email_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
 
@@ -357,6 +370,88 @@ class Report
 	// 	}
 	// }
 
+    public static function build_query()
+    {
+        $partner_facility_contacts = DB::table('partner_facility_contacts')->get();
 
+        foreach ($partner_facility_contacts as $partner_facility_contact) {
+            print_r($partner_facility_contact);
+        }
+    }
+
+
+    public static function critical_results($type)
+    {
+        $sampleview_class = self::$my_classes[$type]['sampleview_class'];
+        $view_table = self::$my_classes[$type]['view_table'];
+        $dt = date('Y-m-d', strtotime('-7 days'));
+        $q = 'rcategory IN (3, 4)';
+        $lab = \App\Lab::find(env('APP_LAB'));
+        if ($type == 'eid') $q = 'result=2';
+
+        $facilities = Facility::whereRaw("id IN (SELECT DISTINCT facility_id FROM {$view_table} WHERE datedispatched = '{$dt}' AND repeatt=0 AND {$q})")->get();
+        $data = [];
+        $index = 0;
+        foreach ($facilities as $facility) {
+            $samples = $sampleview_class::whereRaw($q)
+                ->where(['datedispatched' => $dt, 'repeatt' => 0])
+                ->get();
+            foreach ($samples as $key => $sample) {
+                $data[$index]['patient'] = $sample->patient;
+                $data[$index]['facility_mfl'] = $facility->facilitycode;
+                $data[$index]['facility_name'] = $facility->name;
+                $data[$index]['datecollected'] = $sample->my_date_format('datecollected');
+                $data[$index]['datereceived'] = $sample->my_date_format('datereceived');
+                $data[$index]['datetested'] = $sample->my_date_format('datetested');
+                $data[$index]['datedispatched'] = $sample->my_date_format('datedispatched');
+                if ($sample->result) {
+                    $data[$index]['result'] = "Positive";
+                } else {
+                    $data[$index]['result'] = '';
+                }
+                $index++;
+            }
+        }
+
+        if ($data){
+            $cc_array = [];
+            $to_array = [];
+            $mail_array = ['sinjiri@healthit.uonbi.ac.ke'];
+
+            $partner_contacts = DB::table('partner_facility_contacts')
+                ->whereRaw('partner_facility_contacts.deleted_at is null')
+                ->where('critical_results', 1)
+                ->get();//add criteria for critical result ==1
+
+            foreach ($partner_contacts as $key => $contact) {
+                if ($contact->type == "Recepient") {
+                    array_push($to_array, $contact->email);
+                } else {
+                    if ($contact->type == "Cc") {
+                        array_push($cc_array, $contact->email);
+
+                    }
+                }
+            }
+            if (env('APP_ENV') == 'production') {
+                try {
+                    $comm = new CriticalResults( $type, $data, $dt);
+                    Mail::to($to_array)->cc($cc_array)->send($comm);
+                } catch (Exception $e) {
+                    dd($e->getMessage());
+                }
+            } else {
+                try {
+                    $comm = new CriticalResults($type, $data, $dt);
+                    Mail::to($mail_array)->cc([$lab->email])->send($comm);
+                } catch (Exception $e) {
+                    dd($e->getMessage());
+                }
+            }
+        }else{
+            //TODO implement a custom feedback mechanism for weeks with no critical results reported
+            echo "No critical results for specified period";
+        }
+    }
 
 }

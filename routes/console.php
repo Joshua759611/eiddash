@@ -220,3 +220,9 @@ Artisan::command('resend:smsqueries', function() {
     $str = $model->resendSMS();
     $this->info($str);
 });
+
+Artisan::command('dispatch:critical', function(){
+    $str = \App\Report::critical_results('eid');
+    $str = \App\Report::critical_results('vl');
+    $this->info($str);
+})->describe('Send emails for critical results.');
