@@ -333,7 +333,7 @@ class Report
     {
         $sampleview_class = self::$my_classes[$type]['sampleview_class'];
         $view_table = self::$my_classes[$type]['view_table'];
-        $dt = date('Y-m-d', strtotime('-5 month'));
+        $dt = date('Y-m-d', strtotime('-7 days'));
         $q = 'rcategory IN (3, 4)';
         $lab = \App\Lab::find(env('APP_LAB'));
         if ($type == 'eid') $q = 'result=2';
@@ -353,7 +353,11 @@ class Report
                 $data[$index]['datereceived'] = $sample->my_date_format('datereceived');
                 $data[$index]['datetested'] = $sample->my_date_format('datetested');
                 $data[$index]['datedispatched'] = $sample->my_date_format('datedispatched');
-                $data[$index]['result'] = $sample->result ?? '';
+                if ($sample->result) {
+                    $data[$index]['result'] = "Positive";
+                } else {
+                    $data[$index]['result'] = '';
+                }
                 $index++;
             }
         }
@@ -365,6 +369,7 @@ class Report
 
             $partner_contacts = DB::table('partner_facility_contacts')
                 ->whereRaw('partner_facility_contacts.deleted_at is null')
+                ->where('critical_results', 1)
                 ->get();//add criteria for critical result ==1
 
             foreach ($partner_contacts as $key => $contact) {
@@ -392,6 +397,9 @@ class Report
                     dd($e->getMessage());
                 }
             }
+        }else{
+            //TODO implement a custom feedback mechanism for weeks with no critical results reported
+            echo "No critical results for specified period";
         }
     }
 
