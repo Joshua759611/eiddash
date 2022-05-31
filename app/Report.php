@@ -384,35 +384,39 @@ class Report
     {
         $sampleview_class = self::$my_classes[$type]['sampleview_class'];
         $view_table = self::$my_classes[$type]['view_table'];
-        $dt = date('Y-m-d', strtotime('-7 days'));
+        $dt = date('Y-m-d', strtotime('0 days'));
         $q = 'rcategory IN (3, 4)';
         $lab = \App\Lab::find(env('APP_LAB'));
         if ($type == 'eid') $q = 'result=2';
 
-        $facilities = Facility::whereRaw("id IN (SELECT DISTINCT facility_id FROM {$view_table} WHERE datedispatched = '{$dt}' AND repeatt=0 AND {$q})")->get();
+        $facilities = Facility::whereRaw("id IN (SELECT DISTINCT facility_id FROM {$view_table} WHERE datedispatched >= '{$dt}' AND repeatt=0 AND {$q})")->get();
         $data = [];
         $index = 0;
-        foreach ($facilities as $facility) {
             $samples = $sampleview_class::whereRaw($q)
-                ->where(['datedispatched' => $dt, 'repeatt' => 0])
+				->where('datedispatched',$dt)
+                ->where(['repeatt' => 0])
                 ->get();
+
             foreach ($samples as $key => $sample) {
                 $data[$index]['patient'] = $sample->patient;
-                $data[$index]['facility_mfl'] = $facility->facilitycode;
-                $data[$index]['facility_name'] = $facility->name;
+                $data[$index]['facility_mfl'] = $sample->facility_id;
+                $data[$index]['facility_name'] = $sample->facility_name;
                 $data[$index]['datecollected'] = $sample->my_date_format('datecollected');
                 $data[$index]['datereceived'] = $sample->my_date_format('datereceived');
                 $data[$index]['datetested'] = $sample->my_date_format('datetested');
                 $data[$index]['datedispatched'] = $sample->my_date_format('datedispatched');
-                if ($sample->result) {
+                if ($sample->result && $type == 'eid') {
                     $data[$index]['result'] = "Positive";
-                } else {
+                } elseif($sample->result && $type == 'vl'){
+					$data[$index]['result'] = $sample->result;
+				}else {
                     $data[$index]['result'] = '';
                 }
                 $index++;
             }
-        }
-
+        // }
+		
+		
         if ($data){
             $cc_array = [];
             $to_array = [];
@@ -435,6 +439,7 @@ class Report
             }
             if (env('APP_ENV') == 'production') {
                 try {
+					// dd($data);
                     $comm = new CriticalResults( $type, $data, $dt);
                     Mail::to($to_array)->cc($cc_array)->send($comm);
                 } catch (Exception $e) {
@@ -452,6 +457,7 @@ class Report
             //TODO implement a custom feedback mechanism for weeks with no critical results reported
             echo "No critical results for specified period";
         }
+		// 
     }
 
 }
