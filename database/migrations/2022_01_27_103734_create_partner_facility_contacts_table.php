@@ -23,6 +23,7 @@ class CreatePartnerFacilityContactsTable extends Migration
             $table->string('telephone')->nullable();
             $table->enum('type', ['Recepient', 'Cc', 'Bcc'])->nullable();
             $table->boolean('critical_results');
+            $table->boolean('lab_summary');
             $table->timestamps();
             $table->softDeletes();
         });
