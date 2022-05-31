@@ -399,7 +399,7 @@ class Report
 
             foreach ($samples as $key => $sample) {
                 $data[$index]['patient'] = $sample->patient;
-                $data[$index]['facility_mfl'] = $sample->facility_id;
+                $data[$index]['facility_mfl'] = $sample->facility_code;
                 $data[$index]['facility_name'] = $sample->facility_name;
                 $data[$index]['datecollected'] = $sample->my_date_format('datecollected');
                 $data[$index]['datereceived'] = $sample->my_date_format('datereceived');
