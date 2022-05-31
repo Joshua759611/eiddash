@@ -34,7 +34,7 @@ class Report
         ],
     ];
 
-	public static $email_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+	public static $email_array = ['rosaga@healthit.uonbi.ac.ke', 'sinjiri@healthit.uonbi.ac.ke', 'baksajoshua09@gmail.com'];
 
 
     public static function test_email()

@@ -6,6 +6,7 @@ perexec='php /usr/share/nginx/html/performance/artisan '
 #0 8 * * 1 $eidexec report:hei-county 2>&1
 #10 8 * * 1 $eidexec report:suppression-partner 2>&1
 #0 8 * * 1 $eidexec report:suppression-county 2>&1
+0 8 * * 1 $eidexec report:vl_summary 2>&1
 0 8 * * 1 $eidexec report 2>&1
 0 4 * * * $eidexec dhis:current 2>&1
 0 22 * * * $eidexec get:mlab 2>&1
