@@ -83,6 +83,7 @@
                         @endif
                         <th> Facility MFL </th>
                         <th> Facility Name </th>
+                        <th> County </th>
                         <th> Date Collected </th>
                         <th> Date Received </th>
                         <th> Date Tested </th>
@@ -94,10 +95,11 @@
                 <tbody>
                     @foreach($summary as $key => $row)
                     <tr>
-                        <td> {{ $key+1 }}   </td>
+                        <td> {{ $key+1 }}&nbsp;</td>
                         <td> {{ $row['patient'] }}  </td>
                         <td> {{ $row['facility_mfl'] }} </td>
                         <td> {{ $row['facility_name'] }}    </td>
+                        <td> {{ $row['county'] }}    </td>
                         <td> {{ $row['datecollected'] }}    </td>
                         <td> {{ $row['datereceived'] }} </td>
                         <td> {{ $row['datetested'] }}   </td>
