@@ -66,6 +66,7 @@ class Synch
 		try {
 			$response = $client->request('post', 'auth/login', [
 	            'http_errors' => false,
+			'verify' => false,
 	            'connect_timeout' => 1.5,
 				'headers' => [
 					'Accept' => 'application/json',
@@ -95,7 +96,7 @@ class Synch
 		} else{
 			self::login($lab);
 		}
-		// dd($lab);
+		//dd($lab);
 		return Cache::get($lab->token_name);
 	}
 
