@@ -405,8 +405,8 @@ class Report
                 $data[$index]['facility_name'] = $sample->facility_name;
                 $data[$index]['county'] = $sample->county;
                 $data[$index]['datecollected'] = $sample->my_date_format('datecollected');
-                $data[$index]['datereceived'] = $sample->my_date_format('datereceived');
-                $data[$index]['datetested'] = $sample->my_date_format('datetested');
+                $data[$index]['tat_collected_to_received'] = $sample->tat_collected_to_received;
+                $data[$index]['tat_received_to_tested'] = $sample->tat_received_to_tested;
                 $data[$index]['datedispatched'] = $sample->my_date_format('datedispatched');
                 if ($sample->result && $type == 'eid') {
                     $data[$index]['result'] = "Positive";

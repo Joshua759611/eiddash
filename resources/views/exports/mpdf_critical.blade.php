@@ -85,8 +85,8 @@
                         <th> Facility Name </th>
                         <th> County </th>
                         <th> Date Collected </th>
-                        <th> Date Received </th>
-                        <th> Date Tested </th>
+                        <th> TAT(C-R) </th>
+                        <th> TAT(R-T) </th>
                         <th> Date Dispatched </th>
                         <th> Result </th>
                     </tr>
@@ -101,8 +101,8 @@
                         <td> {{ $row['facility_name'] }}    </td>
                         <td> {{ $row['county'] }}    </td>
                         <td> {{ $row['datecollected'] }}    </td>
-                        <td> {{ $row['datereceived'] }} </td>
-                        <td> {{ $row['datetested'] }}   </td>
+                        <td> {{ $row['tat_collected_to_received'] }} </td>
+                        <td> {{ $row['tat_received_to_tested'] }}   </td>
                         <td> {{ $row['datedispatched'] }}   </td>
                         <td> {{ $row['result'] }}   </td>
                     </tr>
