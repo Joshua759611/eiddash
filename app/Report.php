@@ -218,6 +218,58 @@ class Report
 		}
 	}
 
+	/**
+	function can help extract mails from the hr growing table on db as quick fix
+     */
+    public static function contacts_for_alerts($testType)
+    {
+        $partner_contacts = [];
+        if ($testType === 'vl') {
+            $partner_contacts = VlPartner::where('active', 2)->get();
+
+        } else {
+            if ($testType === 'eid') {
+                $partner_contacts = EidPartner::where('active', 1)->get();
+
+            }
+        }
+        $cc_array = [];
+        $bcc_array = [];
+        foreach ($partner_contacts as $key => $contact) {
+            foreach ($contact->toArray() as $column_name => $value) {
+                $value = trim($value);
+
+                // Check if email address is blocked
+                if (self::my_string_contains($column_name, ['ccc', 'bcc', 'mainrecipientmail'])) {
+                    $b = BlockedEmail::where('email', $value)->first();
+                    if ($b) {
+                        $contact->$column_name = null;
+                        $contact->save();
+                        echo "Removed blocked email {$value} \n";
+                        continue;
+                    }
+                }
+                $partner_name = DB::table('partners')->where('id', $contact->partner)->first()->name ?? '';
+                $county = DB::table('countys')->where('id', $contact->county)->first()->name ?? '';
+
+                if (self::my_string_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $cc_array[] = [trim($value), $contact->partner, $partner_name, $county, $contact->active, $contact->lastalertsent];
+                if (self::my_string_contains($column_name, ['bcc']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
+            }
+
+        }
+        $filename = "alert_vl_.csv";
+
+        $handle = fopen($filename, 'w');
+        fputcsv($handle, array('Mail', 'eid_system_partner_id', 'Partner Name', 'county', 'notification_status', 'date_last_alert_sent'));
+        foreach ($cc_array as $k_arr => $cc_val) {
+            fputcsv($handle, $cc_val, $separator = ",", $enclosure = '"', $escape = "\\");
+        }
+        fclose($handle);
+        $headers = array(
+            'Content-Type' => 'text/csv',
+        );
+
+    }
 	public static function vl_county($county_id=null)
 	{
 		$county_contacts = EidUser::when($county_id, function($query) use ($county_id){
