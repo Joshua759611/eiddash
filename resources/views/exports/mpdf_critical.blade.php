@@ -75,19 +75,19 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th> No </th>
+                        <th> No &nbsp;</th>
                         @if($type == 'eid')
-                        <th> HEI Number</th>
+                        <th> HEI Number &nbsp;</th>
                         @else
-                        <th> CCC Number</th>
+                        <th> CCC Number &nbsp;</th>
                         @endif
-                        <th> Facility MFL </th>
-                        <th> Facility Name </th>
-                        <th> County </th>
-                        <th> Date Collected </th>
-                        <th> TAT(C-R) </th>
-                        <th> TAT(R-T) </th>
-                        <th> Date Dispatched </th>
+                        <th> Facility MFL</th>
+                        <th> Facility Name&nbsp;</th>
+                        <th> County&nbsp; </th>
+                        <th> Date Collected&nbsp; </th>
+                        <th> TAT(C-R)&nbsp; </th>
+                        <th> TAT(R-T) &nbsp;</th>
+                        <th> Date Dispatched &nbsp;</th>
                         <th> Result </th>
                     </tr>
                 </thead>
@@ -99,7 +99,7 @@
                         <td> {{ $row['patient'] }}  </td>
                         <td> {{ $row['facility_mfl'] }} </td>
                         <td> {{ $row['facility_name'] }}    </td>
-                        <td> {{ $row['county'] }}    </td>
+                        <td> {{ $row['county'] }} &nbsp;   </td>
                         <td> {{ $row['datecollected'] }}    </td>
                         <td> {{ $row['tat_collected_to_received'] }} </td>
                         <td> {{ $row['tat_received_to_tested'] }}   </td>
