@@ -459,6 +459,7 @@ class Report
                 $data[$index]['datecollected'] = $sample->my_date_format('datecollected');
                 $data[$index]['tat_collected_to_received'] = $sample->tat_collected_to_received;
                 $data[$index]['tat_received_to_tested'] = $sample->tat_received_to_tested;
+                $data[$index]['tat_datetested_to_date_dispatched'] = $sample->tat_datetested_to_date_dispatched;
                 $data[$index]['datedispatched'] = $sample->my_date_format('datedispatched');
                 if ($sample->result && $type == 'eid') {
                     $data[$index]['result'] = "Positive";
