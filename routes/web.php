@@ -127,6 +127,8 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::group(['middleware' => ['only_utype:1, 10']], function () {
 		Route::get('partnercontacts', 'FacilityController@partnercontacts')->name('partnercontacts');
+		Route::get('vlalertemails', 'FacilityController@vlAlertsEmails')->name('vlalertemails');
+		Route::get('eidAlertsEmails', 'FacilityController@eidAlertsEmails')->name('eidAlertsEmails');
 		Route::any('createpartnercontacts', 'FacilityController@createpartnercontacts')->name('createpartnercontacts');
 		Route::any('updatepartnercontacts/{contact?}', 'FacilityController@updatepartnercontacts')->name('updatepartnercontacts');
 		Route::any('enable_notification/{contact?}', 'FacilityController@enable_notification')->name('enable_notification');

@@ -229,6 +229,15 @@ class FacilityController extends Controller
                         ])->with('pageTitle', 'Partner Facility Contacts');
     }
 
+    public function vlAlertsEmails()
+    {
+        return self::contacts_for_alerts('vl',"VL alert Emails");
+    }
+ public function  eidAlertsEmails()
+    {
+        return self::contacts_for_alerts('eid',"EID alert Emails");
+    }
+
     public function createpartnercontacts(Request $request)
     {
         if ($request->method() == 'GET') {
@@ -291,6 +300,78 @@ class FacilityController extends Controller
             return redirect()->route('partnercontacts');
         }
 
+    }
+
+    /**
+    function can help extract mails from the hr growing table on db as quick fix
+     */
+    public function contacts_for_alerts($testType, $title)
+    {
+        $partner_contacts = [];
+        if ($testType === 'vl') {
+            $partner_contacts = DB::table('vl_partner_contacts_for_alerts')->where('active','=',2)->get();
+
+        } else {
+            if ($testType === 'eid') {
+                $partner_contacts = DB::table('eid_partner_contacts_for_alerts')->where('active','=', 1)->get();
+
+            }
+        }
+        $cc_array = [];
+        $bcc_array = [];
+        foreach ($partner_contacts as $key => $contact) {
+
+            foreach ($contact as $column_name => $value) {
+                $value = trim($value);
+
+                // Check if email address is blocked
+                if (self::my_string_contains($column_name, ['ccc', 'bcc', 'mainrecipientmail'])) {
+                    $b = DB::table('blocked_emails')->where('email','=', $value)->first();
+                    if ($b) {
+                        $contact->$column_name = null;
+                        $contact->save();
+                        echo "Removed blocked email {$value} \n";
+                        continue;
+                    }
+                }
+                $partner_name = DB::table('partners')->where('id','=',$contact->partner)->first()->name ?? '';
+                $county = DB::table('countys')->where('id','=', $contact->county)->first()->name ?? '';
+
+                if (self::my_string_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $cc_array[] = [trim($value), $contact->partner, $partner_name, $county, $contact->active, $contact->lastalertsent];
+                if (self::my_string_contains($column_name, ['bcc']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
+            }
+
+        }
+
+        $table = '';
+        $columns = parent::_columnBuilder(['Email', 'Partner', 'County', 'Notification Status','Last alert sent','Action']);
+
+        foreach ($cc_array as $k_arr => $cc_val) {
+            $table .= '<tr>';
+            $table .= '<td>'.$cc_val[0] ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td>'.$cc_val[2] ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td>'.$cc_val[3] ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td>'.$cc_val[4] ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td>'.$cc_val[5] ?? '<strong>N/A</strong>' .'</td>';
+            $table .= '<td><a title="Once deactivated the user will be blocked from receiving alerts"  class="btn btn-default" style="color: orangered;"> Delete</a></td>';
+            $table .= '</tr>';
+        }
+         return view('tables.editable', [
+             'row' => $table,
+             'columns' => $columns,
+             'create_endpoint' => 'createpartnercontacts',
+             'create_text' => 'Create Partner Facility Contact',
+             'function' => 'update'
+         ])->with('pageTitle', $title);
+
+    }
+    public function my_string_contains($str, $search_array)
+    {
+        if(!is_array($search_array)) return str_contains($str, $search_array);
+        foreach ($search_array as $value) {
+            if(str_contains($str, $value)) return true;
+        }
+        return false;
     }
 
     /**

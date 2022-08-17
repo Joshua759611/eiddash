@@ -18,11 +18,20 @@
         <ul class="nav" id="side-menu" style=" padding-top: 12px;padding-left: 8px;">
         @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 10)
             <li><a href="{{ url('user/add') }}">Add Users</a></li>
-            <hr />
+            <hr/>
             <li>
                 <a href="{{ url('partnercontacts') }}"><span class="nav-label">Partner Contacts</span></a>
             </li>
-            <hr />
+            <hr/>
+            <li>
+                <a href="{{ url('vlalertemails') }}"><span class="nav-label">Partner Vl alert emails</span></a>
+            </li>
+            <hr/>
+            <hr/>
+            <li>
+                <a href="{{ url('eidAlertsEmails') }}"><span class="nav-label">Partner EID alert emails</span></a>
+            </li>
+            <hr/>
         @endif
         @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 10)
             <li><a href="{{ url('reports/permission/setup') }}">Reports Setup</a></li>
@@ -110,18 +119,18 @@
             @if(in_array(Auth::user()->user_type_id, [10, 13]))
                 <li>
                     <a href="{{ url('email/create') }}">Add Email</a>
-                </li>                
+                </li>
                 <li>
                     <a href="{{ url('email') }}">View Emails</a>
-                </li>                
-            @endif 
+                </li>
+            @endif
             @if(in_array(Auth::user()->user_type_id, [2,6,7]))
                 <li><a href="https://eid.nascop.org">EID Summaries</a></li>
                 <hr />
                 <li><a href="https://viralload.nascop.org">VL Summaries</a></li>
                 <hr />
             @endif
-            
+
             @if(Auth::user()->user_type_id != 8)
                 <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
                 <hr />
