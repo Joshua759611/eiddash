@@ -186,7 +186,7 @@ class FacilityController extends Controller
 
     public function partnercontacts()
     {
-        $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results', 'Edit', 'Action']);
+        $columns = parent::_columnBuilder(['Name', 'Email', 'Mobile No', 'County', 'Sub-County', 'Partner', 'Critical Results','EID Results','VL Results', 'Edit', 'Action']);
         $partners = PartnerFacilityContact::withTrashed()->get();
         if ($partners->isEmpty()) {
             $table = '<tr><th colspan="7"><center>No Contact Available</center></th></tr>';
@@ -200,6 +200,12 @@ class FacilityController extends Controller
             $critical_results_label = "<label class'label label-danger'>Not Allowed</label>";
             if ($partner->critical_results)
                 $critical_results_label = "<label class'label label-success'>Allowed</label>";
+            $eid_results_label = "<label class'label label-danger'>Not Allowed</label>";
+            if ($partner->eid_results)
+                $eid_results_label = "<label class'label label-success'>Allowed</label>";
+            $vl_results_label = "<label class'label label-danger'>Not Allowed</label>";
+            if ($partner->vl_results)
+                $vl_results_label = "<label class'label label-success'>Allowed</label>";
             $table .= '<tr>';
             $table .= '<td>'.$partner->name ?? '<strong>N/A</strong>' .'</td>';
             $table .= '<td>'.$partner->email ?? '<strong>N/A</strong>' .'</td>';
@@ -208,6 +214,8 @@ class FacilityController extends Controller
             $table .= '<td>'.$subcounty_label.'</td>';
             $table .= '<td>'.$partner_label.'</td>';
             $table .= '<td>'.$critical_results_label.'</td>';
+            $table .= '<td>'.$eid_results_label.'</td>';
+            $table .= '<td>'.$vl_results_label.'</td>';
             if($partner->deleted_at==NULL){
                 $table .= '<td><a href="'.env('APP_URL').'/updatepartnercontacts/'.$partner->id.'" class="btn btn-default">Edit</a></td>';
             }else{
@@ -252,7 +260,7 @@ class FacilityController extends Controller
                 'name' => 'required',
                 'email' => 'required|unique:partner_facility_contacts',
             ]);
-            $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
+            $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'eid_results', 'vl_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
             $contact = new PartnerFacilityContact;
             $contact->fill($form_data);
             $contact->save();
@@ -276,7 +284,7 @@ class FacilityController extends Controller
                 'name' => 'required',
                 'email' => 'required',
             ]);
-            $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
+            $form_data = $request->only(['name', 'email', 'telephone', 'critical_results', 'eid_results', 'vl_results', 'type', 'county_id', 'subcounty_id', 'partner_id']);
             $contact = PartnerFacilityContact::find($id);
             $contact->fill($form_data);
             $contact->save();
@@ -292,6 +300,8 @@ class FacilityController extends Controller
                 'telephone' => $contact['telephone'],
                 'type' => $contact['type'],
                 'critical_results' => $contact['critical_results'],
+                'eid_results' => $contact['eid_results'],
+                'vl_results' => $contact['vl_results'],
                 'contact_change_date' => $contact['updated_at'],
                 'contact_deleted_at' => $contact['deleted_at'],
                 'contact_updated_by' => auth()->user()->id,

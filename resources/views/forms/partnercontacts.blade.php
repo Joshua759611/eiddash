@@ -61,6 +61,20 @@
                                    @if(isset($contact) && $contact->critical_results)
                                    checked
                                     @endif
+                            />&nbsp;&nbsp;
+                            <label class="control-label">EID Results</label>
+                            <input  type="hidden" name="eid_results" value="0"/>
+                            <input type="checkbox" class="i-checks" name="eid_results" value="1"
+                                   @if(isset($contact) && $contact->eid_results)
+                                   checked
+                                    @endif
+                            />&nbsp;&nbsp;
+                            <label class="control-label">VL Results</label>
+                            <input  type="hidden" name="vl_results" value="0"/>
+                            <input type="checkbox" class="i-checks" name="vl_results" value="1"
+                                   @if(isset($contact) && $contact->vl_results)
+                                   checked
+                                    @endif
                             />
                         </div>
                     </div>
