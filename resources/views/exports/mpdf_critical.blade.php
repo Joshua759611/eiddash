@@ -87,6 +87,7 @@
                         <th> Date Collected&nbsp; </th>
                         <th> TAT(C-R)&nbsp; </th>
                         <th> TAT(R-T) &nbsp;</th>
+                        <th> TAT(T-D) &nbsp;</th>
                         <th> Date Dispatched &nbsp;</th>
                         <th> Result </th>
                     </tr>
@@ -103,6 +104,7 @@
                         <td> {{ $row['datecollected'] }}    </td>
                         <td> {{ $row['tat_collected_to_received'] }} </td>
                         <td> {{ $row['tat_received_to_tested'] }}   </td>
+                        <td> {{ $row['tat_datetested_to_date_dispatched'] }}   </td>
                         <td> {{ $row['datedispatched'] }}   </td>
                         <td> {{ $row['result'] }}   </td>
                     </tr>
