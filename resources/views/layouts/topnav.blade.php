@@ -63,6 +63,19 @@
                     <a href="{{ url('home') }}">Home</a>
                 </li>
             @if(Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 10)
+                <li class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Notifications <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{{ url('vlalertemails') }}"><span class="nav-label">Partner Vl alert emails</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ url('eidAlertsEmails') }}"><span class="nav-label">Partner EID alert emails</span></a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="">
                     <a href="{{ url('users') }}">Users</a>
                 </li>
