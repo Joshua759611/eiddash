@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\PartnerReport;
+use App\ReportCategory;
+use App\ReportPermission;
+use App\UserType;
 use DB;
 use Illuminate\Http\Request;
 use App\Sample;
