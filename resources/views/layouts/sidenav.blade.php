@@ -20,16 +20,11 @@
             <li><a href="{{ url('user/add') }}">Add Users</a></li>
             <hr/>
             <li>
+                <a href="{{ url('partners') }}"><span class="nav-label">Partners</span></a>
+            </li>
+            <hr/>
+            <li>
                 <a href="{{ url('partnercontacts') }}"><span class="nav-label">Partner Contacts</span></a>
-            </li>
-            <hr/>
-            <li>
-                <a href="{{ url('vlalertemails') }}"><span class="nav-label">Partner Vl alert emails</span></a>
-            </li>
-            <hr/>
-            <hr/>
-            <li>
-                <a href="{{ url('eidAlertsEmails') }}"><span class="nav-label">Partner EID alert emails</span></a>
             </li>
             <hr/>
         @endif
