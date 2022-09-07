@@ -445,7 +445,7 @@ class Report
         $data = [];
         $index = 0;
             $samples = $sampleview_class::whereRaw($q)
-				->where('datedispatched',$dt)
+                ->where('datedispatched', '>=', $dt)
                 ->where(['repeatt' => 0])
                 ->groupBy('county')
                 ->orderBy('county', 'asc')
