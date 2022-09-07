@@ -303,7 +303,7 @@ class FacilityController extends Controller
             if ($partner->deleted_at == NULL) {
                 $table .= '<td><a href="' . env('APP_URL') . '/updatepartnercontacts/' . $partner->id . '" class="btn btn-default">Edit</a></td>';
             } else {
-                $table .= '<td><a href="' . env('APP_URL') . '/updatepartnercontacts/' . $partner->id . '" class="btn btn-default" disabled>Edit</a></td>';
+                $table .= '<td><a href="' . env('APP_URL') . '/updatepartnercontacts/' . $partner->id . '" class="btn btn-default disabled">Edit</a></td>';
             }
             if ($partner->deleted_at == NULL) {
                 $table .= '<td><a title="Once deactivated the user will not be able to receive alerts" href="' . env('APP_URL') . '/disable_notification/' . $partner->id . '" class="btn btn-default" style="color: orangered;"> Deactivate</a></td>';
@@ -673,6 +673,8 @@ class FacilityController extends Controller
             'telephone' => $contact[0]->telephone,
             'type' => $contact[0]->type,
             'critical_results' => $contact[0]->critical_results,
+            'eid_results' => $contact[0]->eid_results,
+            'vl_results' => $contact[0]->vl_results,
             'contact_change_date' => $contact[0]->updated_at,
             'contact_deleted_at' => $contact[0]->deleted_at,
             'contact_updated_by' => Auth()->user(),
