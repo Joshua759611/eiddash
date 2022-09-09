@@ -218,6 +218,58 @@ class Report
 		}
 	}
 
+	/**
+	function can help extract mails from the hr growing table on db as quick fix
+     */
+    public static function contacts_for_alerts($testType)
+    {
+        $partner_contacts = [];
+        if ($testType === 'vl') {
+            $partner_contacts = VlPartner::where('active', 2)->get();
+
+        } else {
+            if ($testType === 'eid') {
+                $partner_contacts = EidPartner::where('active', 1)->get();
+
+            }
+        }
+        $cc_array = [];
+        $bcc_array = [];
+        foreach ($partner_contacts as $key => $contact) {
+            foreach ($contact->toArray() as $column_name => $value) {
+                $value = trim($value);
+
+                // Check if email address is blocked
+                if (self::my_string_contains($column_name, ['ccc', 'bcc', 'mainrecipientmail'])) {
+                    $b = BlockedEmail::where('email', $value)->first();
+                    if ($b) {
+                        $contact->$column_name = null;
+                        $contact->save();
+                        echo "Removed blocked email {$value} \n";
+                        continue;
+                    }
+                }
+                $partner_name = DB::table('partners')->where('id', $contact->partner)->first()->name ?? '';
+                $county = DB::table('countys')->where('id', $contact->county)->first()->name ?? '';
+
+                if (self::my_string_contains($column_name, ['ccc', 'mainrecipientmail']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $cc_array[] = [trim($value), $contact->partner, $partner_name, $county, $contact->active, $contact->lastalertsent];
+                if (self::my_string_contains($column_name, ['bcc']) && filter_var($value, FILTER_VALIDATE_EMAIL) && !self::my_string_contains($value, ['jbatuka'])) $bcc_array[] = trim($value);
+            }
+
+        }
+        $filename = "alert_vl_.csv";
+
+        $handle = fopen($filename, 'w');
+        fputcsv($handle, array('Mail', 'eid_system_partner_id', 'Partner Name', 'county', 'notification_status', 'date_last_alert_sent'));
+        foreach ($cc_array as $k_arr => $cc_val) {
+            fputcsv($handle, $cc_val, $separator = ",", $enclosure = '"', $escape = "\\");
+        }
+        fclose($handle);
+        $headers = array(
+            'Content-Type' => 'text/csv',
+        );
+
+    }
 	public static function vl_county($county_id=null)
 	{
 		$county_contacts = EidUser::when($county_id, function($query) use ($county_id){
@@ -384,7 +436,7 @@ class Report
     {
         $sampleview_class = self::$my_classes[$type]['sampleview_class'];
         $view_table = self::$my_classes[$type]['view_table'];
-        $dt = date('Y-m-d', strtotime('-1 days'));
+        $dt = date('Y-m-d', strtotime('-7 days'));
         $q = 'rcategory IN (3, 4)';
         $lab = \App\Lab::find(env('APP_LAB'));
         if ($type == 'eid') $q = 'result=2';
@@ -393,17 +445,21 @@ class Report
         $data = [];
         $index = 0;
             $samples = $sampleview_class::whereRaw($q)
-				->where('datedispatched',$dt)
+                ->where('datedispatched', '>=', $dt)
                 ->where(['repeatt' => 0])
+                ->groupBy('county')
+                ->orderBy('county', 'asc')
                 ->get();
 
             foreach ($samples as $key => $sample) {
                 $data[$index]['patient'] = $sample->patient;
                 $data[$index]['facility_mfl'] = $sample->facility_code;
                 $data[$index]['facility_name'] = $sample->facility_name;
+                $data[$index]['county'] = $sample->county;
                 $data[$index]['datecollected'] = $sample->my_date_format('datecollected');
-                $data[$index]['datereceived'] = $sample->my_date_format('datereceived');
-                $data[$index]['datetested'] = $sample->my_date_format('datetested');
+                $data[$index]['tat_collected_to_received'] = $sample->tat_collected_to_received;
+                $data[$index]['tat_received_to_tested'] = $sample->tat_received_to_tested;
+                $data[$index]['tat_datetested_to_date_dispatched'] = $sample->tat_datetested_to_date_dispatched;
                 $data[$index]['datedispatched'] = $sample->my_date_format('datedispatched');
                 if ($sample->result && $type == 'eid') {
                     $data[$index]['result'] = "Positive";

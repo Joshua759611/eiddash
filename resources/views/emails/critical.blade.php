@@ -5,7 +5,7 @@
 	<br />
 	<br />
 	
-	We would like to draw your attention to the attached {{ $tests[$type]['name'] }} Critical Results for prompt patient management. Please find attached results dispatched on {{ $datedispatched }}. 
+	We would like to draw your attention to the attached {{ $tests[$type]['name'] }} Critical Results for prompt patient management. Please find attached results dispatched between {{ $datedispatched }} to {{ date("Y-m-d ") }}.
 	
 	<br />
 	<br />

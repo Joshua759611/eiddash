@@ -54,7 +54,7 @@ class CriticalResults extends Mailable
     public function build()
     {
         $t = strtoupper($this->type);
-        $str = "Critical {$t} Results For {$this->datedispatched}";
+        $str = "Critical {$t} Results For {$this->datedispatched} to ".date("Y-m-d ");
         $this->attach($this->file_path, ['as' => $str]);
         return $this->subject($str)->view('emails.critical');
     }

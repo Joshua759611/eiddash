@@ -75,18 +75,20 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th> No </th>
+                        <th> No &nbsp;</th>
                         @if($type == 'eid')
-                        <th> HEI Number</th>
+                        <th> HEI Number &nbsp;</th>
                         @else
-                        <th> CCC Number</th>
+                        <th> CCC Number &nbsp;</th>
                         @endif
-                        <th> Facility MFL </th>
-                        <th> Facility Name </th>
-                        <th> Date Collected </th>
-                        <th> Date Received </th>
-                        <th> Date Tested </th>
-                        <th> Date Dispatched </th>
+                        <th> Facility MFL</th>
+                        <th> Facility Name&nbsp;</th>
+                        <th> County&nbsp; </th>
+                        <th> Date Collected&nbsp; </th>
+                        <th> TAT(C-R)&nbsp; </th>
+                        <th> TAT(R-T) &nbsp;</th>
+                        <th> TAT(T-D) &nbsp;</th>
+                        <th> Date Dispatched &nbsp;</th>
                         <th> Result </th>
                     </tr>
                 </thead>
@@ -94,13 +96,15 @@
                 <tbody>
                     @foreach($summary as $key => $row)
                     <tr>
-                        <td> {{ $key+1 }}   </td>
+                        <td> {{ $key+1 }}&nbsp;</td>
                         <td> {{ $row['patient'] }}  </td>
                         <td> {{ $row['facility_mfl'] }} </td>
                         <td> {{ $row['facility_name'] }}    </td>
+                        <td> {{ $row['county'] }} &nbsp;   </td>
                         <td> {{ $row['datecollected'] }}    </td>
-                        <td> {{ $row['datereceived'] }} </td>
-                        <td> {{ $row['datetested'] }}   </td>
+                        <td> {{ $row['tat_collected_to_received'] }} </td>
+                        <td> {{ $row['tat_received_to_tested'] }}   </td>
+                        <td> {{ $row['tat_datetested_to_date_dispatched'] }}   </td>
                         <td> {{ $row['datedispatched'] }}   </td>
                         <td> {{ $row['result'] }}   </td>
                     </tr>

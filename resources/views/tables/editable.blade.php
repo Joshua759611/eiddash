@@ -27,11 +27,20 @@
                         </div>
 
                     @endif
+                    @if ($create_text !='Add Partner')
             		<div class="alert alert-success" style="/*padding-top: 4px;padding-bottom: 4px;">
 		                <p>
 		                    You may update the respective facility contact details in the fields provided. Click on the " Update Contact Details " button at the bottom of the page to save the details.
 		                </p>
 		            </div>
+                    @else
+                    <div class="alert alert-success" style="/*padding-top: 4px;padding-bottom: 4px;">
+                        <p>
+                            You may add a new partner by 'Add partner' action.
+                        </p>
+                    </div>
+                    @endif
+
                     @isset($create_endpoint)
                     <br />
                     <div class="form-group">
