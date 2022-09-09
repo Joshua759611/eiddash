@@ -436,7 +436,7 @@ class Report
     {
         $sampleview_class = self::$my_classes[$type]['sampleview_class'];
         $view_table = self::$my_classes[$type]['view_table'];
-        $dt = date('Y-m-d', strtotime('-1 days'));
+        $dt = date('Y-m-d', strtotime('-7 days'));
         $q = 'rcategory IN (3, 4)';
         $lab = \App\Lab::find(env('APP_LAB'));
         if ($type == 'eid') $q = 'result=2';
