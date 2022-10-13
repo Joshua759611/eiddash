@@ -444,4 +444,61 @@ class Common
 		return self::sms("254725455925", "This is a test email sent at ". date('Y-m-d H:i:s'));
 	}
 
+    /**Add facility id column to the ipsl data provided based on facilities corresponding  mflcode*/
+    public static function mapIpslFacilitiesWithFacilityIds(){
+//        DB::table('eid_partner_contacts_for_alerts')->where('id', $contact->id)->update(['lastalertsent' => date('Y-m-d')]);
+        $data_array = DB::table('temp_ips_sites')
+            ->leftJoin('partner_facilities','partner_facilities.partner_id','=','temp_ips_sites.eid_partner_id')
+            ->get();
+        foreach ($data_array as  $key => $facility){
+          $eid_facility =  DB::table('facilitys')->where('facilitycode','=',$facility->organisationunitcode)->get()->first();
+          $facility_id = '';
+          if ($eid_facility){
+              $facility_id = $eid_facility->id;
+          }
+            $facility->id= $facility_id;
+//            dd($facility);
+        }
+        self::csv_download($data_array,"facilities_export",false,true);
+    }
+
+    public static function mapFacilityPartners()
+    {
+        //get list of all mechanisms and facilities they support
+        $data_list = DB::table('temp_facility_ips');
+        foreach ($data_list as $key => $partnerFacility) {
+
+            $eid_facility = DB::table('facilitys')->where('facilitycode', '=', $partnerFacility->facilitycode)->get()->first();
+            $eid_partner = DB::table("partners")->where('partnerDHISCode', '=', $partnerFacility->dhiscode);
+            if (isset($eid_facility) && isset($eid_partner)) {
+                //all partners mapped to this facility
+                $partner_mappings_for_facility = DB::table("partner_supported_facilities")
+                    ->where('facility_id', '=', $eid_facility->id)->get();
+                if (isset($partner_mappings_for_facility)) {
+                    foreach ($partner_mappings_for_facility as $key => $mapping) {
+                        if ($mapping->partner != $eid_partner->id) {
+                            //update a row
+                            $mapping->endofsupport = "2021-09-30";
+                            $mapping->pre_update();
+                        }
+                    }
+                }
+                //create a new row entry for this partner
+                $to_save_facility = DB::table("partner_facilities");
+                $to_save_facility->facility_id = $eid_facility->id;
+                $to_save_facility->partner = $eid_partner;
+                $to_save_facility->start_date = "2020-10-01";
+                $to_save_facility->end_date = "";
+                $to_save_facility->save();
+
+            } else {
+                if (!isset($eid_facility)) $partnerFacility->eid_facility_exits = 1;
+                if (!isset($eid_partner)) $partnerFacility->eid_partner_exist = 1;
+                //update the flags on table
+                $partnerFacility->pre_update();
+            }
+
+        }
+
+    }
 }
