@@ -34,8 +34,10 @@ class GenerealController extends Controller
 				array( 'db' => 'datedispatched', 'dt' => 9),
 				array( 'db' => 'result', 'dt' => 10)
 			);
-	
-	public function patientSearch(Request $request) {
+
+    public $dtg_2022_sites = [13805, 14058, 14110, 14121, 14103, 13738, 13704, 11258, 11259, 18267, 11936, 12177, 12438, 12488, 12911, 13220, 12973, 18743, 17719, 13191, 18219, 15965, 16073, 15862, 16030, 16141, 13703, 15282, 13608, 13667, 13777, 13798, 13841, 14130, 13488, 13604, 13468, 13939, 16662, 13781, 13864, 13921, 14012, 14020, 14106, 14120, 13476, 13507, 14080, 14156, 14175, 12366, 12455, 12457, 10485, 10903, 13019, 10539, 10603, 10825, 10973, 10520, 10808, 10890, 11976, 12492, 10777, 13023, 11970, 13156, 11094, 12881, 12905, 12904, 12929, 13028, 13030, 13050, 13165, 13074];
+
+    public function patientSearch(Request $request) {
 		$usertype = auth()->user()->user_type_id;
         $level = ($usertype == 8) ? auth()->user()->facility_id : auth()->user()->level;
     	$search = $request->input('search');
@@ -71,6 +73,8 @@ class GenerealController extends Controller
 		                        return $query->where('view_facilitys.partner_id', '=', $level);
                             if ($usertype == 8)
                                 return $query->where('view_facilitys.id', '=', $level);
+                            if ($usertype == 17)
+                                return $query->whereIn('facilitycode',$this->dtg_2022_sites);
 		                })->paginate(10);
 		foreach ($eidPatients as $key => $patient) {
         	$mergeData[] = (object)[
@@ -89,7 +93,7 @@ class GenerealController extends Controller
         }
         $eidPatients = json_decode(json_encode($eidPatients));
         $vlPatients = json_decode(json_encode($vlPatients));
-        
+
         $from = max([$eidPatients->from, $vlPatients->from]);
         $to = max([$eidPatients->to, $vlPatients->to]);
         $total = max([$eidPatients->total, $vlPatients->total]);
@@ -108,7 +112,7 @@ class GenerealController extends Controller
                         'to' => $to,
                         'total' => $total
                     ];
-        
+
         echo json_encode($returnData);
     }
 
@@ -132,6 +136,8 @@ class GenerealController extends Controller
                         return $query->where('view_facilitys.partner_id', '=', $level);
                     if ($usertype == 8)
                         return $query->where('view_facilitys.id', '=', $level);
+                    if ($usertype == 17)
+                        return $query->whereIn('view_facilitys.facilitycode', $this->dtg_2022_sites);
                 })->paginate(10);
 
         $vlBatches = Viralbatch::select('viralbatches.id as id', 'viralbatches.original_batch_id as batch_id', 'view_facilitys.facilitycode as code')
@@ -148,6 +154,8 @@ class GenerealController extends Controller
                         return $query->where('view_facilitys.partner_id', '=', $level);
                     if ($usertype == 8)
                         return $query->where('view_facilitys.id', '=', $level);
+                    if ($usertype == 17)
+                        return $query->whereIn('view_facilitys.facilitycode', $this->dtg_2022_sites);
                 })->paginate(10);
         foreach ($eidBatches as $key => $value) {
             $mergeBatches[] = [
@@ -168,7 +176,7 @@ class GenerealController extends Controller
         }
         $eidBatches = json_decode(json_encode($eidBatches));
         $vlBatches = json_decode(json_encode($vlBatches));
-        
+
         $from = max([$eidBatches->from, $vlBatches->from]);
         $to = max([$eidBatches->to, $vlBatches->to]);
         $total = max([$eidBatches->total, $vlBatches->total]);
@@ -217,6 +225,8 @@ class GenerealController extends Controller
                         return $query->where('subcounty_id', '=', $level);
                     if ($usertype == 7)
                         return $query->where('partner_id', '=', $level);
+                    if ($usertype == 17)
+                        return $query->whereIn('facilitycode',$this->dtg_2022_sites);
                 })->paginate(10);
     }
 
@@ -271,7 +281,7 @@ class GenerealController extends Controller
         $samples = $samples->load($relationships);
         $data['sample'] = $samples;
         $data['testingSys'] = $testSysm;
-        
+
         // return view('reports.individualresult', $data);
         $facility = $samples->batch->view_facility->name;
         $datereceived = date('d-M-Y', strtotime($samples->datereceived));
@@ -324,7 +334,7 @@ class GenerealController extends Controller
             $data['batches'] = Viralbatch::with(['sample.patient', 'view_facility', 'lab', 'receiver', 'creator'])->where('id', '=', $batch)->get();
             $id = $data['batches']->first()->original_batch_id;
         }
-        
+
         $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('reports.summarybatch', $data)->render();
         $mpdf->WriteHTML($view_data);
@@ -403,7 +413,7 @@ class GenerealController extends Controller
     					})
     					->where("$table.repeatt", '=', 0)
     					->where("$table.flag", '=', 1);
-    	
+
     	$Total = $modelCount->get()->first()->totals;
 
     	return $model;
@@ -414,7 +424,7 @@ class GenerealController extends Controller
     	$count = 1;
     	$dataSet = $model->get();
         $sessionData = (object)session('searchParams');
-        
+
     	foreach ($dataSet as $key => $value) {
             $action = "<a href='". url("printindividualresult/$testingSystem/$value->id") ."'>
                         <img src='".asset('img/print.png')."' />&nbsp;Result</a>&nbsp;|&nbsp;
@@ -452,12 +462,12 @@ class GenerealController extends Controller
     		$data[] = [
     					$count, $value->patient,
     					$value->facility, $value->lab,
-    					"<a href='". url("batchsearchresult/$testingSystem/$value->batch_id") ."'>".$value->original_batch_id."</a>", 
+    					"<a href='". url("batchsearchresult/$testingSystem/$value->batch_id") ."'>".$value->original_batch_id."</a>",
                         $value->receivedstatus_name,
-    					($value->datecollected) ? date('d-M-Y', strtotime($value->datecollected)) : '', 
-                        ($value->datereceived) ? date('d-M-Y', strtotime($value->datereceived)) : '', 
-                        ($value->datetested) ? date('d-M-Y', strtotime($value->datetested)) : '', 
-                        ($value->datedispatched) ? date('d-M-Y', strtotime($value->datedispatched)) : '', 
+    					($value->datecollected) ? date('d-M-Y', strtotime($value->datecollected)) : '',
+                        ($value->datereceived) ? date('d-M-Y', strtotime($value->datereceived)) : '',
+                        ($value->datetested) ? date('d-M-Y', strtotime($value->datetested)) : '',
+                        ($value->datedispatched) ? date('d-M-Y', strtotime($value->datedispatched)) : '',
     					$result, $action
     				];
     		$count++;
@@ -476,11 +486,11 @@ class GenerealController extends Controller
     public static function limit($model,$request) {
     	$offset = (int) $request['start'];
     	$limit = (int) $request['length'];
-    	
+
     	if ( isset($offset) && $limit != -1 ) {
     		$model = $model->offset($offset)->limit($limit);
 		}
-		
+
 		return $model;
     }
 
@@ -493,7 +503,7 @@ class GenerealController extends Controller
     	$order = $request['order'] ?? null;
     	$dbcolumns = self::$columns;
 		$dtColumns = self::pluck($dbcolumns,'dt');
-		
+
     	if (isset($order) && count($order)) {
     		foreach ($order as $key => $value) {
     			$columnIdx = array_search( $value['column'], $dtColumns );
@@ -512,12 +522,12 @@ class GenerealController extends Controller
     	$search = $request['search'] ?? null;
     	$searchstr = $search['value'] ?? null;
     	$dtColumns = self::pluck($dbcolumns,'dt');
-		
+
 		if ($testingSystem == 'eid')
     		$table = "sample_complete_view";
     	if ($testingSystem == 'vl')
     		$table = "viralsample_complete_view";
-    	
+
     	if (isset($search) && $search['value'] != '') {
     		$str = "%$searchstr%";
     		foreach ($requestColumns as $key => $value) {
@@ -554,9 +564,9 @@ class GenerealController extends Controller
 				}
     		}
     	}
-    	
+
     	$Total = $modelCount->get()->first()->totals;
-    	
+
     	return $model;
     }
 

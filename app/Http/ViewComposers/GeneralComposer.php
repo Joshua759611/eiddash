@@ -46,16 +46,20 @@ class GeneralComposer
                                 if ($usertype == 8)
                                     return $query->where('id', '=', auth()->user()->facility_id);
                             })->get()->first();
-            if ($usertype == 3) 
-                $data = (object)['name'=>$user->partner];
-            if ($usertype == 4) 
-                $data = (object)['name'=>$user->county.' - County'];
-            if ($usertype == 5) 
-                $data = (object)['name'=>$user->subcounty.' - Sub-County'];
-            if ($usertype == 8) 
-                $data = (object)['name'=>$user->name];
+            if ($user){
+                if ($usertype == 3)
+                    $data = (object)['name'=>$user->partner];
+                if ($usertype == 4)
+                    $data = (object)['name'=>$user->county.' - County'];
+                if ($usertype == 5)
+                    $data = (object)['name'=>$user->subcounty.' - Sub-County'];
+                if ($usertype == 8)
+                    $data = (object)['name'=>$user->name];
+            }else{
+                $name = DB::table('partners')->where('id', '=', auth()->user()->level)->first()->name . "(No Facilities Assigned yet)";
+                $data = (object)['name'=> $name];
+            }
         }
-        // dd($data);
         $view->with('user', $data);
     }
 

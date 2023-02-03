@@ -28,6 +28,13 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
+                    @if(Auth::user()->user_type_id == 17)
+                    <div class="panel-body">
+                        <div class="alert alert-success">
+                                <center>Test Outcome Report [ Search by client ccc or facility on left navigation links ]</center>
+                        </div>
+                    </div>
+                    @else
                     <div class="alert alert-success">
                     @if(Auth::user()->user_type_id == 9)
                         <center>Report Outcomes</center>
@@ -449,6 +456,7 @@
                         </div>                  
                         {{ Form::close() }}
                     </div>
+                        @endif
                 </div>
             </div>
         </div>

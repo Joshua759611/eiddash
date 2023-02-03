@@ -83,7 +83,7 @@
                     <hr />
                 @endif
             @endif
-            @if(!in_array(Auth::user()->user_type_id, [2, 6, 7, 14, 15, 16]))
+            @if(!in_array(Auth::user()->user_type_id, [2, 6, 7, 14, 15, 16,17]))
                 <li><a href="{{ url('hei/validate') }}">HEI Patient Follow Up</a></li>
                 <hr />
                 <li><a href="{{ url('#') }}">HEI Validation Guide</a></li>

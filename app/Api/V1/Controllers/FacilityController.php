@@ -40,6 +40,7 @@ class FacilityController extends Controller
 
             if(!$fac){
                 unset($value->facility_contact);
+                unset($value->status);
                 $fac = new Facility;
                 $fac->fill(get_object_vars($value));
                 unset($fac->clinician_phone);

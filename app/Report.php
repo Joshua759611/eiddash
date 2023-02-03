@@ -453,6 +453,12 @@ class Report
             foreach ($samples as $key => $sample) {
                 $data[$index]['patient'] = $sample->patient;
                 $data[$index]['facility_mfl'] = $sample->facility_code;
+                $age = $sample->age;
+                if ($age && $age < 15) {
+                    $data[$index]['group'] = "Child";
+                } else {
+                    $data[$index]['group'] = "Adult";
+                }
                 $data[$index]['facility_name'] = $sample->facility_name;
                 $data[$index]['county'] = $sample->county;
                 $data[$index]['datecollected'] = $sample->my_date_format('datecollected');
