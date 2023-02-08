@@ -81,6 +81,7 @@
                         @else
                         <th> CCC Number &nbsp;</th>
                         @endif
+                        <th>Group &nbsp;</th>
                         <th> Facility MFL</th>
                         <th> Facility Name&nbsp;</th>
                         <th> County&nbsp; </th>
@@ -98,6 +99,7 @@
                     <tr>
                         <td> {{ $key+1 }}&nbsp;</td>
                         <td> {{ $row['patient'] }}  </td>
+                        <td>{{ $row['group'] }}</td>
                         <td> {{ $row['facility_mfl'] }} </td>
                         <td> {{ $row['facility_name'] }}    </td>
                         <td> {{ $row['county'] }} &nbsp;   </td>
