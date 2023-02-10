@@ -41,6 +41,7 @@ $api->version('v1', function (Router $api) {
 
         $api->get('pull/facilities', 'PullController@facilities');
         $api->post('pull/vl', 'PullController@vl');
+        $api->post('pull/eid', 'PullController@eid');
 
         $api->post('recency', 'PullController@recency');
 
