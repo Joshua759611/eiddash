@@ -28,7 +28,7 @@ class PullController extends Controller
 
         // if($test == 2){
             $class = SampleCompleteView::class;
-            $table = 'samples_view';
+            $table = 'sample_complete_view';
         // }
         // else if($test == 1){
         //     $class = ViralsampleView::class;
