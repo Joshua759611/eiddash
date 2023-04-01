@@ -877,17 +877,18 @@ class ReportController extends Controller
             // $selectStr = "$table.id, $table.patient, $table.original_batch_id, IF(lab.name IS NULL, poclab.name, lab.name) as labdesc, view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility, view_facilitys.facilitycode, $table.gender_description, $table.dob, $table.age, pcrtype.alias as pcrtype, IF($table.pcrtype=4, $table.enrollment_ccc_no, null) as enrolment_ccc_no, $table.datecollected, $table.datereceived, $table.datetested, $table.datedispatched";
             $selectStr = "$table.id, $table.patient, $table.original_batch_id, IF(lab.name IS NULL, poclab.name, lab.name) as labdesc, view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner, view_facilitys.name as facility, view_facilitys.facilitycode, $table.gender_description, $table.dob, $table.age, pcrtype.alias as pcrtype, $table.enrollment_ccc_no, $table.datecollected, $table.datereceived, $table.datetested, $table.datedispatched";
 
-            if ($request->indicatortype == 1 || $request->indicatortype == 6) {
+            if ($request->indicatortype == 6) {
                 $excelColumns = ['System ID','Sample ID', 'Batch', 'Lab Tested In', 'County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Gender', 'DOB', 'Age (Months)', 'PCR Type', 'Enrollment CCC No', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched', 'Infant Prophylaxis', 'Received Status', 'Lab Comment', 'Reason for Repeat', 'Spots', 'Feeding', 'Entry Point', 'Result', 'PMTCT Intervention', 'Mother Result', 'Mother Age', 'Mother CCC No', 'Mother Last VL', 'Entry'];
                 $selectStr .= ",$table.regimen_name as infantprophylaxis, $table.receivedstatus_name as receivedstatus, $table.labcomment, $table.reason_for_repeat, $table.spots, $table.feeding_name, entry_points.name as entrypoint, ir.name as infantresult, $table.mother_prophylaxis_name as motherprophylaxis, mr.name as motherresult, $table.mother_age, $table.mother_ccc_no, $table.mother_last_result, case  when $table.order_no IS NOT NULL then 'EMR' when $table.site_entry  = '1, 1, NULL' then 'Health Facility' when $table.site_entry = '2, 1, 0' then 'POC' else 'Testing Lab' end ";
-                if ($request->indicatortype == 1) {
-                    $title .= "EID TEST OUTCOMES FOR ";
-                    $briefTitle .= "EID TEST OUTCOMES ";
-                }
-                if ($request->indicatortype == 6) {
+
                     $title .= "EID PATIENTS <2M ";
                     $briefTitle .= "EID PATIENTS <2M ";
-                }
+            }else if ($request->indicatortype == 1) {
+                $excelColumns = ['System ID','Sample ID', 'Batch', 'Lab Tested In', 'County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Gender', 'DOB', 'Age (Months)', 'PCR Type', 'Enrollment CCC No', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched', 'Infant Prophylaxis', 'Received Status', 'Lab Comment', 'Reason for Repeat', 'Spots', 'Feeding', 'Entry Point', 'Result', 'PMTCT Intervention', 'Mother Result', 'Mother Age', 'Mother CCC No', 'Mother Last VL', 'Entry','Time Result SMS Sent'];
+                $selectStr .= ",$table.regimen_name as infantprophylaxis, $table.receivedstatus_name as receivedstatus, $table.labcomment, $table.reason_for_repeat, $table.spots, $table.feeding_name, entry_points.name as entrypoint, ir.name as infantresult, $table.mother_prophylaxis_name as motherprophylaxis, mr.name as motherresult, $table.mother_age, $table.mother_ccc_no, $table.mother_last_result, case  when $table.order_no IS NOT NULL then 'EMR' when $table.site_entry  = '1, 1, NULL' then 'Health Facility' when $table.site_entry = '2, 1, 0' then 'POC' else 'Testing Lab' end,$table.time_result_sms_sent ";
+
+                $title .= "EID TEST OUTCOMES FOR ";
+                $briefTitle .= "EID TEST OUTCOMES ";
             } else if ($request->indicatortype == 2 || $request->indicatortype == 3 || $request->indicatortype == 4) {
                 // $excelColumns = ['System ID','Sample ID', 'Batch', 'Lab Tested In', 'County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Gender', 'DOB', 'Age (Months)', 'PCR Type', 'Enrollment CCC No', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched', 'Test Result', 'Validation (CP,A,VL,RT,UF)', 'Enrollment Status', 'Date Initiated on Treatment', 'Enrollment CCC #', 'Other Reasons'];
                 $excelColumns = ['System ID','Sample ID', 'Batch', 'Lab Tested In', 'County', 'Sub-County', 'Partner', 'Facilty', 'Facility Code', 'Gender', 'DOB', 'Age (Months)', 'PCR Type', 'Enrollment CCC No', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched', 'Test Result', 'Validation (CP,A,VL,RT,UF)', 'Enrollment Status', 'Date Initiated on Treatment', 'Other Reasons'];
